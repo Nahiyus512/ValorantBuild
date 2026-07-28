@@ -174,6 +174,17 @@ export function LoadoutDemo(){
   }
   function toggleQuality(q:string){setQualities(v=>v.includes(q)?v.filter(x=>x!==q):[...v,q])}
   function displayFor(w:Weapon){const load=equipped[w.id];const s=w.skins.find(x=>x.id===load?.skinId)??w.skins.at(-1)!;return s.chromas.find(c=>c.id===load?.chromaId)?.render??s.chromas[0]?.render??w.icon}
+  function moveCustomScroll(e:React.PointerEvent<HTMLDivElement>){
+    const rail=e.currentTarget;
+    const list=rail.previousElementSibling as HTMLElement|null;
+    if(!list)return;
+    if(e.type==="pointerdown")rail.setPointerCapture(e.pointerId);
+    if(e.type==="pointermove"&&!rail.hasPointerCapture(e.pointerId))return;
+    const rect=rail.getBoundingClientRect();
+    const thumbHeight=160*canvasScale;
+    const ratio=Math.max(0,Math.min(1,(e.clientY-rect.top-thumbHeight/2)/Math.max(1,rect.height-thumbHeight)));
+    list.scrollTop=ratio*Math.max(0,list.scrollHeight-list.clientHeight);
+  }
   async function shareHome(){
     if(page!=="home"){setPage("home");await new Promise(resolve=>window.setTimeout(resolve,80))}
     const stage=document.querySelector(".fixed-stage");
@@ -244,13 +255,14 @@ export function LoadoutDemo(){
       <div className="selector-layout cosmetic-layout">
         <aside className="item-browser cosmetic-browser">
           <div className="browser-tools buddy-tools"><label>⌕<input value={query} onChange={e=>setQuery(e.target.value)} placeholder={`搜索${tabs.find(([id])=>id===cosmeticTab)?.[1]??""}`}/></label></div>
-          <div className={`cosmetic-grid ${cosmeticTab==="titles"?"title-grid":""}`}>
+          <div className={`cosmetic-grid ${cosmeticTab==="titles"?"title-grid":""}`} onScroll={e=>{const el=e.currentTarget;setListScroll(el.scrollTop/Math.max(1,el.scrollHeight-el.clientHeight))}}>
             {cosmeticItems.map(item=><button key={item.id} className={(cosmeticTab==="cards"?selectedCardId:cosmeticTab==="titles"?selectedTitleId:selectedSprayId)===item.id?"selected":""} onClick={()=>{
               if(cosmeticTab==="cards")setSelectedCardId(item.id);
               else if(cosmeticTab==="titles")setSelectedTitleId(item.id);
               else setSelectedSprayId(item.id);
             }}>{("icon" in item)&&<img src={item.icon} alt=""/>}<strong>{item.name}</strong></button>)}
           </div>
+          <div className="custom-scrollbar" onPointerDown={moveCustomScroll} onPointerMove={moveCustomScroll}><span style={{top:`${listScroll*648}px`}}/></div>
         </aside>
         <section className="weapon-preview cosmetic-preview">
           <div className="preview-title"><h1>{cosmeticTab==="wheel"?"喷漆盘":currentName}</h1></div>
@@ -276,10 +288,11 @@ export function LoadoutDemo(){
         <div className={`browser-tools ${tab==="buddy"?"buddy-tools":""}`}><label>⌕<input value={query} onChange={e=>setQuery(e.target.value)} placeholder={tab==="skin"?"搜索皮肤":"搜索挂饰"}/></label>
           {tab==="skin"&&<button className={`filter-trigger ${filterOpen?"on":""}`} aria-label="打开筛选与排序" onClick={()=>setFilterOpen(true)}><span/><span/><span/></button>}
         </div>
-        <div className={tab==="skin"?"skin-grid":"buddy-grid"}>
+        <div className={tab==="skin"?"skin-grid":"buddy-grid"} onScroll={e=>{const el=e.currentTarget;setListScroll(el.scrollTop/Math.max(1,el.scrollHeight-el.clientHeight))}}>
           {tab==="skin"?visibleSkins.map(s=><button key={s.id} className={skinId===s.id?"selected":""} onClick={()=>chooseSkin(s)} style={{"--rarity":s.rarityColor} as React.CSSProperties}><img src={s.chromas[0]?.render??s.icon} alt=""/><strong>{s.name.replace(` ${weapon?.name}`,"")}</strong><small>{s.priceCN==null?"非直接售卖":`${s.priceCN} 点券`}</small></button>):
           <><button className={buddyId===null?"selected":""} onClick={()=>setBuddyId(null)} aria-label="不使用挂饰"><span className="no-buddy">×</span></button>{visibleBuddies.map(b=><button key={b.id} className={buddyId===b.id?"selected":""} onClick={()=>setBuddyId(b.id)}><img src={b.icon} alt=""/><strong>{b.name}</strong></button>)}</>}
         </div>
+        <div className="custom-scrollbar" onPointerDown={moveCustomScroll} onPointerMove={moveCustomScroll}><span style={{top:`${listScroll*648}px`}}/></div>
       </aside>
       <section className="weapon-preview">
         <div className="preview-title">{selectedSkin?.rarityIcon&&<img src={selectedSkin.rarityIcon} alt={selectedSkin.rarityName}/>}<h1>{selectedSkin?.name??weapon?.name}</h1></div>
