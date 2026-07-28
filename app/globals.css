@@ -1226,3 +1226,18 @@ html,body{width:100%;height:100%;overflow:hidden!important}
 .fixed-stage .weapon-preview .gun-stage:before{
   left:56%!important;top:44%!important;transform:translate(-50%,-50%)!important;
 }
+
+/* Keep all four enlarged expression images on the same radius, centered in
+   their upper, left, right and lower partitions. */
+.fixed-stage .profile-panel .spray-wheel i:nth-of-type(1){
+  left:calc(50% - 24px)!important;right:auto!important;top:34px!important;bottom:auto!important;
+}
+.fixed-stage .profile-panel .spray-wheel i:nth-of-type(2){
+  left:34px!important;right:auto!important;top:calc(50% - 24px)!important;bottom:auto!important;
+}
+.fixed-stage .profile-panel .spray-wheel i:nth-of-type(3){
+  left:auto!important;right:34px!important;top:calc(50% - 24px)!important;bottom:auto!important;
+}
+.fixed-stage .profile-panel .spray-wheel i:nth-of-type(4){
+  left:calc(50% - 24px)!important;right:auto!important;top:auto!important;bottom:34px!important;
+}
