@@ -63,6 +63,19 @@ function TacticalBackground(){
   </div>
 }
 
+function SharePreview({imageUrl,onClose,onSave}:{imageUrl:string;onClose:()=>void;onSave:()=>void}){
+  return <div className="share-preview-modal" role="dialog" aria-modal="true" aria-label="分享图片预览" onMouseDown={e=>{if(e.target===e.currentTarget)onClose()}}>
+    <div className="share-preview-dialog">
+      <div className="share-preview-heading">
+        <div><span>SHARE</span><h2>分享图片预览</h2></div>
+        <button type="button" onClick={onClose} aria-label="关闭分享图片预览">×</button>
+      </div>
+      <div className="share-preview-image"><img src={imageUrl} alt="ValorantBuild 主页面分享图"/></div>
+      <button className="share-save-button" type="button" onClick={onSave}>保存图片</button>
+    </div>
+  </div>
+}
+
 export function LoadoutDemo(){
   const [data,setData]=useState<Data|null>(null);
   const [page,setPage]=useState<"home"|"select"|"card"|"expression">("home");
@@ -91,6 +104,8 @@ export function LoadoutDemo(){
   const [equippedTitleId,setEquippedTitleId]=useState<string|null>(null);
   const [sprayWheel,setSprayWheel]=useState<string[]>([]);
   const [wheelPickerOpen,setWheelPickerOpen]=useState(false);
+  const [shareImageUrl,setShareImageUrl]=useState<string|null>(null);
+  const [shareGenerating,setShareGenerating]=useState(false);
 
   useEffect(()=>{fetch("/demo-data.json").then(r=>r.json() as Promise<Data>).then(d=>{
     setData(d);
@@ -130,6 +145,7 @@ export function LoadoutDemo(){
     const fit=()=>setCanvasScale(Math.min(window.innerWidth/1920,window.innerHeight/1080));
     fit();window.addEventListener("resize",fit);return()=>window.removeEventListener("resize",fit);
   },[]);
+  useEffect(()=>()=>{if(shareImageUrl)URL.revokeObjectURL(shareImageUrl)},[shareImageUrl]);
 
   const weapon=data?.weapons.find(w=>w.id===weaponId);
   const selectedSkin=weapon?.skins.find(s=>s.id===skinId);
@@ -186,10 +202,13 @@ export function LoadoutDemo(){
     list.scrollTop=ratio*Math.max(0,list.scrollHeight-list.clientHeight);
   }
   async function shareHome(){
+    if(shareGenerating)return;
+    setShareGenerating(true);
     if(page!=="home"){setPage("home");await new Promise(resolve=>window.setTimeout(resolve,80))}
     const stage=document.querySelector(".fixed-stage");
-    if(!stage)return;
+    if(!stage){setShareGenerating(false);return}
     const clone=stage.cloneNode(true) as HTMLElement;
+    clone.querySelector(".top-export")?.remove();
     clone.style.setProperty("--canvas-scale","1");
     clone.style.transform="none";clone.style.position="relative";clone.style.left="0";clone.style.top="0";
     const asDataUrl=async(src:string)=>{
@@ -211,9 +230,16 @@ export function LoadoutDemo(){
     const svg=`<svg xmlns="http://www.w3.org/2000/svg" width="1920" height="1080"><foreignObject width="100%" height="100%"><div xmlns="http://www.w3.org/1999/xhtml"><style>${css}</style>${markup}</div></foreignObject></svg>`;
     const image=new Image();
     const url=URL.createObjectURL(new Blob([svg],{type:"image/svg+xml;charset=utf-8"}));
-    image.onload=()=>{const canvas=document.createElement("canvas");canvas.width=1920;canvas.height=1080;canvas.getContext("2d")?.drawImage(image,0,0);URL.revokeObjectURL(url);canvas.toBlob(blob=>{if(!blob){window.alert("图片生成失败，请重试");return}const a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download=`ValorantBuild-${Date.now()}.png`;document.body.appendChild(a);a.click();a.remove();window.setTimeout(()=>URL.revokeObjectURL(a.href),1000)},"image/png")};
-    image.onerror=()=>{URL.revokeObjectURL(url);window.alert("图片生成失败，请重试")};
+    image.onload=()=>{const canvas=document.createElement("canvas");canvas.width=1920;canvas.height=1080;canvas.getContext("2d")?.drawImage(image,0,0);URL.revokeObjectURL(url);canvas.toBlob(blob=>{setShareGenerating(false);if(!blob){window.alert("图片生成失败，请重试");return}setShareImageUrl(previous=>{if(previous)URL.revokeObjectURL(previous);return URL.createObjectURL(blob)})},"image/png")};
+    image.onerror=()=>{setShareGenerating(false);URL.revokeObjectURL(url);window.alert("图片生成失败，请重试")};
     image.src=url;
+  }
+  function closeSharePreview(){setShareImageUrl(previous=>{if(previous)URL.revokeObjectURL(previous);return null})}
+  function saveShareImage(){
+    if(!shareImageUrl)return;
+    const anchor=document.createElement("a");
+    anchor.href=shareImageUrl;anchor.download=`ValorantBuild-${Date.now()}.png`;
+    document.body.appendChild(anchor);anchor.click();anchor.remove();
   }
 
   if(!data)return <main className="loading"><span>V</span><p>正在装载 1,364 款皮肤资源…</p></main>;
@@ -236,6 +262,8 @@ export function LoadoutDemo(){
     </section>
     <div className="home-foot"><span>20 种武器</span><span>1,364 款可用皮肤</span><span>866 个挂饰</span></div>
     </div>
+    {shareGenerating&&<div className="share-generating" role="status"><span/>正在生成分享图片…</div>}
+    {shareImageUrl&&<SharePreview imageUrl={shareImageUrl} onClose={closeSharePreview} onSave={saveShareImage}/>}
   </main>;
 
   if(page==="card"||page==="expression"){

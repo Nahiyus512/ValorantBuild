@@ -1218,6 +1218,22 @@ html,body{width:100%;height:100%;overflow:hidden!important}
   color:#22ffc5!important;background:transparent!important;text-shadow:none!important;transform:none!important;
 }
 
+.share-preview-modal{position:fixed;z-index:1000;inset:0;display:grid;place-items:center;padding:32px;background:rgba(3,9,13,.82);backdrop-filter:blur(12px)}
+.share-preview-dialog{width:min(1180px,calc(100vw - 64px));max-height:calc(100vh - 64px);padding:24px;display:flex;flex-direction:column;gap:20px;overflow:auto;color:#eef7f5;background:#101a1e;border:1px solid rgba(255,255,255,.24);box-shadow:0 24px 80px rgba(0,0,0,.55)}
+.share-preview-heading{display:flex;align-items:center;justify-content:space-between}
+.share-preview-heading span{display:block;color:#22ffc5;font:700 12px/1.2 Arial,sans-serif;letter-spacing:.3em}
+.share-preview-heading h2{margin:5px 0 0;font:700 24px/1.2 Arial,sans-serif;letter-spacing:.06em}
+.share-preview-heading>button{width:42px;height:42px;border:1px solid rgba(255,255,255,.25);color:#fff;background:transparent;font:300 32px/1 Arial,sans-serif;cursor:pointer}
+.share-preview-heading>button:hover{color:#22ffc5;border-color:#22ffc5}
+.share-preview-image{min-height:0;padding:8px;background:#05090b;border:1px solid rgba(255,255,255,.12)}
+.share-preview-image img{display:block;width:100%;height:auto;aspect-ratio:16/9;object-fit:contain}
+.share-save-button{align-self:center;min-width:240px;height:54px;border:0;color:#07110f;background:#22ffc5;font:800 16px/1 Arial,sans-serif;letter-spacing:.12em;cursor:pointer}
+.share-save-button:hover{background:#fff}
+.share-generating{position:fixed;z-index:1001;left:50%;top:50%;transform:translate(-50%,-50%);display:flex;align-items:center;gap:14px;padding:18px 24px;color:#fff;background:rgba(7,16,20,.94);border:1px solid rgba(34,255,197,.5);font:700 14px/1 Arial,sans-serif;letter-spacing:.08em}
+.share-generating span{width:18px;height:18px;border:2px solid rgba(255,255,255,.25);border-top-color:#22ffc5;border-radius:50%;animation:share-spin .7s linear infinite}
+@keyframes share-spin{to{transform:rotate(360deg)}}
+@media (max-width:700px){.share-preview-modal{padding:14px}.share-preview-dialog{width:calc(100vw - 28px);max-height:calc(100vh - 28px);padding:16px}.share-preview-heading h2{font-size:19px}.share-save-button{width:100%}}
+
 /* Requested home-wheel and weapon-preview alignment. */
 .fixed-stage .profile-panel .spray-wheel i{overflow:visible!important}
 .fixed-stage .profile-panel .spray-wheel i img{
