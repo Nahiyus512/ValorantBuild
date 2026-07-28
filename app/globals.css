@@ -49,4 +49,20 @@ button,input,select{font-family:inherit;font-weight:900}
 .select-bar{height:5.4vh;min-height:46px}.selector-layout{height:calc(100vh - max(46px,5.4vh));overflow:hidden}.item-browser,.weapon-preview{height:100%;overflow:hidden}
 .skin-grid,.buddy-grid{height:calc(100% - 62px);scrollbar-width:none}.skin-grid::-webkit-scrollbar,.buddy-grid::-webkit-scrollbar{display:none}.gun-stage{min-height:0}
 @media(max-width:1000px){.loadout-layout{grid-template-columns:minmax(0,1fr) 170px;padding-left:2vw;padding-right:2vw;gap:2vw}.weapon-board{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:1vw}.profile-panel{display:grid}.selector-layout{grid-template-columns:390px 1fr}}
-@media(max-width:700px){html,body{overflow:hidden}.loadout-layout{height:calc(100vh - 46px);display:grid;grid-template-columns:1fr;padding:2vh 6px}.profile-panel{display:none}.weapon-board{grid-template-columns:repeat(4,minmax(0,1fr));overflow:hidden;gap:4px}.weapon-column{min-width:0}.selector-layout{height:calc(100vh - 46px);overflow:hidden}.item-browser{height:41%}.weapon-preview{height:59%;min-height:0}.skin-grid,.buddy-grid{height:calc(100% - 96px)}}
+@media(max-width:700px) and (orientation:portrait){
+  html,body{overflow-y:auto;scrollbar-width:none}body::-webkit-scrollbar{display:none}.game-shell{height:auto;min-height:100vh;overflow:visible}
+  .home-bar{position:sticky;top:0;z-index:10}.loadout-layout{height:auto;min-height:calc(100vh - 46px);display:block;padding:18px 10px 28px}.profile-panel{display:none}
+  .weapon-board{height:auto;display:grid;grid-template-columns:1fr 1fr;gap:22px 8px;overflow:visible}.weapon-column{height:660px;min-width:0}
+  .weapon-column>h2{height:30px;font-size:13px}.weapon-column-grid{height:630px;grid-template-rows:repeat(6,95px);gap:10px}.weapon-column-grid>h3{transform:translateY(-24px);font-size:13px}
+  .weapon-tile{height:95px}.weapon-tile>img:first-child{height:70px}.weapon-tile span{font-size:8px}
+  .selector-layout{height:calc(100vh - 46px);overflow:hidden}.item-browser{height:41%}.weapon-preview{height:59%;min-height:0}.skin-grid,.buddy-grid{height:calc(100% - 96px)}
+}
+@media(max-height:500px) and (orientation:landscape){
+  .home-bar{height:42px;min-height:42px}.home-mark{width:120px}
+  .loadout-layout{height:calc(100vh - 42px);grid-template-columns:1fr;padding:8px 16px 10px}.profile-panel{display:none}
+  .weapon-board{grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}.weapon-column>h2{height:20px;font-size:10px}.weapon-column-grid{height:calc(100% - 20px);gap:4px}.weapon-column-grid>h3{transform:translateY(-15px);font-size:10px}
+  .weapon-tile>img:first-child{height:calc(100% - 13px)}.weapon-tile span{font-size:6px;bottom:2px}.weapon-tile small{display:none}.weapon-tile:before{height:1px}
+  .select-bar{height:42px;min-height:42px}.selector-layout{height:calc(100vh - 42px);grid-template-columns:42% 58%}.item-browser{height:100%;padding:8px}.browser-tools{margin-bottom:5px}.browser-tools label,.browser-tools button,.browser-tools select{height:30px}
+  .skin-grid,.buddy-grid{height:calc(100% - 35px);grid-template-columns:repeat(4,1fr);gap:4px}.skin-grid button,.buddy-grid button{height:90px}.skin-grid img,.buddy-grid img{height:57px}
+  .weapon-preview{height:100%;padding:8px 18px}.preview-title h1{font-size:21px}.preview-title img{width:21px;height:21px}.main-gun{height:145px}.gun-stage:before{width:220px;height:220px}.selection-meta{min-height:68px}.equip-row{height:48px}.equip-button{height:40px!important;width:150px;font-size:12px}.favorite-button{height:40px!important;width:42px!important;font-size:20px!important}.chroma-row{bottom:5px}.chroma-row button{width:34px;height:34px}
+}
