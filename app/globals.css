@@ -1,7 +1,7 @@
 @import "tailwindcss";
 
 :root{--bg:#071923;--panel:rgba(8,29,39,.86);--line:rgba(151,181,191,.28);--muted:#78909a;--red:#ff4655;--mint:#31e8c1}
-*{box-sizing:border-box}html,body{margin:0;min-height:100%;background:var(--bg);color:#edf3f1;font-family:Arial,"Microsoft YaHei",sans-serif}button,input,select{font:inherit}.game-shell{min-height:100vh;background:#071923;position:relative;overflow:hidden}.game-bg{position:fixed;inset:0;background:radial-gradient(circle at 50% 22%,rgba(0,143,174,.32),transparent 46%),linear-gradient(125deg,#071722,#0a4051 50%,#061621);pointer-events:none}.game-bg:after{content:"";position:absolute;inset:0;opacity:.26;background-image:linear-gradient(128deg,transparent 38%,rgba(94,170,187,.14) 38.2%,transparent 38.5%),linear-gradient(28deg,transparent 72%,rgba(94,170,187,.12) 72.2%,transparent 72.5%)}
+*{box-sizing:border-box}html,body{margin:0;min-height:100%;background:var(--bg);color:#edf3f1;font-family:Arial,"Microsoft YaHei",sans-serif}button,input,select{font:inherit}.game-shell{min-height:100vh;background:#061521;position:relative;overflow:hidden}
 .loading{min-height:100vh;display:grid;place-content:center;text-align:center;background:#071923;color:#8da4ac}.loading span{font-size:80px;color:var(--red);font-weight:900}.loading p{letter-spacing:2px;font-size:12px}
 .home-bar,.select-bar{height:58px;position:relative;z-index:3;display:flex;align-items:center;padding:0 22px;border-bottom:1px solid var(--line);background:rgba(4,17,24,.68);gap:12px}.home-bar b{font-size:35px;font-weight:300}.home-bar span,.home-bar i,.select-bar i{color:#708792;font-style:normal}.home-mark{position:absolute;left:50%;transform:translateX(-50%);top:0;width:180px;height:57px;background:var(--red);clip-path:polygon(14% 0,86% 0,100% 50%,86% 100%,14% 100%,0 50%);display:grid;place-items:center;font-size:30px;font-weight:900}.home-bar small{margin-left:auto;color:#79919a}
 .loadout-layout{position:relative;z-index:1;display:grid;grid-template-columns:minmax(720px,1fr) 270px;gap:28px;max-width:1500px;margin:auto;padding:60px 45px 48px}.weapon-board{display:grid;grid-template-columns:1.1fr 1.1fr 1.1fr 1.1fr;grid-auto-flow:column;grid-template-rows:auto auto;gap:22px 26px;align-items:start}.weapon-group h2,.profile-panel h2{text-align:center;font-size:17px;margin:0 0 11px}.weapon-group>div{display:grid;gap:10px}.group-Sidearm{grid-column:1;grid-row:1/3}.group-SMG{grid-column:2;grid-row:1}.group-Shotgun{grid-column:2;grid-row:2}.group-Rifle{grid-column:3;grid-row:1/3}.group-Sniper{grid-column:4;grid-row:1}.group-Heavy{grid-column:4;grid-row:2}.group-Melee{grid-column:3;grid-row:3}.weapon-tile{height:103px;border:1px solid #45606a;background:linear-gradient(135deg,rgba(20,54,68,.78),rgba(8,27,37,.76));position:relative;color:white;text-align:left;padding:8px;overflow:hidden;transition:.2s}.weapon-tile:hover{border-color:#fff;background:rgba(25,67,81,.88);transform:translateY(-2px)}.weapon-tile>img:first-child{width:100%;height:68px;object-fit:contain}.weapon-tile span{position:absolute;bottom:6px;left:8px;font-size:11px;color:#8fa3aa}.weapon-tile small{position:absolute;bottom:6px;right:8px;color:#607a84;font-size:8px}.tile-buddy{position:absolute;right:8px!important;bottom:21px!important;width:25px!important;height:25px!important;object-fit:contain!important}
@@ -899,3 +899,100 @@ html,body{width:100%;height:100%;overflow:hidden!important}
   width:auto;height:auto;background:none;clip-path:none;font-size:50px;line-height:1;color:#fff;
 }
 .fixed-stage .top-weapon{left:120px}
+
+/* Layered tactical background shared by the loadout and skin selector. */
+.background-layer{
+  --bg-ink:#061521;
+  --bg-deep:#0a2031;
+  --bg-mid:#10354d;
+  --bg-blue:#1a4b68;
+  --bg-line:#7895a4;
+  position:fixed;
+  z-index:0;
+  inset:0;
+  overflow:hidden;
+  background:var(--bg-ink);
+  pointer-events:none;
+  isolation:isolate;
+}
+.background-layer>*{position:absolute;inset:0;pointer-events:none}
+
+/* 1. Deep blue-black foundation, brighter through the middle. */
+.base-gradient{
+  background:
+    radial-gradient(ellipse 76% 62% at 51% 43%,rgba(26,75,104,.72) 0%,rgba(16,53,77,.46) 31%,rgba(6,21,33,0) 70%),
+    radial-gradient(ellipse 46% 35% at 28% 52%,rgba(13,48,67,.4),transparent 72%),
+    linear-gradient(180deg,#04101a 0%,var(--bg-deep) 20%,var(--bg-mid) 51%,#091d2a 79%,#030b12 100%);
+}
+
+/* 2. Restrained cyan-blue bloom; opacity stays low for text contrast. */
+.center-glow{
+  inset:-8% -10% 0;
+  opacity:0;
+  background:radial-gradient(ellipse 42% 35% at 52% 37%,rgba(82,176,203,.16),rgba(33,112,147,.07) 44%,transparent 76%);
+  animation:background-glow-in 1.8s ease-out forwards;
+}
+
+/* 3 + 4. A single responsive SVG holds large planes and fine linework. */
+.background-geometry{width:100%;height:100%;overflow:visible}
+.large-polygons{
+  transform-box:fill-box;
+  transform-origin:center;
+  animation:background-drift 24s ease-in-out infinite alternate;
+}
+.large-polygons .poly{stroke:rgba(134,169,184,.035);stroke-width:1}
+.poly-left-back{fill:rgba(22,72,97,.12)}
+.poly-left-mid{fill:rgba(70,105,119,.075)}
+.poly-left-cut{fill:rgba(15,55,76,.13)}
+.poly-right-back{fill:rgba(41,83,105,.1)}
+.poly-right-mid{fill:rgba(68,100,116,.065)}
+.poly-right-cut{fill:rgba(19,67,91,.13)}
+.poly-center-plane{fill:rgba(64,120,140,.038)}
+.small-decorations{
+  fill:none;
+  stroke:var(--bg-line);
+  stroke-width:1.25;
+  opacity:.06;
+  vector-effect:non-scaling-stroke;
+}
+.small-decorations path:nth-child(3){stroke-dasharray:5 12;opacity:.7}
+.small-decorations path:nth-child(4){stroke-width:2;opacity:.6}
+
+/* 5. Static SVG turbulence texture; no frame-by-frame repaint. */
+.noise-layer{
+  opacity:.035;
+  mix-blend-mode:soft-light;
+  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 180 180' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.82' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.72'/%3E%3C/svg%3E");
+  background-size:180px 180px;
+}
+
+/* 6. Soft edge falloff, deliberately stronger at the sides and bottom. */
+.vignette{
+  background:
+    radial-gradient(ellipse 76% 69% at 50% 43%,transparent 42%,rgba(1,8,13,.28) 72%,rgba(1,6,10,.7) 100%),
+    linear-gradient(90deg,rgba(1,7,12,.48),transparent 17%,transparent 81%,rgba(1,7,12,.55)),
+    linear-gradient(180deg,rgba(1,7,12,.28),transparent 22%,transparent 69%,rgba(1,6,10,.58));
+}
+
+/* Subtle horizontal atmospheric light behind the primary content. */
+.lower-haze{
+  inset:auto 8% 8%;
+  height:34%;
+  opacity:.34;
+  background:radial-gradient(ellipse 60% 18% at 50% 58%,rgba(69,138,158,.2),transparent 76%);
+  filter:blur(10px);
+}
+
+@keyframes background-glow-in{to{opacity:1}}
+@keyframes background-drift{
+  from{transform:translate3d(-4px,-2px,0)}
+  to{transform:translate3d(6px,5px,0)}
+}
+
+@media (max-width:1099px){
+  .small-decorations path:nth-child(n+3){display:none}
+}
+@media (prefers-reduced-motion:reduce){
+  .center-glow{opacity:1;animation:none}
+  .large-polygons{animation:none}
+}
