@@ -488,3 +488,67 @@ html,body{width:100%;height:100%;overflow:hidden!important}
 .fixed-stage .spray-wheel:hover i{transform:none;box-shadow:none!important}
 .fixed-stage .spray-wheel span{transition:transform .3s ease,border-color .3s ease,box-shadow .3s ease}
 .fixed-stage .spray-wheel:hover span{transform:scale(1.08);border-color:#22ffc5!important;box-shadow:0 0 0 2px rgba(34,255,197,.65),0 0 8px rgba(34,255,197,.25)}
+
+/* Wheel ring owns the four gaps; the diagonal lines remain continuous */
+.fixed-stage .spray-wheel{border:0!important;box-shadow:none!important}
+.fixed-stage .wheel-ring{
+  position:absolute;z-index:1;inset:0;border-radius:50%;
+  background:conic-gradient(
+    #58707a 0 10.5%,transparent 10.5% 12%,#58707a 12% 35.5%,
+    transparent 35.5% 37%,#58707a 37% 60.5%,transparent 60.5% 62%,
+    #58707a 62% 85.5%,transparent 85.5% 87%,#58707a 87% 100%
+  );
+  -webkit-mask:radial-gradient(farthest-side,transparent calc(100% - 2px),#000 calc(100% - 2px));
+  mask:radial-gradient(farthest-side,transparent calc(100% - 2px),#000 calc(100% - 2px));
+  transition:transform .3s ease,background-color .3s ease,filter .3s ease;
+}
+.fixed-stage .spray-wheel:before,.fixed-stage .spray-wheel:after{
+  width:109.33%;background:#58707a!important;
+}
+.fixed-stage .spray-wheel:hover:before,.fixed-stage .spray-wheel:hover:after{width:100%;background:#58707a!important}
+.fixed-stage .spray-wheel:hover .wheel-ring{
+  transform:scale(1.025);background:#22ffc5;filter:drop-shadow(0 0 5px rgba(34,255,197,.35));
+}
+.fixed-stage .spray-wheel i,
+.fixed-stage .spray-wheel i:nth-child(4){
+  background:transparent!important;border:0!important;box-shadow:none!important;
+  transition:none!important;
+}
+.fixed-stage .spray-wheel:hover i{transform:none!important;color:#fff!important;background:transparent!important;box-shadow:none!important}
+
+/* Continuous player-card frame and layered geometric traces */
+.fixed-stage .card-energy{left:0;right:0}
+.fixed-stage .card-energy:after{display:none!important;animation:none!important}
+.fixed-stage .player-card{
+  background:
+    linear-gradient(var(--frame),var(--frame)) left top/100% 1px no-repeat,
+    linear-gradient(var(--frame),var(--frame)) left top/1px 75% no-repeat,
+    linear-gradient(var(--frame),var(--frame)) right top/1px 75% no-repeat,
+    linear-gradient(45deg,transparent 49.2%,var(--frame) 49.6% 50.4%,transparent 50.8%) left bottom/42.2% 25.2% no-repeat,
+    linear-gradient(-45deg,transparent 49.2%,var(--frame) 49.6% 50.4%,transparent 50.8%) right bottom/42.2% 25.2% no-repeat!important;
+}
+.fixed-stage .player-card:before,.fixed-stage .player-card:after{
+  z-index:6;top:calc(100% - 1px);bottom:auto;width:1px;height:24px;background:var(--frame)!important;
+  transition:background-color .3s ease;
+}
+.fixed-stage .player-card:before{left:42.1%;transform:none}
+.fixed-stage .player-card:after{left:auto;right:42.1%;transform:none}
+.fixed-stage .player-card-inner:before{
+  inset:12px 10px 86px;border:1px solid rgba(214,225,226,.55);
+  clip-path:polygon(0 0,100% 0,100% 77%,52% 100%,48% 100%,0 77%);
+}
+.fixed-stage .player-card-inner:after{
+  content:"";display:block;position:absolute;z-index:1;inset:24px 20px 106px;
+  border:1px solid rgba(132,163,168,.34);
+  clip-path:polygon(0 0,100% 0,100% 76%,54% 100%,46% 100%,0 76%);
+  pointer-events:none;
+}
+.fixed-stage .player-card:hover{
+  background:
+    linear-gradient(var(--active),var(--active)) left top/100% 2px no-repeat,
+    linear-gradient(var(--active),var(--active)) left top/2px 75% no-repeat,
+    linear-gradient(var(--active),var(--active)) right top/2px 75% no-repeat,
+    linear-gradient(45deg,transparent 49%,var(--active) 49.5% 50.5%,transparent 51%) left bottom/42.2% 25.2% no-repeat,
+    linear-gradient(-45deg,transparent 49%,var(--active) 49.5% 50.5%,transparent 51%) right bottom/42.2% 25.2% no-repeat!important;
+}
+.fixed-stage .player-card:hover:before,.fixed-stage .player-card:hover:after{height:24px;background:var(--active)!important}

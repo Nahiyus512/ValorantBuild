@@ -86,7 +86,7 @@ export function LoadoutDemo(){
               </button>})}
           </div></section>)}
       </div>
-      <aside className="profile-panel"><h2>玩家卡面</h2><div className="player-card"><div className="card-energy"><span>107</span></div><div className="player-card-inner"><div className="v-shape">V</div><strong>ValorantBuild</strong><small>装备分析师</small></div></div><h2>个性表达</h2><div className="spray-wheel"><i>V</i><i>V</i><i>V</i><i>V</i><span/></div></aside>
+      <aside className="profile-panel"><h2>玩家卡面</h2><div className="player-card"><div className="card-energy"><span>107</span></div><div className="player-card-inner"><div className="v-shape">V</div><strong>ValorantBuild</strong><small>装备分析师</small></div></div><h2>个性表达</h2><div className="spray-wheel"><b className="wheel-ring"/><i>V</i><i>V</i><i>V</i><i>V</i><span/></div></aside>
     </section>
     <div className="home-foot"><span>20 种武器</span><span>1,364 款可用皮肤</span><span>866 个挂饰</span></div>
     </div>
