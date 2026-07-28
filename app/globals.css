@@ -578,3 +578,102 @@ html,body{width:100%;height:100%;overflow:hidden!important}
   );
 }
 .fixed-stage .spray-wheel i:nth-child(1){top:34px!important}
+
+/* Selector header hierarchy */
+.fixed-stage .select-bar{background:rgba(4,17,24,.68)!important;border-bottom:1px solid var(--line)!important}
+.fixed-stage .select-brand{position:absolute;left:50%;transform:translateX(-50%);font-size:22px;letter-spacing:1.5px;color:#fff}
+.fixed-stage .selector-subnav{
+  position:relative;z-index:4;width:1920px;height:72px;border-bottom:1px solid rgba(151,171,176,.42);
+  background:rgba(6,23,31,.72);
+}
+.fixed-stage .selector-back{
+  position:absolute;left:24px;top:0;height:45px;border:0;background:none;color:#fff;font-size:15px;
+}
+.fixed-stage .selector-back i{padding:0 8px;color:#718890;font-style:normal}
+.fixed-stage .selector-tabs{
+  position:absolute;left:0;bottom:0;width:1040px;height:38px;display:grid;grid-template-columns:1fr 1fr;
+  border-bottom:1px solid rgba(225,235,235,.72);
+}
+.fixed-stage .selector-tabs button{
+  position:relative;border:0;background:none;color:#e6eeee;font-size:15px;font-weight:400;
+}
+.fixed-stage .selector-tabs button:after{
+  content:"";position:absolute;left:0;right:0;bottom:-2px;height:1px;background:#fff;
+}
+.fixed-stage .selector-tabs button.active{color:#22ffc5;font-weight:900}
+.fixed-stage .selector-tabs button.active:after{height:4px;background:#22ffc5;box-shadow:0 0 7px rgba(34,255,197,.35)}
+
+/* Doubled skin browser */
+.fixed-stage .selector-layout{
+  width:1920px!important;height:950px!important;grid-template-columns:1040px 880px!important;
+}
+.fixed-stage .item-browser{width:1040px!important;height:950px!important;padding:20px 28px!important}
+.fixed-stage .weapon-preview{width:880px!important;height:950px!important;padding:36px 56px 24px!important}
+.fixed-stage .browser-tools{grid-template-columns:1fr 46px!important;gap:10px;margin-bottom:16px}
+.fixed-stage .filter-trigger{
+  position:relative;width:46px;padding:9px!important;background:#1c2c35!important;border:0!important;
+}
+.fixed-stage .filter-trigger span{
+  position:absolute;left:11px;width:24px;height:1px;background:#a8b6b9;
+}
+.fixed-stage .filter-trigger span:nth-child(1){top:13px}
+.fixed-stage .filter-trigger span:nth-child(2){top:21px}
+.fixed-stage .filter-trigger span:nth-child(3){top:29px}
+.fixed-stage .filter-trigger span:after{
+  content:"";position:absolute;top:-3px;width:6px;height:6px;border:1px solid #a8b6b9;background:#1c2c35;
+}
+.fixed-stage .filter-trigger span:nth-child(1):after,.fixed-stage .filter-trigger span:nth-child(3):after{right:5px}
+.fixed-stage .filter-trigger span:nth-child(2):after{left:5px}
+.fixed-stage .skin-grid,.fixed-stage .buddy-grid{
+  height:876px!important;grid-template-columns:repeat(3,1fr)!important;gap:14px!important;
+}
+.fixed-stage .skin-grid button,.fixed-stage .buddy-grid button{height:260px!important;padding:14px!important}
+.fixed-stage .skin-grid img,.fixed-stage .buddy-grid img{height:190px!important}
+.fixed-stage .skin-grid strong,.fixed-stage .buddy-grid strong{font-size:15px}
+.fixed-stage .skin-grid small{font-size:12px;margin-top:6px}
+
+/* Full HUD filter and sort dialog */
+.fixed-stage .filter-modal{
+  position:absolute;z-index:30;inset:0;display:grid;place-items:center;background:rgba(2,10,15,.72);
+}
+.fixed-stage .filter-dialog{
+  position:relative;width:1030px;height:840px;padding:48px 100px 120px;color:#f2f3ef;
+  background:#0d1b24;border-top:1px solid #b8c6c8;border-bottom:1px solid #b8c6c8;
+  box-shadow:0 24px 80px rgba(0,0,0,.55);
+}
+.fixed-stage .filter-dialog:before,.fixed-stage .filter-dialog:after{
+  content:"";position:absolute;top:0;bottom:0;width:1px;background:linear-gradient(transparent,#7b9298 15% 85%,transparent);
+}
+.fixed-stage .filter-dialog:before{left:0}.fixed-stage .filter-dialog:after{right:0}
+.fixed-stage .filter-dialog h2{text-align:center;margin:0;font-size:46px}
+.fixed-stage .filter-divider{position:relative;height:60px;border-bottom:1px solid #31434b}
+.fixed-stage .filter-divider span{position:absolute;left:50%;bottom:-6px;width:12px;height:12px;transform:translateX(-50%) rotate(45deg);border:1px solid #52666d;background:#0d1b24}
+.fixed-stage .filter-columns{display:grid;grid-template-columns:1fr 1fr;gap:30px;padding-top:45px}
+.fixed-stage .filter-columns h3{font-size:20px;margin:0 0 14px}
+.fixed-stage .filter-option,.fixed-stage .sort-option{
+  height:68px;margin-bottom:8px;display:flex;align-items:center;background:#192832;cursor:pointer;
+}
+.fixed-stage .filter-option input,.fixed-stage .sort-option input{display:none}
+.fixed-stage .filter-check{
+  width:68px;height:68px;display:grid;place-items:center;background:#2b3a44;position:relative;
+}
+.fixed-stage .filter-check:before{
+  content:"";position:absolute;width:30px;height:30px;transform:rotate(45deg);border:2px solid #829197;
+}
+.fixed-stage .filter-option input:checked+.filter-check:before{border-color:var(--q);background:color-mix(in srgb,var(--q) 35%,transparent);box-shadow:0 0 10px color-mix(in srgb,var(--q) 55%,transparent)}
+.fixed-stage .filter-option strong,.fixed-stage .sort-option strong{padding-left:24px;font-size:16px}
+.fixed-stage .filter-option i{margin-left:auto;margin-right:20px;width:27px;height:27px;border:4px solid var(--q);transform:rotate(45deg)}
+.fixed-stage .sort-option span{width:68px;height:68px;background:#2b3a44;position:relative}
+.fixed-stage .sort-option span:before{content:"";position:absolute;inset:20px;border:2px solid #91a0a5;border-radius:50%}
+.fixed-stage .sort-option input:checked+span:before{border:6px solid #22ffc5;box-shadow:0 0 8px rgba(34,255,197,.35)}
+.fixed-stage .filter-done{
+  position:absolute;left:50%;bottom:52px;transform:translateX(-50%);width:290px;height:68px;
+  border:6px double #dfe3df;background:#eeeae4;color:#17232a;font-size:23px;
+}
+
+/* Symmetric bottom actions */
+.fixed-stage .selection-meta{position:relative;min-height:120px!important}
+.fixed-stage .chroma-row{left:0!important;right:auto!important;transform:none!important;bottom:12px!important}
+.fixed-stage .equip-row{right:0!important;bottom:12px!important}
+.fixed-stage .favorite-button{display:none!important}
+.fixed-stage .card-energy,.fixed-stage .player-card:hover .card-energy{background-size:100% 5px!important}

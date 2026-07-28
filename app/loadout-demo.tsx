@@ -25,7 +25,7 @@ export function LoadoutDemo(){
   const [weaponId,setWeaponId]=useState("");
   const [tab,setTab]=useState<"skin"|"buddy">("skin");
   const [query,setQuery]=useState("");
-  const [sort,setSort]=useState<"default"|"priceAsc"|"priceDesc"|"qualityAsc"|"qualityDesc">("default");
+  const [sort,setSort]=useState<"default"|"priceAsc"|"priceDesc"|"qualityAsc"|"qualityDesc">("qualityDesc");
   const [qualities,setQualities]=useState<string[]>([]);
   const [skinId,setSkinId]=useState("");
   const [chromaId,setChromaId]=useState("");
@@ -95,13 +95,16 @@ export function LoadoutDemo(){
   return <main className="game-shell">
     <div className="game-bg"/>
     <div className="fixed-stage" style={{"--canvas-scale":canvasScale} as React.CSSProperties}>
-    <header className="select-bar"><button onClick={()=>setPage("home")}>‹ 返回</button><i>//</i><strong>{weapon?.name}</strong><div><button className={tab==="skin"?"active":""} onClick={()=>{setTab("skin");setQuery("")}}>皮肤</button>{weapon?.category!=="Melee"&&<button className={tab==="buddy"?"active":""} onClick={()=>{setTab("buddy");setQuery("")}}>挂饰</button>}</div><small>{weapon?.skins.length} 款皮肤</small></header>
+    <header className="select-bar"><div className="select-brand">ValorantBuild</div></header>
+    <nav className="selector-subnav">
+      <button className="selector-back" onClick={()=>setPage("home")}>‹ 返回 <i>//</i> {weapon?.name}</button>
+      <div className="selector-tabs"><button className={tab==="skin"?"active":""} onClick={()=>{setTab("skin");setQuery("")}}>皮肤</button>{weapon?.category!=="Melee"&&<button className={tab==="buddy"?"active":""} onClick={()=>{setTab("buddy");setQuery("")}}>挂饰</button>}</div>
+    </nav>
     <div className="selector-layout">
       <aside className="item-browser">
         <div className="browser-tools"><label>⌕<input value={query} onChange={e=>setQuery(e.target.value)} placeholder={tab==="skin"?"搜索皮肤":"搜索挂饰"}/></label>
-          {tab==="skin"&&<><button className={filterOpen?"on":""} onClick={()=>setFilterOpen(!filterOpen)}>筛选 {qualities.length?`(${qualities.length})`:""}</button><select value={sort} onChange={e=>setSort(e.target.value as typeof sort)}><option value="default">默认排序</option><option value="priceAsc">价格：低到高</option><option value="priceDesc">价格：高到低</option><option value="qualityAsc">品质：低到高</option><option value="qualityDesc">品质：高到低</option></select></>}
+          {tab==="skin"&&<button className={`filter-trigger ${filterOpen?"on":""}`} aria-label="打开筛选与排序" onClick={()=>setFilterOpen(true)}><span/><span/><span/></button>}
         </div>
-        {filterOpen&&tab==="skin"&&<div className="quality-filter"><div><strong>品质筛选</strong><button onClick={()=>setQualities([])}>清除</button></div>{qualityOrder.map((q,i)=><label key={q} style={{"--q": ["#5a9fe2","#009587","#d1548d","#f5955b","#fad663"][i]} as React.CSSProperties}><input type="checkbox" checked={qualities.includes(q)} onChange={()=>toggleQuality(q)}/><span/>{["精选","豪华","卓越","传奇","终极"][i]}</label>)}</div>}
         <div className={tab==="skin"?"skin-grid":"buddy-grid"}>
           {tab==="skin"?visibleSkins.map(s=><button key={s.id} className={skinId===s.id?"selected":""} onClick={()=>chooseSkin(s)} style={{"--rarity":s.rarityColor} as React.CSSProperties}><img src={s.chromas[0]?.render??s.icon} alt=""/><strong>{s.name.replace(` ${weapon?.name}`,"")}</strong><small>{s.priceCN==null?"非直接售卖":`${s.priceCN} 点券`}</small></button>):
           <><button className={buddyId===null?"selected":""} onClick={()=>setBuddyId(null)}><span className="no-buddy">×</span><strong>不使用挂饰</strong></button>{visibleBuddies.map(b=><button key={b.id} className={buddyId===b.id?"selected":""} onClick={()=>setBuddyId(b.id)}><img src={b.icon} alt=""/><strong>{b.name}</strong></button>)}</>}
@@ -113,10 +116,21 @@ export function LoadoutDemo(){
         <div className="selection-meta">
           {tab==="skin"&&selectedSkin&&selectedSkin.chromas.length>1&&<div className="chroma-row">{selectedSkin.chromas.map(c=><button key={c.id} className={selectedChroma?.id===c.id?"selected":""} onClick={()=>setChromaId(c.id)} title={c.name}>{c.swatch?<img src={c.swatch} alt=""/>:<img src={c.render} alt=""/>}</button>)}</div>}
           {tab==="buddy"&&<div className="buddy-summary"><span>当前挂饰</span><strong>{selectedBuddy?.name??"无挂饰"}</strong><small>挂饰会应用在当前武器配置中</small></div>}
-          <div className="equip-row"><button className="favorite-button">☆</button><button className={(weapon&&selectedSkin&&selectedChroma&&equipped[weapon.id]?.skinId===selectedSkin.id&&equipped[weapon.id]?.chromaId===selectedChroma.id&&equipped[weapon.id]?.buddyId===buddyId)?"equip-button equipped":"equip-button"} onClick={equip}>{(weapon&&selectedSkin&&selectedChroma&&equipped[weapon.id]?.skinId===selectedSkin.id&&equipped[weapon.id]?.chromaId===selectedChroma.id&&equipped[weapon.id]?.buddyId===buddyId)?"已装备":"装备"}</button></div>
+          <div className="equip-row"><button className={(weapon&&selectedSkin&&selectedChroma&&equipped[weapon.id]?.skinId===selectedSkin.id&&equipped[weapon.id]?.chromaId===selectedChroma.id&&equipped[weapon.id]?.buddyId===buddyId)?"equip-button equipped":"equip-button"} onClick={equip}>{(weapon&&selectedSkin&&selectedChroma&&equipped[weapon.id]?.skinId===selectedSkin.id&&equipped[weapon.id]?.chromaId===selectedChroma.id&&equipped[weapon.id]?.buddyId===buddyId)?"已装备":"装备"}</button></div>
         </div>
       </section>
     </div>
+    {filterOpen&&tab==="skin"&&<div className="filter-modal" role="dialog" aria-modal="true" aria-label="筛选与排序">
+      <div className="filter-dialog">
+        <h2>筛选</h2>
+        <div className="filter-divider"><span/></div>
+        <div className="filter-columns">
+          <section><h3>按稀有度筛选</h3>{qualityOrder.map((q,i)=><label className="filter-option" key={q} style={{"--q":["#5a9fe2","#009587","#d1548d","#f5955b","#fad663"][i]} as React.CSSProperties}><input type="checkbox" checked={qualities.includes(q)} onChange={()=>toggleQuality(q)}/><span className="filter-check"/><strong>{["精选","豪华","卓越","传奇","终极"][i]}</strong><i/></label>)}</section>
+          <section><h3>排序选择</h3>{[["qualityDesc","品质：高到低"],["qualityAsc","品质：低到高"],["priceDesc","价格：高到低"],["priceAsc","价格：低到高"]].map(([value,label])=><label className="sort-option" key={value}><input type="radio" name="skin-sort" checked={sort===value} onChange={()=>setSort(value as typeof sort)}/><span/><strong>{label}</strong></label>)}</section>
+        </div>
+        <button className="filter-done" onClick={()=>setFilterOpen(false)}>完成</button>
+      </div>
+    </div>}
     </div>
   </main>
 }
