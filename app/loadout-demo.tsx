@@ -8,6 +8,7 @@ type Weapon={id:string;name:string;category:string;defaultSkinId:string;icon:str
 type Buddy={id:string;name:string;icon:string};
 type Data={priceNote:string;weapons:Weapon[];buddies:Buddy[]};
 type Equipped={skinId:string;chromaId:string;buddyId:string|null};
+type SaveState="loading"|"saved"|"saving"|"error";
 
 const categoryNames:Record<string,string>={Sidearm:"佩枪",SMG:"冲锋枪",Shotgun:"霰弹枪",Rifle:"步枪",Sniper:"狙击枪",Heavy:"机枪",Melee:"近战武器"};
 const categoryOrder=["Sidearm","SMG","Shotgun","Rifle","Sniper","Heavy","Melee"];
@@ -19,13 +20,13 @@ const homeColumns=[
   {title:"狙击枪",items:[["飞将",1],["莽侠",2],["冥驹",3],["战神",5],["奥丁",6]],subtitles:[["机枪",4]]},
 ] as const;
 
-function TopBrandBar({onBack,weaponName}:{onBack?:()=>void;weaponName?:string}){
+function TopBrandBar({onBack,weaponName,saveState}:{onBack?:()=>void;weaponName?:string;saveState:SaveState}){
   return <header className="home-bar shared-topbar">
     {onBack&&<button className="top-return" onClick={onBack}><span>&lt;</span> 返回</button>}
     {weaponName&&<span className="top-weapon">// {weaponName}</span>}
     <button className="top-rank">排行</button>
     <div className="home-mark">ValorantBuild</div>
-    <button className="top-export">导出</button>
+    <button className="top-export" aria-live="polite">{saveState==="loading"?"正在恢复":saveState==="saving"?"保存中":saveState==="error"?"保存失败":"已保存"}</button>
   </header>
 }
 
@@ -46,13 +47,35 @@ export function LoadoutDemo(){
   const [playerName,setPlayerName]=useState("ValorantBuild");
   const [playerLevel,setPlayerLevel]=useState("100");
   const [listScroll,setListScroll]=useState(0);
+  const [saveState,setSaveState]=useState<SaveState>("loading");
+  const [storageReady,setStorageReady]=useState(false);
 
-  useEffect(()=>{fetch("/demo-data.json").then(r=>r.json()).then((d:Data)=>{
+  useEffect(()=>{Promise.all([
+    fetch("/demo-data.json").then(r=>r.json() as Promise<Data>),
+    fetch("/api/loadout").then(r=>r.ok?r.json():Promise.reject(new Error("loadout")))
+  ]).then(([d,saved])=>{
     setData(d);
     const initial:Record<string,Equipped>={};
     d.weapons.forEach(w=>{const s=w.skins.find(x=>x.id===w.defaultSkinId)??w.skins.at(-1)!;initial[w.id]={skinId:s.id,chromaId:s.chromas[0]?.id,buddyId:null}});
-    setEquipped(initial);
-  })},[]);
+    const stored=saved.loadout;
+    setEquipped({...initial,...(stored?.equipped??{})});
+    if(stored?.playerName)setPlayerName(stored.playerName);
+    if(stored?.playerLevel)setPlayerLevel(stored.playerLevel);
+    setSaveState("saved");
+    setStorageReady(true);
+  }).catch(()=>setSaveState("error"))},[]);
+  useEffect(()=>{
+    if(!storageReady)return;
+    setSaveState("saving");
+    const timer=window.setTimeout(()=>{
+      fetch("/api/loadout",{
+        method:"PUT",
+        headers:{"content-type":"application/json"},
+        body:JSON.stringify({playerName,playerLevel,equipped})
+      }).then(r=>{if(!r.ok)throw new Error("save");setSaveState("saved")}).catch(()=>setSaveState("error"));
+    },500);
+    return()=>window.clearTimeout(timer);
+  },[storageReady,playerName,playerLevel,equipped]);
   useEffect(()=>{
     const fit=()=>setCanvasScale(Math.min(window.innerWidth/1920,window.innerHeight/1080));
     fit();window.addEventListener("resize",fit);return()=>window.removeEventListener("resize",fit);
@@ -97,7 +120,7 @@ export function LoadoutDemo(){
   if(page==="home")return <main className="game-shell">
     <div className="game-bg"/>
     <div className="fixed-stage" style={{"--canvas-scale":canvasScale} as React.CSSProperties}>
-    <TopBrandBar/>
+    <TopBrandBar saveState={saveState}/>
     <section className="loadout-layout">
       <div className="weapon-board">
         {homeColumns.map(column=><section className="weapon-column" key={column.title}><h2>{column.title}</h2><div className="weapon-column-grid">
@@ -117,7 +140,7 @@ export function LoadoutDemo(){
   return <main className="game-shell">
     <div className="game-bg"/>
     <div className="fixed-stage" style={{"--canvas-scale":canvasScale} as React.CSSProperties}>
-    <TopBrandBar onBack={()=>setPage("home")} weaponName={weapon?.name}/>
+    <TopBrandBar onBack={()=>setPage("home")} weaponName={weapon?.name} saveState={saveState}/>
     <nav className="selector-subnav">
       <div className="selector-tabs"><button className={tab==="skin"?"active":""} onClick={()=>{setTab("skin");setQuery("")}}>皮肤</button>{weapon?.category!=="Melee"&&<button className={tab==="buddy"?"active":""} onClick={()=>{setTab("buddy");setQuery("")}}>挂饰</button>}</div>
     </nav>
