@@ -21,7 +21,7 @@ const homeColumns=[
 
 function TopBrandBar({onBack,weaponName}:{onBack?:()=>void;weaponName?:string}){
   return <header className="home-bar shared-topbar">
-    {onBack&&<button className="top-return" onClick={onBack}>‹ 返回</button>}
+    {onBack&&<button className="top-return" onClick={onBack}><span>‹</span> 返回</button>}
     {weaponName&&<span className="top-weapon">// {weaponName}</span>}
     <button className="top-rank">排行</button>
     <div className="home-mark">ValorantBuild</div>
@@ -128,7 +128,7 @@ export function LoadoutDemo(){
         </div>
         <div className={tab==="skin"?"skin-grid":"buddy-grid"} onScroll={e=>{const el=e.currentTarget;setListScroll(el.scrollTop/Math.max(1,el.scrollHeight-el.clientHeight))}}>
           {tab==="skin"?visibleSkins.map(s=><button key={s.id} className={skinId===s.id?"selected":""} onClick={()=>chooseSkin(s)} style={{"--rarity":s.rarityColor} as React.CSSProperties}><img src={s.chromas[0]?.render??s.icon} alt=""/><strong>{s.name.replace(` ${weapon?.name}`,"")}</strong><small>{s.priceCN==null?"非直接售卖":`${s.priceCN} 点券`}</small></button>):
-          <><button className={buddyId===null?"selected":""} onClick={()=>setBuddyId(null)}><span className="no-buddy">×</span><strong>不使用挂饰</strong></button>{visibleBuddies.map(b=><button key={b.id} className={buddyId===b.id?"selected":""} onClick={()=>setBuddyId(b.id)}><img src={b.icon} alt=""/><strong>{b.name}</strong></button>)}</>}
+          <><button className={buddyId===null?"selected":""} onClick={()=>setBuddyId(null)} aria-label="不使用挂饰"><span className="no-buddy">×</span></button>{visibleBuddies.map(b=><button key={b.id} className={buddyId===b.id?"selected":""} onClick={()=>setBuddyId(b.id)}><img src={b.icon} alt=""/><strong>{b.name}</strong></button>)}</>}
         </div>
         <div className="custom-scrollbar"><span style={{top:`${listScroll*648}px`}}/></div>
       </aside>
@@ -137,7 +137,7 @@ export function LoadoutDemo(){
         <div className="gun-stage"><img className="main-gun" src={selectedChroma?.render??weapon?.icon} alt=""/>{selectedBuddy&&<img className="gun-buddy" src={selectedBuddy.icon} alt={selectedBuddy.name}/>}</div>
         <div className="selection-meta">
           {tab==="skin"&&selectedSkin&&selectedSkin.chromas.length>1&&<div className="chroma-row">{selectedSkin.chromas.map(c=><button key={c.id} className={selectedChroma?.id===c.id?"selected":""} onClick={()=>setChromaId(c.id)} title={c.name}>{c.swatch?<img src={c.swatch} alt=""/>:<img src={c.render} alt=""/>}</button>)}</div>}
-          {tab==="buddy"&&<div className="buddy-summary"><span>当前挂饰</span><strong>{selectedBuddy?.name??"无挂饰"}</strong><small>挂饰会应用在当前武器配置中</small></div>}
+          {tab==="buddy"&&<div className="buddy-summary"><strong>{selectedBuddy?.name??"无挂饰"}</strong></div>}
           <div className="equip-row"><button className={selectionIsEquipped?"equip-button equipped":"equip-button"} onClick={equip}>{selectionIsEquipped?"已装备":"装备"}</button></div>
         </div>
       </section>
