@@ -277,14 +277,6 @@ html,body{width:100%;height:100%;overflow:hidden!important}
 .fixed-stage .spray-wheel:hover i:nth-child(3){border-right:2px solid #22ffc5}
 .fixed-stage .spray-wheel:hover span{border-color:#22ffc5!important;box-shadow:0 0 8px rgba(34,255,197,.35)}
 
-/* Exact reference composition for player card and expression wheel */
-.fixed-stage .profile-panel{
-  background:url("/profile-reference.png") center top/auto 926px no-repeat;
-}
-.fixed-stage .profile-panel>h2,
-.fixed-stage .profile-panel>.player-card,
-.fixed-stage .profile-panel>.spray-wheel{visibility:hidden!important}
-
 /* Column-specific weapon proportions, based on the 142px sidearm row */
 .fixed-stage .weapon-column:nth-child(2) .weapon-column-grid,
 .fixed-stage .weapon-column:nth-child(3) .weapon-column-grid,
@@ -296,27 +288,97 @@ html,body{width:100%;height:100%;overflow:hidden!important}
 }
 .fixed-stage .weapon-column:nth-child(2) .weapon-tile:nth-of-type(1){top:0}
 .fixed-stage .weapon-column:nth-child(2) .weapon-tile:nth-of-type(2){top:199.3px}
-.fixed-stage .weapon-column:nth-child(2) .weapon-tile:nth-of-type(3){top:498.6px}
+.fixed-stage .weapon-column:nth-child(2) .weapon-tile:nth-of-type(3){top:499px}
 .fixed-stage .weapon-column:nth-child(2) .weapon-tile:nth-of-type(4){top:698.3px}
-.fixed-stage .weapon-column:nth-child(2) .weapon-column-grid>h3{position:absolute;top:462.6px;width:100%;height:28px!important}
+.fixed-stage .weapon-column:nth-child(2) .weapon-column-grid>h3{position:absolute;top:431px;width:100%;height:28px!important;line-height:28px!important}
 
 .fixed-stage .weapon-column:nth-child(3) .weapon-tile,
 .fixed-stage .weapon-column:nth-child(4) .weapon-tile{
-  position:absolute!important;height:159.75px!important;min-height:159.75px!important;
+  position:absolute!important;height:151.84px!important;min-height:151.84px!important;
 }
 .fixed-stage .weapon-column:nth-child(3) .weapon-tile:nth-of-type(1),
 .fixed-stage .weapon-column:nth-child(4) .weapon-tile:nth-of-type(1){top:0}
 .fixed-stage .weapon-column:nth-child(3) .weapon-tile:nth-of-type(2),
-.fixed-stage .weapon-column:nth-child(4) .weapon-tile:nth-of-type(2){top:167.35px}
+.fixed-stage .weapon-column:nth-child(4) .weapon-tile:nth-of-type(2){top:159.44px}
 .fixed-stage .weapon-column:nth-child(3) .weapon-tile:nth-of-type(3),
-.fixed-stage .weapon-column:nth-child(4) .weapon-tile:nth-of-type(3){top:334.7px}
-.fixed-stage .weapon-column:nth-child(3) .weapon-tile:nth-of-type(4){top:502.05px}
+.fixed-stage .weapon-column:nth-child(4) .weapon-tile:nth-of-type(3){top:318.88px}
+.fixed-stage .weapon-column:nth-child(3) .weapon-tile:nth-of-type(4){top:478.32px}
 .fixed-stage .weapon-column:nth-child(3) .weapon-tile:nth-of-type(5),
-.fixed-stage .weapon-column:nth-child(4) .weapon-tile:nth-of-type(5){top:730.25px}
-.fixed-stage .weapon-column:nth-child(3) .weapon-column-grid>h3{position:absolute;top:694.25px;width:100%;height:28px!important}
-.fixed-stage .weapon-column:nth-child(4) .weapon-tile:nth-of-type(4){top:562.9px}
-.fixed-stage .weapon-column:nth-child(4) .weapon-column-grid>h3{position:absolute;top:526.9px;width:100%;height:28px!important}
+.fixed-stage .weapon-column:nth-child(4) .weapon-tile:nth-of-type(5){top:738.16px}
+.fixed-stage .weapon-column:nth-child(3) .weapon-column-grid>h3{position:absolute;top:670.16px;width:100%;height:28px!important;line-height:28px!important}
+.fixed-stage .weapon-column:nth-child(4) .weapon-tile:nth-of-type(4){top:578.72px}
+.fixed-stage .weapon-column:nth-child(4) .weapon-column-grid>h3{position:absolute;top:510.72px;width:100%;height:28px!important;line-height:28px!important}
 
 .fixed-stage .weapon-column:nth-child(2) .weapon-tile>img:first-child{height:160px!important}
 .fixed-stage .weapon-column:nth-child(3) .weapon-tile>img:first-child,
 .fixed-stage .weapon-column:nth-child(4) .weapon-tile>img:first-child{height:130px!important}
+
+/* Replaceable player-card frame */
+.fixed-stage .profile-panel{background:none}
+.fixed-stage .profile-panel>h2,
+.fixed-stage .profile-panel>.player-card,
+.fixed-stage .profile-panel>.spray-wheel{visibility:visible!important}
+.fixed-stage .player-card{
+  --card-line:#a9b7ba;--card-active:#18ffe0;
+  background:transparent!important;box-shadow:none!important;overflow:visible!important;
+}
+.fixed-stage .player-card-inner{
+  overflow:hidden;padding-top:98px;
+  background:linear-gradient(155deg,#102b36 0%,#173840 42%,#0a202c 100%);
+  clip-path:polygon(7% 0,93% 0,93% 79%,100% 83%,100% 87%,68% 100%,32% 100%,0 87%,0 83%,7% 79%);
+  box-shadow:inset 0 0 0 2px var(--card-line);
+  transition:filter .35s ease,box-shadow .35s ease;
+}
+.fixed-stage .player-card-inner:before{
+  content:"";position:absolute;z-index:0;inset:18px 14px 35px;
+  border:1px solid rgba(138,165,170,.35);
+  clip-path:polygon(0 0,100% 0,100% 82%,62% 100%,38% 100%,0 82%);
+}
+.fixed-stage .player-card-inner:after{
+  inset:9px 8px 14px;border:1px solid rgba(193,204,206,.5);
+  clip-path:polygon(0 0,100% 0,100% 80%,68% 100%,32% 100%,0 80%);
+}
+.fixed-stage .player-card:before,.fixed-stage .player-card:after{
+  bottom:12px;width:48px;height:1px;background:var(--card-line);box-shadow:none;
+}
+.fixed-stage .player-card:before{left:24px;transform:rotate(45deg)}
+.fixed-stage .player-card:after{right:24px;transform:rotate(-45deg)}
+.fixed-stage .card-energy{
+  z-index:7;left:0;right:0;top:-10px;
+  background:linear-gradient(90deg,var(--card-line) 0 36%,transparent 36% 64%,var(--card-line) 64% 100%) center/100% 4px no-repeat;
+}
+.fixed-stage .card-energy span{top:1px}
+.fixed-stage .player-card .v-shape{position:relative;z-index:2;color:#45a99a;text-shadow:0 0 25px rgba(69,169,154,.25)}
+.fixed-stage .player-card strong{position:relative;z-index:3;background:#f1ce65;color:#111}
+.fixed-stage .player-card small{position:relative;z-index:3;color:#fff}
+.fixed-stage .player-card:hover{transform:none!important;filter:drop-shadow(0 0 8px rgba(24,255,224,.25))}
+.fixed-stage .player-card:hover .player-card-inner{
+  box-shadow:inset 0 0 0 3px var(--card-active),inset 0 0 18px rgba(24,255,224,.12);
+  filter:saturate(1.08);
+}
+.fixed-stage .player-card:hover:before,.fixed-stage .player-card:hover:after{background:var(--card-active);height:2px}
+.fixed-stage .player-card:hover strong{background:var(--card-active)}
+
+/* Replaceable four-direction expression slots */
+.fixed-stage .spray-wheel{
+  overflow:visible;border:2px solid #58707a!important;border-radius:50%;background:rgba(7,28,37,.3);
+  box-shadow:none;transition:border-color .3s ease,box-shadow .3s ease;
+}
+.fixed-stage .spray-wheel:before,.fixed-stage .spray-wheel:after{
+  content:"";position:absolute;z-index:0;left:50%;top:50%;width:128%;height:1px;
+  background:#58707a;transform:translate(-50%,-50%) rotate(45deg);transition:height .3s ease,background-color .3s ease;
+}
+.fixed-stage .spray-wheel:after{transform:translate(-50%,-50%) rotate(-45deg)}
+.fixed-stage .spray-wheel i{
+  z-index:2;width:52px!important;height:52px!important;border:0!important;border-radius:0!important;
+  background:linear-gradient(145deg,#224852,#102a34)!important;color:#fff;
+  box-shadow:0 0 0 1px rgba(151,173,178,.7);transition:transform .3s ease,box-shadow .3s ease;
+}
+.fixed-stage .spray-wheel i:nth-child(1){left:calc(50% - 26px)!important;top:16px!important}
+.fixed-stage .spray-wheel i:nth-child(2){left:16px!important;top:calc(50% - 26px)!important}
+.fixed-stage .spray-wheel i:nth-child(3){left:auto!important;right:16px!important;top:calc(50% - 26px)!important}
+.fixed-stage .spray-wheel i:nth-child(4){left:calc(50% - 26px)!important;top:auto!important;bottom:16px!important;background:#9f302f!important;border-radius:50%!important}
+.fixed-stage .spray-wheel span{z-index:4;inset:36%!important;background:#102630;border:1px solid #58707a!important}
+.fixed-stage .spray-wheel:hover{border-color:#22ffc5!important;box-shadow:0 0 15px rgba(34,255,197,.18)}
+.fixed-stage .spray-wheel:hover:before,.fixed-stage .spray-wheel:hover:after{height:2px;background:#22ffc5}
+.fixed-stage .spray-wheel:hover i{transform:scale(1.06);box-shadow:0 0 0 2px #22ffc5,0 0 9px rgba(34,255,197,.3)}
