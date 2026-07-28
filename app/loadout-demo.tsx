@@ -260,12 +260,12 @@ export function LoadoutDemo(){
               if(cosmeticTab==="cards")setSelectedCardId(item.id);
               else if(cosmeticTab==="titles")setSelectedTitleId(item.id);
               else setSelectedSprayId(item.id);
-            }}>{("icon" in item)&&<img src={item.icon} alt=""/>}<strong>{item.name}</strong></button>)}
+            }}>{("icon" in item)&&typeof item.icon==="string"&&<img src={item.icon} alt=""/>}<strong>{item.name}</strong></button>)}
           </div>
           <div className="custom-scrollbar" onPointerDown={moveCustomScroll} onPointerMove={moveCustomScroll}><span style={{top:`${listScroll*648}px`}}/></div>
         </aside>
         <section className="weapon-preview cosmetic-preview">
-          <div className="preview-title"><h1>{cosmeticTab==="wheel"?"喷漆盘":currentName}</h1></div>
+          <div className="preview-title"><h1>{currentName}</h1></div>
           {cosmeticTab==="cards"&&<div className="card-preview">{selectedCard&&<img src={selectedCard.icon} alt={selectedCard.name}/>}<strong>{playerName}</strong>{equippedTitle&&<small>{equippedTitle.name}</small>}</div>}
           {cosmeticTab==="titles"&&<div className="title-preview"><span>{playerName}</span><strong>{selectedTitle?.name}</strong></div>}
           {cosmeticTab==="sprays"&&<div className="spray-preview">{selectedSpray&&<img src={selectedSpray.icon} alt={selectedSpray.name}/>}</div>}
