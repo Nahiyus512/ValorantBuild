@@ -37,7 +37,7 @@ export function LoadoutDemo(){
   useEffect(()=>{fetch("/demo-data.json").then(r=>r.json()).then((d:Data)=>{
     setData(d);
     const initial:Record<string,Equipped>={};
-    d.weapons.forEach((w,index)=>{const s=w.skins.find(x=>x.id===w.defaultSkinId)??w.skins.at(-1)!;initial[w.id]={skinId:s.id,chromaId:s.chromas[0]?.id,buddyId:d.buddies[(index*7)%d.buddies.length]?.id??null}});
+    d.weapons.forEach(w=>{const s=w.skins.find(x=>x.id===w.defaultSkinId)??w.skins.at(-1)!;initial[w.id]={skinId:s.id,chromaId:s.chromas[0]?.id,buddyId:null}});
     setEquipped(initial);
   })},[]);
   useEffect(()=>{
@@ -48,7 +48,7 @@ export function LoadoutDemo(){
   const weapon=data?.weapons.find(w=>w.id===weaponId);
   const selectedSkin=weapon?.skins.find(s=>s.id===skinId);
   const selectedChroma=selectedSkin?.chromas.find(c=>c.id===chromaId)??selectedSkin?.chromas[0];
-  const selectedBuddy=data?.buddies.find(b=>b.id===buddyId);
+  const selectedBuddy=weapon?.category==="Melee"?undefined:data?.buddies.find(b=>b.id===buddyId);
 
   const visibleSkins=useMemo(()=>{
     if(!weapon)return[];
@@ -63,10 +63,10 @@ export function LoadoutDemo(){
 
   function openWeapon(w:Weapon){
     const load=equipped[w.id]; const skin=w.skins.find(s=>s.id===load?.skinId)??w.skins.at(-1)!;
-    setWeaponId(w.id);setSkinId(skin.id);setChromaId(load?.chromaId??skin.chromas[0]?.id);setBuddyId(load?.buddyId??null);setTab("skin");setQuery("");setPage("select");
+    setWeaponId(w.id);setSkinId(skin.id);setChromaId(load?.chromaId??skin.chromas[0]?.id);setBuddyId(w.category==="Melee"?null:load?.buddyId??null);setTab("skin");setQuery("");setPage("select");
   }
   function chooseSkin(s:Skin){setSkinId(s.id);setChromaId(s.chromas[0]?.id)}
-  function equip(){if(!weapon||!selectedSkin||!selectedChroma)return;setEquipped(v=>({...v,[weapon.id]:{skinId:selectedSkin.id,chromaId:selectedChroma.id,buddyId}}))}
+  function equip(){if(!weapon||!selectedSkin||!selectedChroma)return;setEquipped(v=>({...v,[weapon.id]:{skinId:selectedSkin.id,chromaId:selectedChroma.id,buddyId:weapon.category==="Melee"?null:buddyId}}))}
   function toggleQuality(q:string){setQualities(v=>v.includes(q)?v.filter(x=>x!==q):[...v,q])}
   function displayFor(w:Weapon){const load=equipped[w.id];const s=w.skins.find(x=>x.id===load?.skinId)??w.skins.at(-1)!;return s.chromas.find(c=>c.id===load?.chromaId)?.render??s.chromas[0]?.render??w.icon}
 
@@ -80,9 +80,9 @@ export function LoadoutDemo(){
       <div className="weapon-board">
         {homeColumns.map(column=><section className="weapon-column" key={column.title}><h2>{column.title}</h2><div className="weapon-column-grid">
           {"subtitles" in column&&column.subtitles.map(([label,row])=><h3 key={label} style={{gridRow:row}}>{label}</h3>)}
-          {column.items.map(([name,row])=>{const w=data.weapons.find(x=>x.name===name)!;const load=equipped[w.id];const skin=w.skins.find(s=>s.id===load?.skinId);const buddy=data.buddies.find(b=>b.id===load?.buddyId);
+          {column.items.map(([name,row])=>{const w=data.weapons.find(x=>x.name===name)!;const load=equipped[w.id];const buddy=w.category==="Melee"?undefined:data.buddies.find(b=>b.id===load?.buddyId);
               return <button className="weapon-tile" style={{gridRow:row}} key={w.id} onClick={()=>openWeapon(w)}>
-                <img src={displayFor(w)} alt={w.name}/>{buddy&&<img className="tile-buddy" src={buddy.icon} alt=""/>}<span>{w.name}</span><small>{skin?.rarityName??"默认"}</small>
+                <img src={displayFor(w)} alt={w.name}/>{buddy&&<img className="tile-buddy" src={buddy.icon} alt=""/>}<span>{w.name}</span>
               </button>})}
           </div></section>)}
       </div>
@@ -95,7 +95,7 @@ export function LoadoutDemo(){
   return <main className="game-shell">
     <div className="game-bg"/>
     <div className="fixed-stage" style={{"--canvas-scale":canvasScale} as React.CSSProperties}>
-    <header className="select-bar"><button onClick={()=>setPage("home")}>‹ 返回</button><i>//</i><strong>{weapon?.name}</strong><div><button className={tab==="skin"?"active":""} onClick={()=>{setTab("skin");setQuery("")}}>皮肤</button><button className={tab==="buddy"?"active":""} onClick={()=>{setTab("buddy");setQuery("")}}>挂饰</button></div><small>{weapon?.skins.length} 款皮肤</small></header>
+    <header className="select-bar"><button onClick={()=>setPage("home")}>‹ 返回</button><i>//</i><strong>{weapon?.name}</strong><div><button className={tab==="skin"?"active":""} onClick={()=>{setTab("skin");setQuery("")}}>皮肤</button>{weapon?.category!=="Melee"&&<button className={tab==="buddy"?"active":""} onClick={()=>{setTab("buddy");setQuery("")}}>挂饰</button>}</div><small>{weapon?.skins.length} 款皮肤</small></header>
     <div className="selector-layout">
       <aside className="item-browser">
         <div className="browser-tools"><label>⌕<input value={query} onChange={e=>setQuery(e.target.value)} placeholder={tab==="skin"?"搜索皮肤":"搜索挂饰"}/></label>

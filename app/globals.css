@@ -95,11 +95,15 @@ html,body{width:100%;height:100%;overflow:hidden!important}
 .fixed-stage .chroma-row{bottom:18px!important}.fixed-stage .chroma-row button{width:45px!important;height:45px!important}
 
 /* Main-screen brand and armory refinements */
-.fixed-stage .home-mark{width:360px!important;height:58px!important;background:transparent!important;clip-path:none!important;font-size:25px!important;letter-spacing:1.5px!important;z-index:1}
-.fixed-stage .home-mark:before{content:"";position:absolute;z-index:-1;left:50%;top:0;width:960px;height:58px;transform:translateX(-50%);background:linear-gradient(90deg,rgba(0,0,0,.48) 0 31.25%,#dc3d4b 31.25% 68.75%,rgba(0,0,0,.48) 68.75% 100%);clip-path:polygon(0 0,100% 0,94% 100%,6% 100%)}
+.fixed-stage .home-bar{background:transparent!important;border-bottom:0!important}
+.fixed-stage .home-mark{width:360px!important;height:58px!important;background:transparent!important;clip-path:none!important;font-size:25px!important;letter-spacing:1.5px!important;z-index:1;isolation:isolate}
+.fixed-stage .home-mark:before,.fixed-stage .home-mark:after{content:"";position:absolute;z-index:-1;left:50%;top:0;height:58px;transform:translateX(-50%);clip-path:polygon(0 0,100% 0,94% 100%,6% 100%)}
+.fixed-stage .home-mark:before{width:1100px;background:rgba(4,17,24,.68)}
+.fixed-stage .home-mark:after{width:360px;background:#dc3d4b;clip-path:polygon(0 0,100% 0,86% 100%,14% 100%)}
 .fixed-stage .weapon-board{transform:translateX(-40px)}
 .fixed-stage .weapon-column-grid{grid-template-rows:repeat(6,142px)!important;gap:7.6px!important}
 .fixed-stage .weapon-column-grid>h3{align-self:end!important;transform:none!important;margin:0 0 0!important;line-height:28px!important}
 .fixed-stage .weapon-tile{height:142px!important;min-height:142px!important}
-.fixed-stage .weapon-tile>img:first-child{height:112px!important}
+.fixed-stage .weapon-tile>img:first-child{width:100%!important;height:112px!important;object-fit:scale-down!important;object-position:center!important}
+.fixed-stage .weapon-tile span{font-weight:400!important}
 .fixed-stage .tile-buddy{right:6px!important;bottom:9px!important;width:32px!important;height:32px!important;z-index:2}
