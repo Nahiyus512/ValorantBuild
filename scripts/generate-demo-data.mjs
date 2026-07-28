@@ -4,6 +4,9 @@ const weapons = JSON.parse(fs.readFileSync("data/weapons.json", "utf8"));
 const rawWeaponsJson = JSON.parse(fs.readFileSync("data/raw/weapons.json", "utf8"));
 const rawWeapons = rawWeaponsJson.data ?? rawWeaponsJson;
 const buddies = JSON.parse(fs.readFileSync("data/buddies.json", "utf8"));
+const cards = JSON.parse(fs.readFileSync("data/cards.json", "utf8"));
+const titles = JSON.parse(fs.readFileSync("data/titles.json", "utf8"));
+const sprays = JSON.parse(fs.readFileSync("data/sprays.json", "utf8"));
 const rawBuddiesJson = JSON.parse(fs.readFileSync("data/raw/buddies.json", "utf8"));
 const rawBuddies = rawBuddiesJson.data ?? rawBuddiesJson;
 const rawWeaponMap = new Map(rawWeapons.map((weapon) => [weapon.uuid, weapon]));
@@ -71,3 +74,30 @@ const output = {
 };
 
 fs.writeFileSync("public/demo-data.json", JSON.stringify(output));
+
+fs.mkdirSync("public/cosmetics/cards", { recursive: true });
+fs.mkdirSync("public/cosmetics/sprays", { recursive: true });
+const availableCards = cards.filter((card) => fs.existsSync(card.smallArt));
+const availableSprays = sprays.filter((spray) => fs.existsSync(spray.transparentIcon));
+for (const card of availableCards) {
+  fs.copyFileSync(card.smallArt, `public/cosmetics/cards/${card.uuid}.png`);
+}
+for (const spray of availableSprays) {
+  fs.copyFileSync(spray.transparentIcon, `public/cosmetics/sprays/${spray.uuid}.png`);
+}
+fs.writeFileSync("public/cosmetic-data.json", JSON.stringify({
+  cards: availableCards.map((card) => ({
+    id: card.uuid,
+    name: card.name,
+    icon: `/cosmetics/cards/${card.uuid}.png`,
+  })),
+  titles: titles.map((title) => ({
+    id: title.uuid,
+    name: title.titleText || title.name,
+  })),
+  sprays: availableSprays.map((spray) => ({
+    id: spray.uuid,
+    name: spray.name,
+    icon: `/cosmetics/sprays/${spray.uuid}.png`,
+  })),
+}));
