@@ -885,3 +885,17 @@ html,body{width:100%;height:100%;overflow:hidden!important}
 .fixed-stage .browser-tools{width:765px!important}
 .fixed-stage .skin-grid,.fixed-stage .buddy-grid{width:793px!important}
 .fixed-stage .weapon-preview .gun-stage{transform:none!important}
+
+/* Restore full browser width; resize the artwork itself, never its container */
+.fixed-stage .selector-layout{grid-template-columns:900px 1020px!important}
+.fixed-stage .item-browser{width:900px!important;padding-left:0!important}
+.fixed-stage .browser-tools{width:872px!important}
+.fixed-stage .skin-grid,.fixed-stage .buddy-grid{width:900px!important}
+.fixed-stage .weapon-preview{width:1020px!important}
+.fixed-stage .weapon-preview .main-gun{width:950px!important;height:370px!important}
+
+.fixed-stage .shared-topbar .top-return{left:0!important}
+.fixed-stage .top-return span{
+  width:auto;height:auto;background:none;clip-path:none;font-size:50px;line-height:1;color:#fff;
+}
+.fixed-stage .top-weapon{left:120px}

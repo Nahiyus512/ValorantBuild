@@ -21,7 +21,7 @@ const homeColumns=[
 
 function TopBrandBar({onBack,weaponName}:{onBack?:()=>void;weaponName?:string}){
   return <header className="home-bar shared-topbar">
-    {onBack&&<button className="top-return" onClick={onBack}><span>‹</span> 返回</button>}
+    {onBack&&<button className="top-return" onClick={onBack}><span>&lt;</span> 返回</button>}
     {weaponName&&<span className="top-weapon">// {weaponName}</span>}
     <button className="top-rank">排行</button>
     <div className="home-mark">ValorantBuild</div>
