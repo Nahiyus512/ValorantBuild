@@ -32,6 +32,7 @@ export function LoadoutDemo(){
   const [buddyId,setBuddyId]=useState<string|null>(null);
   const [equipped,setEquipped]=useState<Record<string,Equipped>>({});
   const [filterOpen,setFilterOpen]=useState(false);
+  const [canvasScale,setCanvasScale]=useState(1);
 
   useEffect(()=>{fetch("/demo-data.json").then(r=>r.json()).then((d:Data)=>{
     setData(d);
@@ -39,6 +40,10 @@ export function LoadoutDemo(){
     d.weapons.forEach(w=>{const s=w.skins.find(x=>x.id===w.defaultSkinId)??w.skins.at(-1)!;initial[w.id]={skinId:s.id,chromaId:s.chromas[0]?.id,buddyId:null}});
     setEquipped(initial);
   })},[]);
+  useEffect(()=>{
+    const fit=()=>setCanvasScale(Math.min(window.innerWidth/1920,window.innerHeight/1080));
+    fit();window.addEventListener("resize",fit);return()=>window.removeEventListener("resize",fit);
+  },[]);
 
   const weapon=data?.weapons.find(w=>w.id===weaponId);
   const selectedSkin=weapon?.skins.find(s=>s.id===skinId);
@@ -69,6 +74,7 @@ export function LoadoutDemo(){
 
   if(page==="home")return <main className="game-shell">
     <div className="game-bg"/>
+    <div className="fixed-stage" style={{"--canvas-scale":canvasScale} as React.CSSProperties}>
     <div className="home-bar"><div className="home-mark">V</div></div>
     <section className="loadout-layout">
       <div className="weapon-board">
@@ -83,10 +89,12 @@ export function LoadoutDemo(){
       <aside className="profile-panel"><h2>玩家卡面</h2><div className="player-card"><div className="v-shape">V</div><strong>ValorantBuild</strong><small>装备分析师</small></div><h2>个性表达</h2><div className="spray-wheel"><i>V</i><i>V</i><i>V</i><i>V</i><span/></div></aside>
     </section>
     <div className="home-foot"><span>20 种武器</span><span>1,364 款可用皮肤</span><span>866 个挂饰</span></div>
+    </div>
   </main>;
 
   return <main className="game-shell">
     <div className="game-bg"/>
+    <div className="fixed-stage" style={{"--canvas-scale":canvasScale} as React.CSSProperties}>
     <header className="select-bar"><button onClick={()=>setPage("home")}>‹ 返回</button><i>//</i><strong>{weapon?.name}</strong><div><button className={tab==="skin"?"active":""} onClick={()=>{setTab("skin");setQuery("")}}>皮肤</button><button className={tab==="buddy"?"active":""} onClick={()=>{setTab("buddy");setQuery("")}}>挂饰</button></div><small>{weapon?.skins.length} 款皮肤</small></header>
     <div className="selector-layout">
       <aside className="item-browser">
@@ -108,6 +116,7 @@ export function LoadoutDemo(){
           <div className="equip-row"><button className="favorite-button">☆</button><button className={(weapon&&selectedSkin&&selectedChroma&&equipped[weapon.id]?.skinId===selectedSkin.id&&equipped[weapon.id]?.chromaId===selectedChroma.id&&equipped[weapon.id]?.buddyId===buddyId)?"equip-button equipped":"equip-button"} onClick={equip}>{(weapon&&selectedSkin&&selectedChroma&&equipped[weapon.id]?.skinId===selectedSkin.id&&equipped[weapon.id]?.chromaId===selectedChroma.id&&equipped[weapon.id]?.buddyId===buddyId)?"已装备":"装备"}</button></div>
         </div>
       </section>
+    </div>
     </div>
   </main>
 }

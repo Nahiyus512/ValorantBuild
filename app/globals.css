@@ -66,3 +66,30 @@ button,input,select{font-family:inherit;font-weight:900}
   .skin-grid,.buddy-grid{height:calc(100% - 35px);grid-template-columns:repeat(4,1fr);gap:4px}.skin-grid button,.buddy-grid button{height:90px}.skin-grid img,.buddy-grid img{height:57px}
   .weapon-preview{height:100%;padding:8px 18px}.preview-title h1{font-size:21px}.preview-title img{width:21px;height:21px}.main-gun{height:145px}.gun-stage:before{width:220px;height:220px}.selection-meta{min-height:68px}.equip-row{height:48px}.equip-button{height:40px!important;width:150px;font-size:12px}.favorite-button{height:40px!important;width:42px!important;font-size:20px!important}.chroma-row{bottom:5px}.chroma-row button{width:34px;height:34px}
 }
+
+/* Stable 1920×1080 canvas: all viewport sizes show the same composition. */
+html,body{width:100%;height:100%;overflow:hidden!important}
+.game-shell{position:fixed!important;inset:0;width:100vw!important;height:100vh!important;min-height:0!important;overflow:hidden!important}
+.fixed-stage{position:absolute;z-index:2;left:50%;top:50%;width:1920px;height:1080px;transform:translate(-50%,-50%) scale(var(--canvas-scale));transform-origin:center center;overflow:hidden}
+.fixed-stage .home-bar,.fixed-stage .select-bar{height:58px!important;min-height:58px!important;padding:0 22px!important}
+.fixed-stage .home-mark{width:180px!important;height:58px!important}
+.fixed-stage .loadout-layout{width:1920px!important;height:1022px!important;min-height:0!important;display:grid!important;grid-template-columns:1450px 235px!important;gap:55px!important;margin:0!important;padding:60px 90px 36px!important}
+.fixed-stage .weapon-board{width:1450px!important;height:926px!important;display:grid!important;grid-template-columns:repeat(4,335px)!important;grid-template-rows:1fr!important;gap:36px!important;overflow:hidden!important}
+.fixed-stage .weapon-column{display:block!important;width:335px!important;height:926px!important;min-width:335px!important}
+.fixed-stage .weapon-column>h2{height:36px!important;margin:0!important;font-size:19px!important}
+.fixed-stage .weapon-column-grid{height:890px!important;display:grid!important;grid-template-rows:repeat(6,135px)!important;gap:16px!important;overflow:visible!important}
+.fixed-stage .weapon-column-grid>h3{transform:translateY(-31px)!important;font-size:19px!important}
+.fixed-stage .weapon-tile{width:335px!important;height:135px!important;min-height:135px!important;padding:8px!important}
+.fixed-stage .weapon-tile>img:first-child{height:105px!important}.fixed-stage .weapon-tile span{font-size:11px!important;bottom:7px!important}.fixed-stage .weapon-tile small{display:block!important;font-size:8px!important}
+.fixed-stage .profile-panel{width:235px!important;height:926px!important;display:grid!important;grid-template-rows:36px 520px 40px 205px!important;align-content:space-between!important}
+.fixed-stage .profile-panel h2{height:36px!important;font-size:19px!important}.fixed-stage .player-card{width:235px!important;height:520px!important;padding-top:100px!important}.fixed-stage .v-shape{font-size:92px!important}
+.fixed-stage .player-card strong{margin-top:70px!important;font-size:14px!important}.fixed-stage .player-card small{font-size:10px!important}
+.fixed-stage .spray-wheel{width:205px!important;height:205px!important;align-self:end!important}.fixed-stage .spray-wheel i{width:43px!important;height:43px!important}
+.fixed-stage .home-foot{display:none!important}
+.fixed-stage .selector-layout{width:1920px!important;height:1022px!important;display:grid!important;grid-template-columns:520px 1400px!important;overflow:hidden!important}
+.fixed-stage .item-browser{width:520px!important;height:1022px!important;padding:20px!important}.fixed-stage .skin-grid,.fixed-stage .buddy-grid{height:948px!important;display:grid!important;grid-template-columns:repeat(3,1fr)!important;gap:8px!important;overflow-y:auto!important}
+.fixed-stage .skin-grid button,.fixed-stage .buddy-grid button{width:auto!important;height:130px!important;min-width:0!important}.fixed-stage .skin-grid img,.fixed-stage .buddy-grid img{height:82px!important}
+.fixed-stage .weapon-preview{width:1400px!important;height:1022px!important;padding:36px 96px 24px!important}.fixed-stage .preview-title h1{font-size:54px!important}.fixed-stage .preview-title img{width:34px!important;height:34px!important}
+.fixed-stage .gun-stage{min-height:280px!important}.fixed-stage .main-gun{width:760px!important;height:300px!important}.fixed-stage .gun-buddy{width:62px!important;height:62px!important;left:67%!important;top:64%!important}
+.fixed-stage .selection-meta{min-height:105px!important}.fixed-stage .equip-row{height:72px!important}.fixed-stage .equip-button{width:265px!important;height:60px!important;font-size:18px!important}.fixed-stage .favorite-button{width:62px!important;height:60px!important;font-size:30px!important}
+.fixed-stage .chroma-row{bottom:18px!important}.fixed-stage .chroma-row button{width:45px!important;height:45px!important}
