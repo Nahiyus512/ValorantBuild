@@ -11,10 +11,11 @@ const rawBuddyMap = new Map(rawBuddies.map((buddy) => [buddy.uuid, buddy]));
 
 const asset = (type, uuid, name) =>
   `https://media.valorant-api.com/${type}/${uuid}/${name}.png`;
+const cnTierPrices = { Select: 630, Deluxe: 930, Premium: 1290, Exclusive: 1590, Ultra: 1790 };
 
 const output = {
   generatedAt: new Date().toISOString(),
-  priceNote: "人民币价格按国服基础比例 1 元≈10 点券估算，未计充值档位赠送。",
+  priceNote: "价格采用国服品质档位：精选 630、豪华 930、卓越 1290、传奇 1590、终极 1790 点券。",
   weapons: weapons.map((weapon) => {
     const raw = rawWeaponMap.get(weapon.uuid);
     return {
@@ -32,8 +33,11 @@ const output = {
           rarityName: skin.rarityName ?? "默认",
           rarityRank: skin.rarityRank ?? -1,
           rarityColor: skin.rarityColor ?? "#718791",
+          rarityIcon: skin.rarityUuid
+            ? asset("contenttiers", skin.rarityUuid, "displayicon")
+            : null,
           priceVP: skin.priceVP,
-          priceCNY: skin.priceVP == null ? null : Math.round(skin.priceVP / 10 * 10) / 10,
+          priceCN: skin.priceVP == null ? null : (cnTierPrices[skin.rarity] ?? null),
           icon: asset("weaponskins", skin.uuid, "displayicon"),
           chromas: skin.chromas.map((chroma, index) => ({
             id: chroma.uuid,

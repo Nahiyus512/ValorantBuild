@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useState } from "react";
 
 type Chroma={id:string;name:string;render:string;swatch:string|null;priceRadianite:number|null;isDefault:boolean};
-type Skin={id:string;name:string;rarity:string|null;rarityName:string;rarityRank:number;rarityColor:string;priceVP:number|null;priceCNY:number|null;icon:string;chromas:Chroma[]};
+type Skin={id:string;name:string;rarity:string|null;rarityName:string;rarityRank:number;rarityColor:string;rarityIcon:string|null;priceVP:number|null;priceCN:number|null;icon:string;chromas:Chroma[]};
 type Weapon={id:string;name:string;category:string;defaultSkinId:string;icon:string;skins:Skin[]};
 type Buddy={id:string;name:string;icon:string};
 type Data={priceNote:string;weapons:Weapon[];buddies:Buddy[]};
@@ -42,8 +42,8 @@ export function LoadoutDemo(){
   const visibleSkins=useMemo(()=>{
     if(!weapon)return[];
     let list=weapon.skins.filter(s=>s.name.toLowerCase().includes(query.toLowerCase())&&(!qualities.length||qualities.includes(s.rarity??"")));
-    if(sort==="priceAsc")list=[...list].sort((a,b)=>(a.priceCNY??1e9)-(b.priceCNY??1e9));
-    if(sort==="priceDesc")list=[...list].sort((a,b)=>(b.priceCNY??-1)-(a.priceCNY??-1));
+    if(sort==="priceAsc")list=[...list].sort((a,b)=>(a.priceCN??1e9)-(b.priceCN??1e9));
+    if(sort==="priceDesc")list=[...list].sort((a,b)=>(b.priceCN??-1)-(a.priceCN??-1));
     if(sort==="qualityAsc")list=[...list].sort((a,b)=>a.rarityRank-b.rarityRank);
     if(sort==="qualityDesc")list=[...list].sort((a,b)=>b.rarityRank-a.rarityRank);
     return list;
@@ -63,7 +63,7 @@ export function LoadoutDemo(){
 
   if(page==="home")return <main className="game-shell">
     <div className="game-bg"/>
-    <div className="home-bar"><b>‹</b><span>返回</span><i>//</i><strong>收藏</strong><div className="home-mark">V</div><small>装备构建器 · 国服价格</small></div>
+    <div className="home-bar"><div className="home-mark">V</div><small>装备构建器 · 国服点券</small></div>
     <section className="loadout-layout">
       <div className="weapon-board">
         {categoryOrder.map(category=>{
@@ -90,17 +90,17 @@ export function LoadoutDemo(){
         </div>
         {filterOpen&&tab==="skin"&&<div className="quality-filter"><div><strong>品质筛选</strong><button onClick={()=>setQualities([])}>清除</button></div>{qualityOrder.map((q,i)=><label key={q} style={{"--q": ["#5a9fe2","#009587","#d1548d","#f5955b","#fad663"][i]} as React.CSSProperties}><input type="checkbox" checked={qualities.includes(q)} onChange={()=>toggleQuality(q)}/><span/>{["精选","豪华","卓越","传奇","终极"][i]}</label>)}</div>}
         <div className={tab==="skin"?"skin-grid":"buddy-grid"}>
-          {tab==="skin"?visibleSkins.map(s=><button key={s.id} className={skinId===s.id?"selected":""} onClick={()=>chooseSkin(s)} style={{"--rarity":s.rarityColor} as React.CSSProperties}><img src={s.chromas[0]?.render??s.icon} alt=""/><strong>{s.name.replace(` ${weapon?.name}`,"")}</strong><small>{s.priceCNY==null?"非直接售卖":`¥ ${s.priceCNY.toFixed(1)}`}</small></button>):
+          {tab==="skin"?visibleSkins.map(s=><button key={s.id} className={skinId===s.id?"selected":""} onClick={()=>chooseSkin(s)} style={{"--rarity":s.rarityColor} as React.CSSProperties}><img src={s.chromas[0]?.render??s.icon} alt=""/><strong>{s.name.replace(` ${weapon?.name}`,"")}</strong><small>{s.priceCN==null?"非直接售卖":`${s.priceCN} 点券`}</small></button>):
           <><button className={buddyId===null?"selected":""} onClick={()=>setBuddyId(null)}><span className="no-buddy">×</span><strong>不使用挂饰</strong></button>{visibleBuddies.map(b=><button key={b.id} className={buddyId===b.id?"selected":""} onClick={()=>setBuddyId(b.id)}><img src={b.icon} alt=""/><strong>{b.name}</strong></button>)}</>}
         </div>
       </aside>
       <section className="weapon-preview">
-        <div className="preview-title"><span style={{color:selectedSkin?.rarityColor}}>{selectedSkin?.rarityName} // {selectedSkin?.priceCNY==null?"非直接售卖":`国服估算 ¥${selectedSkin.priceCNY.toFixed(1)}`}</span><h1>{selectedSkin?.name??weapon?.name}</h1></div>
+        <div className="preview-title">{selectedSkin?.rarityIcon&&<img src={selectedSkin.rarityIcon} alt={selectedSkin.rarityName}/>}<h1>{selectedSkin?.name??weapon?.name}</h1></div>
         <div className="gun-stage"><img className="main-gun" src={selectedChroma?.render??weapon?.icon} alt=""/>{selectedBuddy&&<img className="gun-buddy" src={selectedBuddy.icon} alt={selectedBuddy.name}/>}</div>
         <div className="selection-meta">
-          {tab==="skin"&&selectedSkin&&<div className="chroma-row"><div><strong>炫彩</strong><small>{selectedSkin.chromas.length===1?"仅默认外观，无额外炫彩":`${selectedSkin.chromas.length} 种外观`}</small></div><div>{selectedSkin.chromas.map(c=><button key={c.id} className={selectedChroma?.id===c.id?"selected":""} onClick={()=>setChromaId(c.id)}>{c.swatch?<img src={c.swatch} alt=""/>:<img src={c.render} alt=""/>}</button>)}</div></div>}
+          {tab==="skin"&&selectedSkin&&selectedSkin.chromas.length>1&&<div className="chroma-row">{selectedSkin.chromas.map(c=><button key={c.id} className={selectedChroma?.id===c.id?"selected":""} onClick={()=>setChromaId(c.id)} title={c.name}>{c.swatch?<img src={c.swatch} alt=""/>:<img src={c.render} alt=""/>}</button>)}</div>}
           {tab==="buddy"&&<div className="buddy-summary"><span>当前挂饰</span><strong>{selectedBuddy?.name??"无挂饰"}</strong><small>挂饰会应用在当前武器配置中</small></div>}
-          <div className="equip-row"><div><small>国服参考价</small><strong>{selectedSkin?.priceCNY==null?"—":`¥ ${selectedSkin.priceCNY.toFixed(1)}`}</strong><em>按 1 元≈10 点券估算</em></div><button onClick={equip}>装备当前组合</button></div>
+          <div className="equip-row"><button className="favorite-button">☆</button><button className={(weapon&&selectedSkin&&selectedChroma&&equipped[weapon.id]?.skinId===selectedSkin.id&&equipped[weapon.id]?.chromaId===selectedChroma.id&&equipped[weapon.id]?.buddyId===buddyId)?"equip-button equipped":"equip-button"} onClick={equip}>{(weapon&&selectedSkin&&selectedChroma&&equipped[weapon.id]?.skinId===selectedSkin.id&&equipped[weapon.id]?.chromaId===selectedChroma.id&&equipped[weapon.id]?.buddyId===buddyId)?"已装备":"装备"}</button></div>
         </div>
       </section>
     </div>
