@@ -858,3 +858,23 @@ html,body{width:100%;height:100%;overflow:hidden!important}
 }
 .fixed-stage .buddy-summary strong{font-size:54px;line-height:1}
 .fixed-stage .gun-buddy{left:82%!important;top:62%!important}
+
+/* Remove fixed-canvas clipping and align the selector to the true left edge */
+.fixed-stage .item-browser{width:803px!important;transform:none!important}
+.fixed-stage .browser-tools{width:775px!important}
+.fixed-stage .skin-grid,.fixed-stage .buddy-grid{width:803px!important}
+
+/* Solid return arrow, vertically aligned with the shared top bar */
+.fixed-stage .shared-topbar .top-return{
+  display:flex;align-items:center;justify-content:flex-start;height:58px!important;line-height:58px;gap:10px;
+}
+.fixed-stage .top-return span{
+  flex:0 0 auto;width:22px;height:28px;margin:0!important;font-size:0;line-height:0;vertical-align:0;
+  background:#fff;clip-path:polygon(100% 0,100% 100%,0 50%);
+}
+
+/* Preview artwork at 80%, with the HUD ring locked to its center */
+.fixed-stage .weapon-preview .main-gun{width:792px!important;height:308px!important}
+.fixed-stage .weapon-preview .gun-stage:before{
+  left:50%!important;top:50%!important;transform:translate(-50%,-50%)!important;
+}
