@@ -11,21 +11,3 @@ export function getDb() {
 
   return drizzle(env.DB, { schema });
 }
-
-let schemaReady: Promise<unknown> | null = null;
-
-export function ensureDbSchema() {
-  if (!env.DB) throw new Error("Cloudflare D1 binding `DB` is unavailable.");
-
-  schemaReady ??= env.DB.prepare(`
-    CREATE TABLE IF NOT EXISTS user_loadouts (
-      user_email TEXT PRIMARY KEY NOT NULL,
-      player_name TEXT NOT NULL DEFAULT 'ValorantBuild',
-      player_level TEXT NOT NULL DEFAULT '100',
-      equipped_json TEXT NOT NULL DEFAULT '{}',
-      updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
-    )
-  `).run();
-
-  return schemaReady;
-}

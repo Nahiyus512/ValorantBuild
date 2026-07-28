@@ -9,6 +9,7 @@ type Buddy={id:string;name:string;icon:string};
 type Data={priceNote:string;weapons:Weapon[];buddies:Buddy[]};
 type Equipped={skinId:string;chromaId:string;buddyId:string|null};
 type SaveState="loading"|"saved"|"saving"|"error";
+const localStorageKey="valorantbuild.loadout.v1";
 
 const categoryNames:Record<string,string>={Sidearm:"佩枪",SMG:"冲锋枪",Shotgun:"霰弹枪",Rifle:"步枪",Sniper:"狙击枪",Heavy:"机枪",Melee:"近战武器"};
 const categoryOrder=["Sidearm","SMG","Shotgun","Rifle","Sniper","Heavy","Melee"];
@@ -50,14 +51,12 @@ export function LoadoutDemo(){
   const [saveState,setSaveState]=useState<SaveState>("loading");
   const [storageReady,setStorageReady]=useState(false);
 
-  useEffect(()=>{Promise.all([
-    fetch("/demo-data.json").then(r=>r.json() as Promise<Data>),
-    fetch("/api/loadout").then(r=>r.ok?r.json():Promise.reject(new Error("loadout")))
-  ]).then(([d,saved])=>{
+  useEffect(()=>{fetch("/demo-data.json").then(r=>r.json() as Promise<Data>).then(d=>{
     setData(d);
     const initial:Record<string,Equipped>={};
     d.weapons.forEach(w=>{const s=w.skins.find(x=>x.id===w.defaultSkinId)??w.skins.at(-1)!;initial[w.id]={skinId:s.id,chromaId:s.chromas[0]?.id,buddyId:null}});
-    const stored=saved.loadout;
+    let stored:{playerName?:string;playerLevel?:string;equipped?:Record<string,Equipped>}|null=null;
+    try{stored=JSON.parse(window.localStorage.getItem(localStorageKey)??"null")}catch{}
     setEquipped({...initial,...(stored?.equipped??{})});
     if(stored?.playerName)setPlayerName(stored.playerName);
     if(stored?.playerLevel)setPlayerLevel(stored.playerLevel);
@@ -68,12 +67,11 @@ export function LoadoutDemo(){
     if(!storageReady)return;
     setSaveState("saving");
     const timer=window.setTimeout(()=>{
-      fetch("/api/loadout",{
-        method:"PUT",
-        headers:{"content-type":"application/json"},
-        body:JSON.stringify({playerName,playerLevel,equipped})
-      }).then(r=>{if(!r.ok)throw new Error("save");setSaveState("saved")}).catch(()=>setSaveState("error"));
-    },500);
+      try{
+        window.localStorage.setItem(localStorageKey,JSON.stringify({playerName,playerLevel,equipped}));
+        setSaveState("saved");
+      }catch{setSaveState("error")}
+    },250);
     return()=>window.clearTimeout(timer);
   },[storageReady,playerName,playerLevel,equipped]);
   useEffect(()=>{
