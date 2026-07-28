@@ -1217,3 +1217,12 @@ html,body{width:100%;height:100%;overflow:hidden!important}
 .fixed-stage .top-export:hover,.fixed-stage .top-export:active{
   color:#22ffc5!important;background:transparent!important;text-shadow:none!important;transform:none!important;
 }
+
+/* Requested home-wheel and weapon-preview alignment. */
+.fixed-stage .profile-panel .spray-wheel i{overflow:visible!important}
+.fixed-stage .profile-panel .spray-wheel i img{
+  width:160%!important;height:160%!important;max-width:none!important;object-fit:contain!important;
+}
+.fixed-stage .weapon-preview .gun-stage:before{
+  left:56%!important;top:44%!important;transform:translate(-50%,-50%)!important;
+}
