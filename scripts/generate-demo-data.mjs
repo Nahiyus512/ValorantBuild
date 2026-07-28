@@ -94,8 +94,8 @@ fs.writeFileSync("public/cosmetic-data.json", JSON.stringify({
   })),
   titles: titles.map((title) => ({
     id: title.uuid,
-    name: title.titleText || title.name,
-  })),
+    name: title.titleText || title.name || "未命名称号",
+  })).filter((title) => title.name.trim()),
   sprays: availableSprays.map((spray) => ({
     id: spray.uuid,
     name: spray.name,

@@ -155,7 +155,7 @@ export function LoadoutDemo(){
   const cosmeticItems=useMemo(()=>{
     if(!cosmetics)return[];
     const source=cosmeticTab==="cards"?cosmetics.cards:cosmeticTab==="titles"?cosmetics.titles:cosmetics.sprays;
-    return source.filter(item=>item.name.toLowerCase().includes(query.toLowerCase()));
+    return source.filter(item=>String(item.name??"").toLowerCase().includes(query.toLowerCase()));
   },[cosmetics,cosmeticTab,query]);
 
   function openWeapon(w:Weapon){
@@ -207,7 +207,7 @@ export function LoadoutDemo(){
               </button>})}
           </div></section>)}
       </div>
-      <aside className="profile-panel"><h2>玩家卡面</h2><div className="player-card" role="button" tabIndex={0} onClick={e=>{if((e.target as HTMLElement).tagName!=="INPUT"){setCosmeticTab("cards");setQuery("");setPage("card")}}} onKeyDown={e=>{if(e.key==="Enter"){setCosmeticTab("cards");setPage("card")}}} style={equippedCard?{"--card-art":`url(${equippedCard.icon})`} as React.CSSProperties:undefined}><div className="card-energy"><input aria-label="玩家等级" value={playerLevel} maxLength={3} onChange={e=>setPlayerLevel(e.target.value.replace(/\D/g,""))}/></div><div className="player-card-inner"><div className="v-shape">V</div><input className="card-id" aria-label="玩家 ID" value={playerName} maxLength={20} onChange={e=>setPlayerName(e.target.value)}/><small>{equippedTitle?.name??"装备分析师"}</small></div></div><h2>个性表达</h2><button className="spray-wheel" onClick={()=>{setCosmeticTab("sprays");setQuery("");setPage("expression")}} aria-label="选择喷漆"><b className="wheel-ring"/><u className="inner-spokes"/>{[0,1,2,3].map(index=>{const id=sprayWheel[index];const spray=cosmetics?.sprays.find(s=>s.id===id);return <i key={`${id??"empty"}-${index}`}>{spray?<img src={spray.icon} alt=""/>:<em>+</em>}</i>})}<span/></button></aside>
+      <aside className="profile-panel"><h2>玩家卡面</h2><div className="player-card" role="button" tabIndex={0} onClick={e=>{if((e.target as HTMLElement).tagName!=="INPUT"){setCosmeticTab("cards");setQuery("");setPage("card")}}} onKeyDown={e=>{if(e.key==="Enter"){setCosmeticTab("cards");setPage("card")}}} style={equippedCard?{"--card-art":`url(${equippedCard.icon})`} as React.CSSProperties:undefined}><div className="card-energy"><input aria-label="玩家等级" value={playerLevel} maxLength={3} onChange={e=>setPlayerLevel(e.target.value.replace(/\D/g,""))}/></div><div className="player-card-inner">{!equippedCard&&<div className="v-shape">V</div>}<input className="card-id" aria-label="玩家 ID" value={playerName} maxLength={20} onChange={e=>setPlayerName(e.target.value)}/><small>{equippedTitle?.name??"装备分析师"}</small></div></div><h2>个性表达</h2><button className="spray-wheel" onClick={()=>{setCosmeticTab("sprays");setQuery("");setPage("expression")}} aria-label="选择喷漆"><b className="wheel-ring"/><u className="inner-spokes"/>{[0,1,2,3].map(index=>{const id=sprayWheel[index];const spray=cosmetics?.sprays.find(s=>s.id===id);return <i key={`${id??"empty"}-${index}`}>{spray?<img src={spray.icon} alt=""/>:<em>+</em>}</i>})}<span/></button></aside>
     </section>
     <div className="home-foot"><span>20 种武器</span><span>1,364 款可用皮肤</span><span>866 个挂饰</span></div>
     </div>
@@ -226,7 +226,7 @@ export function LoadoutDemo(){
     };
     return <main className="game-shell"><TacticalBackground/><div className="fixed-stage" style={{"--canvas-scale":canvasScale} as React.CSSProperties}>
       <TopBrandBar onBack={()=>setPage("home")} weaponName={isCardPage?"玩家卡面":"个性表达"} onShare={shareHome}/>
-      <nav className="selector-subnav"><div className="selector-tabs cosmetic-tabs">{tabs.map(([id,label])=><button key={id} className={cosmeticTab===id?"active":""} onClick={()=>{setCosmeticTab(id);setQuery("");setListScroll(0)}}>{label}</button>)}</div></nav>
+      <nav className="selector-subnav"><div className={`selector-tabs cosmetic-tabs ${isCardPage?"":"single-tab"}`}>{tabs.map(([id,label])=><button key={id} className={cosmeticTab===id?"active":""} onClick={()=>{setCosmeticTab(id);setQuery("");setListScroll(0)}}>{label}</button>)}</div></nav>
       <div className="selector-layout cosmetic-layout">
         <aside className="item-browser cosmetic-browser">
           <div className="browser-tools buddy-tools"><label>⌕<input value={query} onChange={e=>setQuery(e.target.value)} placeholder={`搜索${tabs.find(([id])=>id===cosmeticTab)?.[1]??""}`}/></label></div>
@@ -246,7 +246,7 @@ export function LoadoutDemo(){
           <div className="selection-meta"><div className="equip-row"><button className={cosmeticIsEquipped?"equip-button equipped":"equip-button"} onClick={toggleCosmetic}>{cosmeticIsEquipped?"取消装备":"装备"}</button></div></div>
         </section>
       </div>
-      {wheelPickerOpen&&<div className="filter-modal wheel-picker" role="dialog" aria-modal="true" aria-label="选择喷漆盘位置"><div className="wheel-picker-panel"><h2>选择装备位置</h2><button className="picker-close" onClick={()=>setWheelPickerOpen(false)}>×</button><div className="picker-wheel"><b className="wheel-ring"/><u className="inner-spokes"/>{[0,1,2,3].map(slot=>{const spray=cosmetics?.sprays.find(s=>s.id===sprayWheel[slot]);return <button key={slot} onClick={()=>{setSprayWheel(v=>{const next=[...v];while(next.length<4)next.push("");next[slot]=selectedSprayId;return next});setWheelPickerOpen(false)}}>{spray?<img src={spray.icon} alt={spray.name}/>:<em>+</em>}<span>{slot+1}</span></button>})}<span/></div></div></div>}
+      {wheelPickerOpen&&<div className="filter-modal wheel-picker" role="dialog" aria-modal="true" aria-label="选择喷漆盘位置"><div className="wheel-picker-panel"><h2>选择装备位置</h2><button className="picker-close" onClick={()=>setWheelPickerOpen(false)}>×</button><div className="picker-wheel"><b className="wheel-ring"/><u className="inner-spokes"/>{(["上","左","右","下"] as const).map((label,slot)=>{const spray=cosmetics?.sprays.find(s=>s.id===sprayWheel[slot]);return <button className={`picker-slot slot-${slot}`} key={slot} onClick={()=>{setSprayWheel(v=>{const next=[...v];while(next.length<4)next.push("");next[slot]=selectedSprayId;return next});setWheelPickerOpen(false)}}>{spray?<img src={spray.icon} alt={spray.name}/>:<em>+</em>}<span>{label}</span></button>})}<span/></div></div></div>}
     </div></main>
   }
 

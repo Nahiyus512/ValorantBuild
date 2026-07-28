@@ -1102,3 +1102,54 @@ html,body{width:100%;height:100%;overflow:hidden!important}
 .fixed-stage .picker-wheel img{width:72%;height:72%;object-fit:contain}
 .fixed-stage .picker-wheel em{font-size:44px;font-style:normal;color:#8fa6ad}
 .fixed-stage .picker-wheel button span{position:absolute;right:18px;bottom:12px;color:#8fa6ad}
+
+/* Final player-card hover cleanup: artwork remains sharp and level rails static. */
+.fixed-stage .player-card:hover,
+.fixed-stage .player-card:hover .player-card-inner{
+  filter:none!important;box-shadow:none!important;
+}
+.fixed-stage .player-card .player-card-inner{filter:none!important;transition:none!important}
+.fixed-stage .player-card .card-energy,
+.fixed-stage .player-card:hover .card-energy{
+  left:0!important;right:0!important;width:auto!important;filter:none!important;transition:none!important;
+  background-image:linear-gradient(90deg,var(--frame) 0 39%,transparent 39% 61%,var(--frame) 61% 100%)!important;
+  background-size:100% 5px!important;background-position:center!important;background-repeat:no-repeat!important;
+}
+.fixed-stage .player-card:hover .card-energy{
+  background-image:linear-gradient(90deg,var(--active) 0 39%,transparent 39% 61%,var(--active) 61% 100%)!important;
+}
+.fixed-stage .card-energy input,.fixed-stage .player-card:hover .card-energy input{
+  box-shadow:none!important;filter:none!important;text-shadow:none!important;
+}
+
+/* A single expression tab is centered; no unused rule extends to its right. */
+.fixed-stage .cosmetic-tabs.single-tab{
+  width:260px!important;grid-template-columns:1fr!important;border-bottom:0!important;
+}
+.fixed-stage .cosmetic-tabs.single-tab button{grid-column:1!important;text-align:center}
+
+/* Equipment picker mirrors the home wheel: up, left, right and down. */
+.fixed-stage .picker-wheel{
+  width:420px;height:420px;overflow:visible!important;border:0!important;background:rgba(7,28,37,.72)!important;
+  box-shadow:none!important;
+}
+.fixed-stage .picker-wheel:before,.fixed-stage .picker-wheel:after{
+  content:"";position:absolute;z-index:0;left:50%;top:50%;width:109%;height:1px;background:#58707a;
+  transform:translate(-50%,-50%) rotate(45deg);
+}
+.fixed-stage .picker-wheel:after{transform:translate(-50%,-50%) rotate(-45deg)}
+.fixed-stage .picker-wheel .wheel-ring{z-index:1}
+.fixed-stage .picker-wheel .inner-spokes{
+  position:absolute;z-index:2;left:38%;top:38%;width:24%;height:24%;border-radius:50%;background:#102630;
+}
+.fixed-stage .picker-wheel .picker-slot{
+  position:absolute!important;z-index:4;width:92px!important;height:92px!important;border:0!important;border-radius:50%!important;
+  display:grid;place-items:center;background:#183b47!important;color:#fff;box-shadow:0 0 0 1px #58707a!important;
+}
+.fixed-stage .picker-wheel .picker-slot:hover{background:rgba(34,255,197,.22)!important;box-shadow:0 0 0 2px #22ffc5!important}
+.fixed-stage .picker-wheel .slot-0{left:calc(50% - 46px)!important;top:28px!important}
+.fixed-stage .picker-wheel .slot-1{left:28px!important;top:calc(50% - 46px)!important}
+.fixed-stage .picker-wheel .slot-2{right:28px!important;left:auto!important;top:calc(50% - 46px)!important}
+.fixed-stage .picker-wheel .slot-3{left:calc(50% - 46px)!important;top:auto!important;bottom:28px!important}
+.fixed-stage .picker-wheel .picker-slot img{width:74%;height:74%;object-fit:contain}
+.fixed-stage .picker-wheel .picker-slot span{right:4px!important;bottom:-23px!important;width:84px;text-align:center;color:#b8c8cb!important}
