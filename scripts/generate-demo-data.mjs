@@ -1,4 +1,5 @@
 import fs from "node:fs";
+import sharp from "sharp";
 
 const weapons = JSON.parse(fs.readFileSync("data/weapons.json", "utf8"));
 const rawWeaponsJson = JSON.parse(fs.readFileSync("data/raw/weapons.json", "utf8"));
@@ -80,7 +81,7 @@ fs.mkdirSync("public/cosmetics/sprays", { recursive: true });
 const availableCards = cards.filter((card) => fs.existsSync(card.largeArt));
 const availableSprays = sprays.filter((spray) => fs.existsSync(spray.transparentIcon));
 for (const card of availableCards) {
-  fs.copyFileSync(card.largeArt, `public/cosmetics/cards/${card.uuid}.png`);
+  await sharp(card.largeArt).webp({ quality: 76, effort: 4 }).toFile(`public/cosmetics/cards/${card.uuid}.webp`);
 }
 for (const spray of availableSprays) {
   fs.copyFileSync(spray.transparentIcon, `public/cosmetics/sprays/${spray.uuid}.png`);
@@ -89,7 +90,7 @@ fs.writeFileSync("public/cosmetic-data.json", JSON.stringify({
   cards: availableCards.map((card) => ({
     id: card.uuid,
     name: card.name,
-    icon: `/cosmetics/cards/${card.uuid}.png`,
+    icon: `/cosmetics/cards/${card.uuid}.webp`,
   })),
   titles: titles.map((title) => ({
     id: title.uuid,
