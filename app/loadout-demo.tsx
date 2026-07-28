@@ -37,7 +37,7 @@ export function LoadoutDemo(){
   useEffect(()=>{fetch("/demo-data.json").then(r=>r.json()).then((d:Data)=>{
     setData(d);
     const initial:Record<string,Equipped>={};
-    d.weapons.forEach(w=>{const s=w.skins.find(x=>x.id===w.defaultSkinId)??w.skins.at(-1)!;initial[w.id]={skinId:s.id,chromaId:s.chromas[0]?.id,buddyId:null}});
+    d.weapons.forEach((w,index)=>{const s=w.skins.find(x=>x.id===w.defaultSkinId)??w.skins.at(-1)!;initial[w.id]={skinId:s.id,chromaId:s.chromas[0]?.id,buddyId:d.buddies[(index*7)%d.buddies.length]?.id??null}});
     setEquipped(initial);
   })},[]);
   useEffect(()=>{
@@ -75,7 +75,7 @@ export function LoadoutDemo(){
   if(page==="home")return <main className="game-shell">
     <div className="game-bg"/>
     <div className="fixed-stage" style={{"--canvas-scale":canvasScale} as React.CSSProperties}>
-    <div className="home-bar"><div className="home-mark">V</div></div>
+    <div className="home-bar"><div className="home-mark">ValorantBuild</div></div>
     <section className="loadout-layout">
       <div className="weapon-board">
         {homeColumns.map(column=><section className="weapon-column" key={column.title}><h2>{column.title}</h2><div className="weapon-column-grid">
