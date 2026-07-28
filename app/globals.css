@@ -798,3 +798,28 @@ html,body{width:100%;height:100%;overflow:hidden!important}
   left:38%!important;top:38%!important;width:24%!important;height:24%!important;background:#102630!important;
 }
 .fixed-stage .inner-spokes:before,.fixed-stage .inner-spokes:after{display:none!important}
+
+/* Final selector alignment and deterministic custom scrollbar */
+.fixed-stage .shared-topbar .top-rank{left:710px}
+.fixed-stage .shared-topbar .top-export{right:710px}
+.fixed-stage .item-browser{padding:8px 0 0!important}
+.fixed-stage .browser-tools{width:872px!important;margin-bottom:16px}
+.fixed-stage .skin-grid,.fixed-stage .buddy-grid{
+  width:900px!important;height:808px!important;padding-right:28px!important;
+  overflow-y:auto!important;scrollbar-width:none!important;
+}
+.fixed-stage .skin-grid::-webkit-scrollbar,.fixed-stage .buddy-grid::-webkit-scrollbar{display:none!important;width:0!important;height:0!important}
+.fixed-stage .custom-scrollbar{
+  position:absolute;z-index:6;right:8px;top:66px;width:10px;height:808px;
+  background:linear-gradient(90deg,transparent 4px,rgba(255,255,255,.58) 4px 5px,transparent 5px);
+  pointer-events:none;
+}
+.fixed-stage .custom-scrollbar span{position:absolute;left:1px;width:8px;height:160px;border-radius:0;background:#fff}
+
+/* Inner spokes retract visually to the inner circumference */
+.fixed-stage .inner-spokes{transition:left .3s ease,top .3s ease,width .3s ease,height .3s ease}
+.fixed-stage .spray-wheel:hover .inner-spokes{left:36%!important;top:36%!important;width:28%!important;height:28%!important}
+
+/* Chroma controls match the equip button height */
+.fixed-stage .chroma-row button{width:60px!important;height:60px!important}
+.fixed-stage .chroma-row{bottom:12px!important}
