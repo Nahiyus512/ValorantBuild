@@ -181,13 +181,27 @@ export function LoadoutDemo(){
     const clone=stage.cloneNode(true) as HTMLElement;
     clone.style.setProperty("--canvas-scale","1");
     clone.style.transform="none";clone.style.position="relative";clone.style.left="0";clone.style.top="0";
-    clone.querySelectorAll("img").forEach(img=>img.src=new URL(img.getAttribute("src")??"",window.location.href).href);
-    const css=Array.from(document.styleSheets).flatMap(sheet=>{try{return Array.from(sheet.cssRules).map(rule=>rule.cssText)}catch{return[]}}).join("\n").replaceAll("url(/",`url(${window.location.origin}/`);
+    const asDataUrl=async(src:string)=>{
+      try{
+        const response=await fetch(new URL(src,window.location.href).href,{mode:"cors"});
+        if(!response.ok)throw new Error("image");
+        const blob=await response.blob();
+        return await new Promise<string>((resolve,reject)=>{const reader=new FileReader();reader.onload=()=>resolve(String(reader.result));reader.onerror=reject;reader.readAsDataURL(blob)});
+      }catch{return "data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs="}
+    };
+    const sourceImages=Array.from(stage.querySelectorAll("img"));
+    const clonedImages=Array.from(clone.querySelectorAll("img"));
+    const embedded=await Promise.all(sourceImages.map(img=>asDataUrl(img.currentSrc||img.src)));
+    clonedImages.forEach((img,index)=>img.src=embedded[index]);
+    const card=clone.querySelector<HTMLElement>(".player-card");
+    if(card&&equippedCard)card.style.setProperty("--card-art",`url(${await asDataUrl(equippedCard.icon)})`);
+    const css=Array.from(document.styleSheets).flatMap(sheet=>{try{return Array.from(sheet.cssRules).filter(rule=>!rule.cssText.startsWith("@font-face")).map(rule=>rule.cssText)}catch{return[]}}).join("\n").replaceAll("url(/",`url(${window.location.origin}/`);
     const markup=new XMLSerializer().serializeToString(clone).replaceAll("url(/",`url(${window.location.origin}/`);
     const svg=`<svg xmlns="http://www.w3.org/2000/svg" width="1920" height="1080"><foreignObject width="100%" height="100%"><div xmlns="http://www.w3.org/1999/xhtml"><style>${css}</style>${markup}</div></foreignObject></svg>`;
     const image=new Image();
     const url=URL.createObjectURL(new Blob([svg],{type:"image/svg+xml;charset=utf-8"}));
-    image.onload=()=>{const canvas=document.createElement("canvas");canvas.width=1920;canvas.height=1080;canvas.getContext("2d")?.drawImage(image,0,0);URL.revokeObjectURL(url);canvas.toBlob(blob=>{if(!blob)return;const a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download=`ValorantBuild-${Date.now()}.png`;a.click();window.setTimeout(()=>URL.revokeObjectURL(a.href),1000)},"image/png")};
+    image.onload=()=>{const canvas=document.createElement("canvas");canvas.width=1920;canvas.height=1080;canvas.getContext("2d")?.drawImage(image,0,0);URL.revokeObjectURL(url);canvas.toBlob(blob=>{if(!blob){window.alert("图片生成失败，请重试");return}const a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download=`ValorantBuild-${Date.now()}.png`;document.body.appendChild(a);a.click();a.remove();window.setTimeout(()=>URL.revokeObjectURL(a.href),1000)},"image/png")};
+    image.onerror=()=>{URL.revokeObjectURL(url);window.alert("图片生成失败，请重试")};
     image.src=url;
   }
 
@@ -207,7 +221,7 @@ export function LoadoutDemo(){
               </button>})}
           </div></section>)}
       </div>
-      <aside className="profile-panel"><h2>玩家卡面</h2><div className="player-card" role="button" tabIndex={0} onClick={e=>{if((e.target as HTMLElement).tagName!=="INPUT"){setCosmeticTab("cards");setQuery("");setPage("card")}}} onKeyDown={e=>{if(e.key==="Enter"){setCosmeticTab("cards");setPage("card")}}} style={equippedCard?{"--card-art":`url(${equippedCard.icon})`} as React.CSSProperties:undefined}><div className="card-energy"><input aria-label="玩家等级" value={playerLevel} maxLength={3} onChange={e=>setPlayerLevel(e.target.value.replace(/\D/g,""))}/></div><div className="player-card-inner">{!equippedCard&&<div className="v-shape">V</div>}<input className="card-id" aria-label="玩家 ID" value={playerName} maxLength={20} onChange={e=>setPlayerName(e.target.value)}/><small>{equippedTitle?.name??"装备分析师"}</small></div></div><h2>个性表达</h2><button className="spray-wheel" onClick={()=>{setCosmeticTab("sprays");setQuery("");setPage("expression")}} aria-label="选择喷漆"><b className="wheel-ring"/><u className="inner-spokes"/>{[0,1,2,3].map(index=>{const id=sprayWheel[index];const spray=cosmetics?.sprays.find(s=>s.id===id);return <i key={`${id??"empty"}-${index}`}>{spray?<img src={spray.icon} alt=""/>:<em>+</em>}</i>})}<span/></button></aside>
+      <aside className="profile-panel"><h2>玩家卡面</h2><div className="player-card" role="button" tabIndex={0} onClick={e=>{if((e.target as HTMLElement).tagName!=="INPUT"){setCosmeticTab("cards");setQuery("");setPage("card")}}} onKeyDown={e=>{if(e.key==="Enter"){setCosmeticTab("cards");setPage("card")}}} style={equippedCard?{"--card-art":`url(${equippedCard.icon})`} as React.CSSProperties:undefined}><div className="card-energy"><input aria-label="玩家等级" value={playerLevel} maxLength={3} onChange={e=>setPlayerLevel(e.target.value.replace(/\D/g,""))}/></div><div className="player-card-inner">{!equippedCard&&<div className="v-shape">V</div>}<input className="card-id" aria-label="玩家 ID" value={playerName} maxLength={20} onChange={e=>setPlayerName(e.target.value)}/>{equippedTitle&&<small>{equippedTitle.name}</small>}</div></div><h2>个性表达</h2><button className="spray-wheel" onClick={()=>{setCosmeticTab("sprays");setQuery("");setPage("expression")}} aria-label="选择喷漆"><b className="wheel-ring"/><u className="inner-spokes"/>{[0,1,2,3].map(index=>{const id=sprayWheel[index];const spray=cosmetics?.sprays.find(s=>s.id===id);return <i key={`${id??"empty"}-${index}`}>{spray?<img src={spray.icon} alt=""/>:<em>+</em>}</i>})}<span/></button></aside>
     </section>
     <div className="home-foot"><span>20 种武器</span><span>1,364 款可用皮肤</span><span>866 个挂饰</span></div>
     </div>
@@ -240,7 +254,7 @@ export function LoadoutDemo(){
         </aside>
         <section className="weapon-preview cosmetic-preview">
           <div className="preview-title"><h1>{cosmeticTab==="wheel"?"喷漆盘":currentName}</h1></div>
-          {cosmeticTab==="cards"&&<div className="card-preview">{selectedCard&&<img src={selectedCard.icon} alt={selectedCard.name}/>}<strong>{playerName}</strong><small>{selectedTitle?.name}</small></div>}
+          {cosmeticTab==="cards"&&<div className="card-preview">{selectedCard&&<img src={selectedCard.icon} alt={selectedCard.name}/>}<strong>{playerName}</strong>{equippedTitle&&<small>{equippedTitle.name}</small>}</div>}
           {cosmeticTab==="titles"&&<div className="title-preview"><span>{playerName}</span><strong>{selectedTitle?.name}</strong></div>}
           {cosmeticTab==="sprays"&&<div className="spray-preview">{selectedSpray&&<img src={selectedSpray.icon} alt={selectedSpray.name}/>}</div>}
           <div className="selection-meta"><div className="equip-row"><button className={cosmeticIsEquipped?"equip-button equipped":"equip-button"} onClick={toggleCosmetic}>{cosmeticIsEquipped?"取消装备":"装备"}</button></div></div>
