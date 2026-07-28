@@ -186,3 +186,93 @@ html,body{width:100%;height:100%;overflow:hidden!important}
 @keyframes card-energy-flow{0%,100%{width:0;opacity:.3}50%{width:100%;opacity:1}}
 @keyframes card-scan{from{transform:translateY(0)}to{transform:translateY(650%)}}
 .fixed-stage .tile-buddy{right:6px!important;bottom:9px!important;width:32px!important;height:32px!important;z-index:2}
+
+/* Interaction tuning */
+.fixed-stage .weapon-tile{
+  box-shadow:inset 1px 0 #45606a,inset -1px 0 #45606a,inset 0 1px #45606a;
+  transform:none!important;
+}
+.fixed-stage .weapon-tile:before{
+  height:1px;background:linear-gradient(90deg,#45606a 0 23%,transparent 23% 77%,#45606a 77% 100%);
+}
+.fixed-stage .weapon-tile:after{
+  width:54%;height:1px;background:rgba(238,245,245,.88);
+  transition:width .38s cubic-bezier(.22,.72,.18,1),height .25s ease,background-color .25s ease,box-shadow .25s ease;
+}
+.fixed-stage .weapon-tile>img:first-child{transform:scale(.9)}
+.fixed-stage .weapon-column:first-child .weapon-tile>img:first-child{transform:scale(.675)}
+.fixed-stage .weapon-tile:hover{
+  transform:none!important;
+  box-shadow:inset 3px 0 #22ffc5,inset -3px 0 #22ffc5,inset 0 3px #22ffc5,0 0 16px rgba(34,255,197,.14);
+}
+.fixed-stage .weapon-tile:hover:before{
+  height:3px;background:linear-gradient(90deg,#22ffc5 0 23%,transparent 23% 77%,#22ffc5 77% 100%);
+}
+.fixed-stage .weapon-tile:hover:after{
+  height:3px;animation:weapon-line-expand .4s cubic-bezier(.22,.72,.18,1) forwards;
+  background:#22ffc5;box-shadow:0 0 9px rgba(34,255,197,.45);
+}
+.fixed-stage .weapon-tile:hover>img:first-child{transform:scale(1)}
+.fixed-stage .weapon-column:first-child .weapon-tile:hover>img:first-child{transform:scale(.75)}
+.fixed-stage .weapon-tile:hover span{color:#fff}
+@keyframes weapon-line-expand{from{width:54%}to{width:100%}}
+
+/* Rectangular player card with an open, tapered lower frame */
+.fixed-stage .player-card{
+  background:transparent!important;clip-path:none!important;padding:0!important;
+  border:0!important;box-shadow:inset 2px 0 var(--card-line),inset -2px 0 var(--card-line),inset 0 2px var(--card-line);
+  filter:none;transition:box-shadow .3s ease,filter .3s ease!important;
+}
+.fixed-stage .player-card:before,.fixed-stage .player-card:after{
+  content:"";position:absolute;z-index:4;inset:auto!important;bottom:79px;width:112px;height:2px;
+  border:0!important;background:var(--card-line);clip-path:none!important;transition:height .3s ease,background-color .3s ease,box-shadow .3s ease;
+}
+.fixed-stage .player-card:before{left:0;transform:rotate(45deg);transform-origin:left center}
+.fixed-stage .player-card:after{right:0;transform:rotate(-45deg);transform-origin:right center}
+.fixed-stage .player-card-inner{
+  padding-top:98px;clip-path:polygon(0 0,100% 0,100% 84%,62% 100%,38% 100%,0 84%);
+}
+.fixed-stage .player-card-inner:after{
+  inset:9px 9px 86px;border:1px solid rgba(174,189,194,.4);clip-path:none;
+}
+.fixed-stage .card-energy{
+  left:0;right:0;top:9px;height:22px;
+  background:linear-gradient(90deg,var(--card-line) 0 38%,transparent 38% 62%,var(--card-line) 62% 100%) center/100% 5px no-repeat;
+}
+.fixed-stage .card-energy span{z-index:2;top:1px}
+.fixed-stage .card-scan{display:none!important}
+.fixed-stage .player-card:hover{
+  transform:none;background:transparent!important;
+  box-shadow:inset 3px 0 var(--card-active),inset -3px 0 var(--card-active),inset 0 3px var(--card-active);
+  filter:drop-shadow(0 0 8px rgba(24,255,224,.28));
+}
+.fixed-stage .player-card:hover:before,.fixed-stage .player-card:hover:after{
+  height:3px;background:var(--card-active);box-shadow:0 0 8px rgba(24,255,224,.42);
+}
+.fixed-stage .player-card:hover .card-energy{
+  background-image:linear-gradient(90deg,var(--card-active) 0 38%,transparent 38% 62%,var(--card-active) 62% 100%);
+}
+
+/* Four-part expression wheel */
+.fixed-stage .spray-wheel{
+  overflow:hidden;border:0!important;border-radius:50%;background:rgba(7,28,37,.72);
+  box-shadow:inset 0 0 0 1px #58707a;transition:box-shadow .28s ease,filter .28s ease;
+}
+.fixed-stage .spray-wheel i{
+  width:50%!important;height:50%!important;margin:0!important;border-radius:0!important;
+  background:rgba(20,54,68,.72)!important;color:#d8e2e2;transition:background-color .28s ease,color .28s ease,transform .3s ease;
+}
+.fixed-stage .spray-wheel i:nth-child(1){left:0!important;top:0!important;border-right:1px solid #58707a;border-bottom:1px solid #58707a}
+.fixed-stage .spray-wheel i:nth-child(2){left:50%!important;top:0!important;border-bottom:1px solid #58707a}
+.fixed-stage .spray-wheel i:nth-child(3){left:0!important;top:50%!important;border-right:1px solid #58707a}
+.fixed-stage .spray-wheel i:nth-child(4){left:50%!important;top:50%!important}
+.fixed-stage .spray-wheel span{z-index:3;inset:38%!important;background:#0a222c;border:1px solid #58707a!important;transition:border-color .28s ease,box-shadow .28s ease}
+.fixed-stage .spray-wheel:hover{
+  box-shadow:inset 0 0 0 3px #22ffc5,0 0 16px rgba(34,255,197,.14);
+  filter:drop-shadow(0 0 5px rgba(34,255,197,.2));
+}
+.fixed-stage .spray-wheel:hover i{color:#fff;background:rgba(19,79,72,.7)!important}
+.fixed-stage .spray-wheel:hover i:nth-child(1){border-right:2px solid #22ffc5;border-bottom:2px solid #22ffc5}
+.fixed-stage .spray-wheel:hover i:nth-child(2){border-bottom:2px solid #22ffc5}
+.fixed-stage .spray-wheel:hover i:nth-child(3){border-right:2px solid #22ffc5}
+.fixed-stage .spray-wheel:hover span{border-color:#22ffc5!important;box-shadow:0 0 8px rgba(34,255,197,.35)}
