@@ -677,3 +677,39 @@ html,body{width:100%;height:100%;overflow:hidden!important}
 .fixed-stage .equip-row{right:0!important;bottom:12px!important}
 .fixed-stage .favorite-button{display:none!important}
 .fixed-stage .card-energy,.fixed-stage .player-card:hover .card-energy{background-size:100% 5px!important}
+
+/* Correct expression-slot positions after adding the independent ring layer */
+.fixed-stage .spray-wheel i:nth-of-type(1){left:calc(50% - 24px)!important;right:auto!important;top:34px!important;bottom:auto!important}
+.fixed-stage .spray-wheel i:nth-of-type(2){left:18px!important;right:auto!important;top:calc(50% - 24px)!important;bottom:auto!important}
+.fixed-stage .spray-wheel i:nth-of-type(3){left:auto!important;right:18px!important;top:calc(50% - 24px)!important;bottom:auto!important}
+.fixed-stage .spray-wheel i:nth-of-type(4){left:calc(50% - 24px)!important;right:auto!important;top:auto!important;bottom:18px!important}
+
+/* Selector uses the same top brand treatment as the loadout home */
+.fixed-stage .select-bar{background:transparent!important;border-bottom:0!important}
+.fixed-stage .select-brand{
+  position:absolute;left:50%;top:0;transform:translateX(-50%);z-index:1;isolation:isolate;
+  width:360px;height:58px;display:grid;place-items:center;font-size:25px;letter-spacing:1.5px;color:#fff;
+}
+.fixed-stage .select-brand:before,.fixed-stage .select-brand:after{
+  content:"";position:absolute;z-index:-1;left:50%;top:0;height:58px;transform:translateX(-50%);
+}
+.fixed-stage .select-brand:before{
+  width:1100px;background:rgba(4,17,24,.68);clip-path:polygon(0 0,100% 0,94% 100%,6% 100%);
+}
+.fixed-stage .select-brand:after{
+  width:360px;background:#dc3d4b;clip-path:polygon(0 0,100% 0,86% 100%,14% 100%);
+}
+.fixed-stage .selector-subnav{background:transparent;border-bottom:0}
+.fixed-stage .selector-tabs{
+  left:50%;transform:translateX(-50%);width:520px;
+}
+
+/* Transparent, left-aligned browser with the released width given to preview */
+.fixed-stage .selector-layout{grid-template-columns:900px 1020px!important}
+.fixed-stage .item-browser{
+  width:900px!important;padding:20px 20px 20px 0!important;background:transparent!important;border-right:0!important;
+}
+.fixed-stage .weapon-preview{width:1020px!important;padding:30px 48px 24px!important}
+.fixed-stage .skin-grid,.fixed-stage .buddy-grid{grid-template-columns:repeat(3,1fr)!important}
+.fixed-stage .weapon-preview .gun-stage{transform:scale(1.13);transform-origin:center center}
+.fixed-stage .weapon-preview .main-gun{width:900px!important;height:350px!important}
