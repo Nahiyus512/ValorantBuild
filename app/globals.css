@@ -382,3 +382,109 @@ html,body{width:100%;height:100%;overflow:hidden!important}
 .fixed-stage .spray-wheel:hover{border-color:#22ffc5!important;box-shadow:0 0 15px rgba(34,255,197,.18)}
 .fixed-stage .spray-wheel:hover:before,.fixed-stage .spray-wheel:hover:after{height:2px;background:#22ffc5}
 .fixed-stage .spray-wheel:hover i{transform:scale(1.06);box-shadow:0 0 0 2px #22ffc5,0 0 9px rgba(34,255,197,.3)}
+
+/* Final proportional pass: a shared 72px category gap */
+.fixed-stage .weapon-column:nth-child(2) .weapon-tile{height:200.7px!important;min-height:200.7px!important}
+.fixed-stage .weapon-column:nth-child(2) .weapon-tile:nth-of-type(1){top:0}
+.fixed-stage .weapon-column:nth-child(2) .weapon-tile:nth-of-type(2){top:208.3px}
+.fixed-stage .weapon-column:nth-child(2) .weapon-tile:nth-of-type(3){top:481px}
+.fixed-stage .weapon-column:nth-child(2) .weapon-tile:nth-of-type(4){top:689.3px}
+.fixed-stage .weapon-column:nth-child(2) .weapon-column-grid>h3{top:431px}
+.fixed-stage .weapon-column:nth-child(2) .weapon-tile>img:first-child{height:169px!important}
+
+.fixed-stage .weapon-column:nth-child(3) .weapon-tile,
+.fixed-stage .weapon-column:nth-child(4) .weapon-tile{height:159.04px!important;min-height:159.04px!important}
+.fixed-stage .weapon-column:nth-child(3) .weapon-tile:nth-of-type(2),
+.fixed-stage .weapon-column:nth-child(4) .weapon-tile:nth-of-type(2){top:166.64px}
+.fixed-stage .weapon-column:nth-child(3) .weapon-tile:nth-of-type(3),
+.fixed-stage .weapon-column:nth-child(4) .weapon-tile:nth-of-type(3){top:333.28px}
+.fixed-stage .weapon-column:nth-child(3) .weapon-tile:nth-of-type(4){top:499.92px}
+.fixed-stage .weapon-column:nth-child(3) .weapon-tile:nth-of-type(5),
+.fixed-stage .weapon-column:nth-child(4) .weapon-tile:nth-of-type(5){top:730.96px}
+.fixed-stage .weapon-column:nth-child(3) .weapon-column-grid>h3{top:681px}
+.fixed-stage .weapon-column:nth-child(4) .weapon-tile:nth-of-type(4){top:564.32px}
+.fixed-stage .weapon-column:nth-child(4) .weapon-column-grid>h3{top:514.32px}
+.fixed-stage .weapon-column:nth-child(3) .weapon-tile>img:first-child,
+.fixed-stage .weapon-column:nth-child(4) .weapon-tile>img:first-child{height:137px!important}
+
+/* Player card: rectangular upper 3/4, fading inverted-triangle lower 1/4 */
+.fixed-stage .profile-panel{grid-template-rows:36px 520px 38px 235px!important}
+.fixed-stage .player-card{
+  width:255px!important;height:520px!important;margin-left:-10px;
+  --frame:#dfe7e7;--active:#18ffe0;
+  background:
+    linear-gradient(var(--frame),var(--frame)) left top/100% 1px no-repeat,
+    linear-gradient(var(--frame),var(--frame)) left top/1px 75% no-repeat,
+    linear-gradient(var(--frame),var(--frame)) right top/1px 75% no-repeat,
+    linear-gradient(45deg,transparent 49.4%,var(--frame) 49.7% 50.3%,transparent 50.6%) left bottom/42% 25% no-repeat,
+    linear-gradient(-45deg,transparent 49.4%,var(--frame) 49.7% 50.3%,transparent 50.6%) right bottom/42% 25% no-repeat,
+    linear-gradient(var(--frame),var(--frame)) 42% 100%/1px 22px no-repeat,
+    linear-gradient(var(--frame),var(--frame)) 58% 100%/1px 22px no-repeat!important;
+  box-shadow:none!important;
+}
+.fixed-stage .player-card-inner{
+  position:absolute;left:10px;top:10px;width:235px;height:492px;padding-top:88px;
+  background:linear-gradient(155deg,#102b36,#173840 48%,rgba(7,28,38,.22));
+  clip-path:polygon(0 0,100% 0,100% 75%,50% 100%,0 75%);
+  -webkit-mask-image:linear-gradient(to bottom,#000 0 75%,rgba(0,0,0,.86) 84%,transparent 100%);
+  mask-image:linear-gradient(to bottom,#000 0 75%,rgba(0,0,0,.86) 84%,transparent 100%);
+  box-shadow:none;transition:filter .32s ease;
+}
+.fixed-stage .player-card-inner:before{
+  inset:12px 10px 98px;border:1px solid rgba(170,193,197,.35);
+  clip-path:polygon(0 0,100% 0,100% 77%,50% 100%,0 77%);
+}
+.fixed-stage .player-card-inner:after{display:none}
+.fixed-stage .player-card:before,.fixed-stage .player-card:after{
+  content:"";position:absolute;z-index:5;top:88px;bottom:auto;width:18px;height:52px;
+  background:
+    linear-gradient(var(--frame),var(--frame)) left top/100% 1px no-repeat,
+    linear-gradient(var(--frame),var(--frame)) left center/65% 1px no-repeat,
+    linear-gradient(var(--frame),var(--frame)) left bottom/100% 1px no-repeat;
+  transform:none;transition:background .3s ease;
+}
+.fixed-stage .player-card:before{left:-8px}
+.fixed-stage .player-card:after{left:auto;right:-8px;transform:scaleX(-1)}
+.fixed-stage .card-energy{
+  left:-4px;right:-4px;top:-10px;height:24px;
+  background:linear-gradient(90deg,var(--frame) 0 39%,transparent 39% 61%,var(--frame) 61% 100%) center/100% 5px no-repeat;
+}
+.fixed-stage .card-energy span{top:1px}
+.fixed-stage .player-card:hover{
+  background:
+    linear-gradient(var(--active),var(--active)) left top/100% 2px no-repeat,
+    linear-gradient(var(--active),var(--active)) left top/2px 75% no-repeat,
+    linear-gradient(var(--active),var(--active)) right top/2px 75% no-repeat,
+    linear-gradient(45deg,transparent 49%,var(--active) 49.5% 50.5%,transparent 51%) left bottom/42% 25% no-repeat,
+    linear-gradient(-45deg,transparent 49%,var(--active) 49.5% 50.5%,transparent 51%) right bottom/42% 25% no-repeat,
+    linear-gradient(var(--active),var(--active)) 42% 100%/2px 22px no-repeat,
+    linear-gradient(var(--active),var(--active)) 58% 100%/2px 22px no-repeat!important;
+}
+.fixed-stage .player-card:hover .player-card-inner{box-shadow:none;filter:saturate(1.08) drop-shadow(0 0 8px rgba(24,255,224,.16))}
+.fixed-stage .player-card:hover:before,.fixed-stage .player-card:hover:after{height:52px;background:
+  linear-gradient(var(--active),var(--active)) left top/100% 1px no-repeat,
+  linear-gradient(var(--active),var(--active)) left center/65% 1px no-repeat,
+  linear-gradient(var(--active),var(--active)) left bottom/100% 1px no-repeat}
+
+/* Expression wheel: shortened extensions retract on hover; only rings activate */
+.fixed-stage .spray-wheel{width:235px!important;height:235px!important;align-self:end!important;transition:border-color .3s ease,box-shadow .3s ease}
+.fixed-stage .spray-wheel:before,.fixed-stage .spray-wheel:after{
+  width:109.33%;height:1px!important;
+  background:linear-gradient(90deg,#58707a 0 4%,transparent 4% 8%,#58707a 8% 92%,transparent 92% 96%,#58707a 96% 100%)!important;
+  transition:width .32s ease!important;
+}
+.fixed-stage .spray-wheel i{
+  width:48px!important;height:48px!important;background:transparent!important;
+  box-shadow:none!important;border:0!important;
+}
+.fixed-stage .spray-wheel i:nth-child(1){left:calc(50% - 24px)!important;top:18px!important}
+.fixed-stage .spray-wheel i:nth-child(2){left:18px!important;top:calc(50% - 24px)!important}
+.fixed-stage .spray-wheel i:nth-child(3){right:18px!important;top:calc(50% - 24px)!important}
+.fixed-stage .spray-wheel i:nth-child(4){left:calc(50% - 24px)!important;bottom:18px!important;background:#9f302f!important}
+.fixed-stage .spray-wheel:hover{
+  border-color:#22ffc5!important;box-shadow:0 0 0 3px rgba(34,255,197,.75),0 0 15px rgba(34,255,197,.18);
+}
+.fixed-stage .spray-wheel:hover:before,.fixed-stage .spray-wheel:hover:after{width:88%;height:1px!important;background:#58707a!important}
+.fixed-stage .spray-wheel:hover i{transform:none;box-shadow:none!important}
+.fixed-stage .spray-wheel span{transition:transform .3s ease,border-color .3s ease,box-shadow .3s ease}
+.fixed-stage .spray-wheel:hover span{transform:scale(1.08);border-color:#22ffc5!important;box-shadow:0 0 0 2px rgba(34,255,197,.65),0 0 8px rgba(34,255,197,.25)}
