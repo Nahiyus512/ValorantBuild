@@ -12,6 +12,12 @@ type Equipped={skinId:string;chromaId:string;buddyId:string|null};
 const categoryNames:Record<string,string>={Sidearm:"佩枪",SMG:"冲锋枪",Shotgun:"霰弹枪",Rifle:"步枪",Sniper:"狙击枪",Heavy:"机枪",Melee:"近战武器"};
 const categoryOrder=["Sidearm","SMG","Shotgun","Rifle","Sniper","Heavy","Melee"];
 const qualityOrder=["Select","Deluxe","Premium","Exclusive","Ultra"];
+const homeColumns=[
+  {title:"佩枪",items:[["标配",1],["短炮",2],["狂怒",3],["鬼魅",4],["追猎",5],["正义",6]]},
+  {title:"冲锋枪",items:[["蜂刺",1],["骇灵",2],["雄鹿",5],["判官",6]],subtitles:[["霰弹枪",4]]},
+  {title:"步枪",items:[["獠犬",1],["戍卫",2],["幻影",3],["狂徒",4],["近战武器",6]],subtitles:[["近战武器",5]]},
+  {title:"狙击枪",items:[["飞将",1],["莽侠",2],["冥驹",3],["战神",5],["奥丁",6]],subtitles:[["机枪",4]]},
+] as const;
 
 export function LoadoutDemo(){
   const [data,setData]=useState<Data|null>(null);
@@ -63,19 +69,18 @@ export function LoadoutDemo(){
 
   if(page==="home")return <main className="game-shell">
     <div className="game-bg"/>
-    <div className="home-bar"><div className="home-mark">V</div><small>装备构建器 · 国服点券</small></div>
+    <div className="home-bar"><div className="home-mark">V</div></div>
     <section className="loadout-layout">
       <div className="weapon-board">
-        {categoryOrder.map(category=>{
-          const group=data.weapons.filter(w=>w.category===category);
-          return <section className={`weapon-group group-${category}`} key={category}><h2>{categoryNames[category]}</h2><div>
-            {group.map(w=>{const load=equipped[w.id];const skin=w.skins.find(s=>s.id===load?.skinId);const buddy=data.buddies.find(b=>b.id===load?.buddyId);
-              return <button className="weapon-tile" key={w.id} onClick={()=>openWeapon(w)}>
+        {homeColumns.map(column=><section className="weapon-column" key={column.title}><h2>{column.title}</h2><div className="weapon-column-grid">
+          {"subtitles" in column&&column.subtitles.map(([label,row])=><h3 key={label} style={{gridRow:row}}>{label}</h3>)}
+          {column.items.map(([name,row])=>{const w=data.weapons.find(x=>x.name===name)!;const load=equipped[w.id];const skin=w.skins.find(s=>s.id===load?.skinId);const buddy=data.buddies.find(b=>b.id===load?.buddyId);
+              return <button className="weapon-tile" style={{gridRow:row}} key={w.id} onClick={()=>openWeapon(w)}>
                 <img src={displayFor(w)} alt={w.name}/>{buddy&&<img className="tile-buddy" src={buddy.icon} alt=""/>}<span>{w.name}</span><small>{skin?.rarityName??"默认"}</small>
               </button>})}
-          </div></section>})}
+          </div></section>)}
       </div>
-      <aside className="profile-panel"><h2>玩家卡面</h2><div className="player-card"><div className="v-shape">V</div><strong>VALO LOADOUT</strong><small>装备分析师</small></div><h2>个性表达</h2><div className="spray-wheel"><i>V</i><i>V</i><i>V</i><i>V</i><span/></div><p>点击任意武器配置皮肤与挂饰</p></aside>
+      <aside className="profile-panel"><h2>玩家卡面</h2><div className="player-card"><div className="v-shape">V</div><strong>ValorantBuild</strong><small>装备分析师</small></div><h2>个性表达</h2><div className="spray-wheel"><i>V</i><i>V</i><i>V</i><i>V</i><span/></div></aside>
     </section>
     <div className="home-foot"><span>20 种武器</span><span>1,364 款可用皮肤</span><span>866 个挂饰</span></div>
   </main>;

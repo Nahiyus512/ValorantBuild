@@ -29,3 +29,24 @@
 .equip-button.equipped{background:rgba(7,25,35,.28)!important;color:#53656c!important;border-color:#243941!important;box-shadow:0 0 0 2px #142730,0 0 0 4px #20353d!important}
 @media(max-width:1000px){.loadout-layout{grid-template-columns:1fr}.selector-layout{grid-template-columns:420px 1fr}.player-card{height:420px}.spray-wheel{width:165px;height:165px}}
 @media(max-width:700px){.selector-layout{display:block}.preview-title img{width:28px;height:28px}.main-gun{width:100%;height:210px}.gun-buddy{left:68%;top:61%}.selection-meta{min-height:150px}.chroma-row{left:0;transform:none;bottom:90px;max-width:100%;overflow-x:auto}.equip-button{width:190px}.favorite-button{width:52px!important}}
+
+@font-face{font-family:"Noto Sans SC";src:url("/fonts/NotoSansSC-VF.ttf") format("truetype");font-weight:100 900;font-style:normal;font-display:swap}
+html,body{width:100%;height:100%;overflow:hidden;font-family:"Noto Sans SC","Microsoft YaHei",sans-serif;font-weight:900}
+button,input,select{font-family:inherit;font-weight:900}
+.game-shell{height:100vh;min-height:0;overflow:hidden}
+.home-bar{height:5.4vh;min-height:46px}.home-mark{height:100%;font-family:"Noto Sans SC",sans-serif}
+.loadout-layout{height:calc(100vh - max(46px,5.4vh));grid-template-columns:minmax(0,1fr) clamp(170px,12.2vw,225px);gap:3.2vw;max-width:none;padding:5.8vh 5.4vw 3.2vh}
+.weapon-board{height:100%;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:2.1vw}
+.weapon-column{height:100%;min-height:0}.weapon-column>h2{height:3.4vh;margin:0;text-align:center;font-size:clamp(13px,1.1vw,19px)}
+.weapon-column-grid{height:calc(100% - 3.4vh);display:grid;grid-template-rows:repeat(6,minmax(0,1fr));gap:1.15vh;position:relative}
+.weapon-column-grid>h3{align-self:start;transform:translateY(-2.6vh);text-align:center;font-size:clamp(13px,1.1vw,19px);margin:0;z-index:2;pointer-events:none}
+.weapon-tile{height:auto;min-height:0;width:100%;padding:.45vh .5vw}
+.weapon-tile>img:first-child{height:calc(100% - 2.4vh)}.weapon-tile span{font-size:clamp(8px,.62vw,11px)}.weapon-tile small{font-size:clamp(6px,.48vw,9px)}
+.profile-panel{height:100%;display:grid;grid-template-rows:3.4vh minmax(0,56%) 4vh minmax(0,1fr);min-height:0}.profile-panel h2{margin:0!important;align-self:start;font-size:clamp(13px,1.1vw,19px)}
+.player-card{height:100%;min-height:0;padding-top:8vh}.v-shape{font-size:clamp(52px,5.2vw,92px)}.player-card strong{margin-top:5vh;font-size:clamp(9px,.8vw,14px)}.player-card small{font-size:clamp(7px,.55vw,10px)}
+.spray-wheel{width:min(100%,20vh);height:auto;aspect-ratio:1;align-self:end}.spray-wheel i{width:3.8vh;height:3.8vh}.spray-wheel i:nth-child(1){left:calc(50% - 1.9vh);top:5%}.spray-wheel i:nth-child(2){left:5%;top:calc(50% - 1.9vh)}.spray-wheel i:nth-child(3){right:5%;top:calc(50% - 1.9vh)}.spray-wheel i:nth-child(4){left:calc(50% - 1.9vh);bottom:5%}.spray-wheel span{inset:37%}
+.home-foot{display:none}
+.select-bar{height:5.4vh;min-height:46px}.selector-layout{height:calc(100vh - max(46px,5.4vh));overflow:hidden}.item-browser,.weapon-preview{height:100%;overflow:hidden}
+.skin-grid,.buddy-grid{height:calc(100% - 62px);scrollbar-width:none}.skin-grid::-webkit-scrollbar,.buddy-grid::-webkit-scrollbar{display:none}.gun-stage{min-height:0}
+@media(max-width:1000px){.loadout-layout{grid-template-columns:minmax(0,1fr) 170px;padding-left:2vw;padding-right:2vw;gap:2vw}.weapon-board{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:1vw}.profile-panel{display:grid}.selector-layout{grid-template-columns:390px 1fr}}
+@media(max-width:700px){html,body{overflow:hidden}.loadout-layout{height:calc(100vh - 46px);display:grid;grid-template-columns:1fr;padding:2vh 6px}.profile-panel{display:none}.weapon-board{grid-template-columns:repeat(4,minmax(0,1fr));overflow:hidden;gap:4px}.weapon-column{min-width:0}.selector-layout{height:calc(100vh - 46px);overflow:hidden}.item-browser{height:41%}.weapon-preview{height:59%;min-height:0}.skin-grid,.buddy-grid{height:calc(100% - 96px)}}
