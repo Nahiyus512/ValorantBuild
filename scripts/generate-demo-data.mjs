@@ -11,11 +11,17 @@ const rawBuddyMap = new Map(rawBuddies.map((buddy) => [buddy.uuid, buddy]));
 
 const asset = (type, uuid, name) =>
   `https://media.valorant-api.com/${type}/${uuid}/${name}.png`;
-const cnTierPrices = { Select: 630, Deluxe: 930, Premium: 1290, Exclusive: 1590, Ultra: 1790 };
+const cnTierPrices = { Select: 590, Deluxe: 890, Premium: 1290, Exclusive: 1590, Ultra: 1790 };
+const meleePriceCN = (priceVP) => {
+  if (priceVP <= 1750) return 1180;
+  if (priceVP <= 2550) return 2580;
+  if (priceVP <= 3550) return 3180;
+  return 3780;
+};
 
 const output = {
   generatedAt: new Date().toISOString(),
-  priceNote: "价格采用国服品质档位：精选 630、豪华 930、卓越 1290、传奇 1590、终极 1790 点券。",
+  priceNote: "枪械采用国服品质档位；近战武器按 1180、2580、3180、3780 四档独立定价。",
   weapons: weapons.map((weapon) => {
     const raw = rawWeaponMap.get(weapon.uuid);
     return {
@@ -37,7 +43,9 @@ const output = {
             ? asset("contenttiers", skin.rarityUuid, "displayicon")
             : null,
           priceVP: skin.priceVP,
-          priceCN: skin.priceVP == null ? null : (cnTierPrices[skin.rarity] ?? null),
+          priceCN: skin.priceVP == null
+            ? null
+            : (weapon.category === "Melee" ? meleePriceCN(skin.priceVP) : (cnTierPrices[skin.rarity] ?? null)),
           icon: asset("weaponskins", skin.uuid, "displayicon"),
           chromas: skin.chromas.map((chroma, index) => ({
             id: chroma.uuid,
