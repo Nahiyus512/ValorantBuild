@@ -713,3 +713,58 @@ html,body{width:100%;height:100%;overflow:hidden!important}
 .fixed-stage .skin-grid,.fixed-stage .buddy-grid{grid-template-columns:repeat(3,1fr)!important}
 .fixed-stage .weapon-preview .gun-stage{transform:scale(1.13);transform-origin:center center}
 .fixed-stage .weapon-preview .main-gun{width:900px!important;height:350px!important}
+
+/* Top actions and compact brand wings */
+.fixed-stage .select-brand:before{width:780px}
+.fixed-stage .top-return,.fixed-stage .top-rank,.fixed-stage .top-export{
+  position:absolute;z-index:3;top:0;height:58px;border:0;background:none;color:#fff;font-size:25px;
+}
+.fixed-stage .top-return{left:24px}.fixed-stage .top-rank{left:280px}.fixed-stage .top-export{right:280px}
+.fixed-stage .weapon-crumb{position:absolute;left:18px;top:18px;color:#dfe7e7;font-size:18px}
+
+/* Flush browser and clearly visible scroll rail */
+.fixed-stage .item-browser{padding-left:0!important}
+.fixed-stage .skin-grid,.fixed-stage .buddy-grid{
+  padding-right:12px!important;scrollbar-width:auto!important;scrollbar-color:#fff transparent!important;
+}
+.fixed-stage .skin-grid::-webkit-scrollbar,.fixed-stage .buddy-grid::-webkit-scrollbar{display:block!important;width:8px!important}
+.fixed-stage .skin-grid::-webkit-scrollbar-track,.fixed-stage .buddy-grid::-webkit-scrollbar-track{background:transparent}
+.fixed-stage .skin-grid::-webkit-scrollbar-thumb,.fixed-stage .buddy-grid::-webkit-scrollbar-thumb{background:#fff!important;border-radius:0}
+.fixed-stage .browser-tools.buddy-tools{grid-template-columns:1fr!important}
+.fixed-stage .browser-tools.buddy-tools label{grid-column:1/-1}
+
+/* Editable player identity */
+.fixed-stage .card-energy input{
+  position:absolute;z-index:3;left:50%;top:1px;transform:translateX(-50%);width:44px;height:18px;
+  padding:0 4px;border:1px solid #d6a98a;border-radius:10px;outline:0;background:#38231f;color:#fff;
+  text-align:center;font-size:10px;font-weight:900;
+}
+.fixed-stage .card-id{
+  display:block;position:relative;z-index:3;width:100%;height:36px;margin-top:70px;padding:0 8px;
+  border:0;outline:0;background:#f1ce65;color:#111;text-align:center;font-size:14px;font-weight:900;
+}
+.fixed-stage .player-card:hover .card-id{background:var(--card-active)}
+.fixed-stage .card-energy:after{display:none!important}
+
+/* Inner wheel repeats the outer gap and retract behavior */
+.fixed-stage .spray-wheel span{
+  border:0!important;background:conic-gradient(
+    #58707a 0 11%,transparent 11% 14%,#58707a 14% 36%,
+    transparent 36% 39%,#58707a 39% 61%,transparent 61% 64%,
+    #58707a 64% 86%,transparent 86% 89%,#58707a 89% 100%
+  )!important;
+  -webkit-mask:radial-gradient(farthest-side,transparent calc(100% - 2px),#000 calc(100% - 2px));
+  mask:radial-gradient(farthest-side,transparent calc(100% - 2px),#000 calc(100% - 2px));
+}
+.fixed-stage .inner-spokes{
+  position:absolute;z-index:3;left:36%;top:36%;width:28%;height:28%;border-radius:50%;background:#102630;text-decoration:none;
+}
+.fixed-stage .inner-spokes:before,.fixed-stage .inner-spokes:after{
+  content:"";position:absolute;left:50%;top:50%;width:128%;height:1px;background:#58707a;
+  transform:translate(-50%,-50%) rotate(45deg);transition:width .3s ease;
+}
+.fixed-stage .inner-spokes:after{transform:translate(-50%,-50%) rotate(-45deg)}
+.fixed-stage .spray-wheel:hover .inner-spokes:before,.fixed-stage .spray-wheel:hover .inner-spokes:after{width:100%}
+.fixed-stage .spray-wheel:hover span{
+  transform:scale(1.025);background:#22ffc5!important;box-shadow:none!important;
+}

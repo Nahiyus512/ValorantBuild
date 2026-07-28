@@ -33,6 +33,8 @@ export function LoadoutDemo(){
   const [equipped,setEquipped]=useState<Record<string,Equipped>>({});
   const [filterOpen,setFilterOpen]=useState(false);
   const [canvasScale,setCanvasScale]=useState(1);
+  const [playerName,setPlayerName]=useState("ValorantBuild");
+  const [playerLevel,setPlayerLevel]=useState("100");
 
   useEffect(()=>{fetch("/demo-data.json").then(r=>r.json()).then((d:Data)=>{
     setData(d);
@@ -86,7 +88,7 @@ export function LoadoutDemo(){
               </button>})}
           </div></section>)}
       </div>
-      <aside className="profile-panel"><h2>玩家卡面</h2><div className="player-card"><div className="card-energy"><span>107</span></div><div className="player-card-inner"><div className="v-shape">V</div><strong>ValorantBuild</strong><small>装备分析师</small></div></div><h2>个性表达</h2><div className="spray-wheel"><b className="wheel-ring"/><i>V</i><i>V</i><i>V</i><i>V</i><span/></div></aside>
+      <aside className="profile-panel"><h2>玩家卡面</h2><div className="player-card"><div className="card-energy"><input aria-label="玩家等级" value={playerLevel} maxLength={3} onChange={e=>setPlayerLevel(e.target.value.replace(/\D/g,""))}/></div><div className="player-card-inner"><div className="v-shape">V</div><input className="card-id" aria-label="玩家 ID" value={playerName} maxLength={20} onChange={e=>setPlayerName(e.target.value)}/><small>装备分析师</small></div></div><h2>个性表达</h2><div className="spray-wheel"><b className="wheel-ring"/><u className="inner-spokes"/><i>V</i><i>V</i><i>V</i><i>V</i><span/></div></aside>
     </section>
     <div className="home-foot"><span>20 种武器</span><span>1,364 款可用皮肤</span><span>866 个挂饰</span></div>
     </div>
@@ -95,14 +97,14 @@ export function LoadoutDemo(){
   return <main className="game-shell">
     <div className="game-bg"/>
     <div className="fixed-stage" style={{"--canvas-scale":canvasScale} as React.CSSProperties}>
-    <header className="select-bar"><div className="select-brand">ValorantBuild</div></header>
+    <header className="select-bar"><button className="top-return" onClick={()=>setPage("home")}>‹ 返回</button><button className="top-rank">排行</button><div className="select-brand">ValorantBuild</div><button className="top-export">导出</button></header>
     <nav className="selector-subnav">
-      <button className="selector-back" onClick={()=>setPage("home")}>‹ 返回 <i>//</i> {weapon?.name}</button>
+      <div className="weapon-crumb">// {weapon?.name}</div>
       <div className="selector-tabs"><button className={tab==="skin"?"active":""} onClick={()=>{setTab("skin");setQuery("")}}>皮肤</button>{weapon?.category!=="Melee"&&<button className={tab==="buddy"?"active":""} onClick={()=>{setTab("buddy");setQuery("")}}>挂饰</button>}</div>
     </nav>
     <div className="selector-layout">
       <aside className="item-browser">
-        <div className="browser-tools"><label>⌕<input value={query} onChange={e=>setQuery(e.target.value)} placeholder={tab==="skin"?"搜索皮肤":"搜索挂饰"}/></label>
+        <div className={`browser-tools ${tab==="buddy"?"buddy-tools":""}`}><label>⌕<input value={query} onChange={e=>setQuery(e.target.value)} placeholder={tab==="skin"?"搜索皮肤":"搜索挂饰"}/></label>
           {tab==="skin"&&<button className={`filter-trigger ${filterOpen?"on":""}`} aria-label="打开筛选与排序" onClick={()=>setFilterOpen(true)}><span/><span/><span/></button>}
         </div>
         <div className={tab==="skin"?"skin-grid":"buddy-grid"}>
