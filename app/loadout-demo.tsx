@@ -19,6 +19,16 @@ const homeColumns=[
   {title:"狙击枪",items:[["飞将",1],["莽侠",2],["冥驹",3],["战神",5],["奥丁",6]],subtitles:[["机枪",4]]},
 ] as const;
 
+function TopBrandBar({onBack,weaponName}:{onBack?:()=>void;weaponName?:string}){
+  return <header className="home-bar shared-topbar">
+    {onBack&&<button className="top-return" onClick={onBack}>‹ 返回</button>}
+    {weaponName&&<span className="top-weapon">// {weaponName}</span>}
+    <button className="top-rank">排行</button>
+    <div className="home-mark">ValorantBuild</div>
+    <button className="top-export">导出</button>
+  </header>
+}
+
 export function LoadoutDemo(){
   const [data,setData]=useState<Data|null>(null);
   const [page,setPage]=useState<"home"|"select">("home");
@@ -51,6 +61,7 @@ export function LoadoutDemo(){
   const selectedSkin=weapon?.skins.find(s=>s.id===skinId);
   const selectedChroma=selectedSkin?.chromas.find(c=>c.id===chromaId)??selectedSkin?.chromas[0];
   const selectedBuddy=weapon?.category==="Melee"?undefined:data?.buddies.find(b=>b.id===buddyId);
+  const selectionIsEquipped=!!(weapon&&selectedSkin&&selectedChroma&&equipped[weapon.id]?.skinId===selectedSkin.id&&equipped[weapon.id]?.chromaId===selectedChroma.id&&equipped[weapon.id]?.buddyId===buddyId);
 
   const visibleSkins=useMemo(()=>{
     if(!weapon)return[];
@@ -68,7 +79,15 @@ export function LoadoutDemo(){
     setWeaponId(w.id);setSkinId(skin.id);setChromaId(load?.chromaId??skin.chromas[0]?.id);setBuddyId(w.category==="Melee"?null:load?.buddyId??null);setTab("skin");setQuery("");setPage("select");
   }
   function chooseSkin(s:Skin){setSkinId(s.id);setChromaId(s.chromas[0]?.id)}
-  function equip(){if(!weapon||!selectedSkin||!selectedChroma)return;setEquipped(v=>({...v,[weapon.id]:{skinId:selectedSkin.id,chromaId:selectedChroma.id,buddyId:weapon.category==="Melee"?null:buddyId}}))}
+  function equip(){
+    if(!weapon||!selectedSkin||!selectedChroma)return;
+    if(selectionIsEquipped){
+      const defaultSkin=weapon.skins.find(s=>s.id===weapon.defaultSkinId)??weapon.skins.at(-1)!;
+      setEquipped(v=>({...v,[weapon.id]:{skinId:defaultSkin.id,chromaId:defaultSkin.chromas[0]?.id,buddyId:null}}));
+      return;
+    }
+    setEquipped(v=>({...v,[weapon.id]:{skinId:selectedSkin.id,chromaId:selectedChroma.id,buddyId:weapon.category==="Melee"?null:buddyId}}))
+  }
   function toggleQuality(q:string){setQualities(v=>v.includes(q)?v.filter(x=>x!==q):[...v,q])}
   function displayFor(w:Weapon){const load=equipped[w.id];const s=w.skins.find(x=>x.id===load?.skinId)??w.skins.at(-1)!;return s.chromas.find(c=>c.id===load?.chromaId)?.render??s.chromas[0]?.render??w.icon}
 
@@ -77,7 +96,7 @@ export function LoadoutDemo(){
   if(page==="home")return <main className="game-shell">
     <div className="game-bg"/>
     <div className="fixed-stage" style={{"--canvas-scale":canvasScale} as React.CSSProperties}>
-    <div className="home-bar"><div className="home-mark">ValorantBuild</div></div>
+    <TopBrandBar/>
     <section className="loadout-layout">
       <div className="weapon-board">
         {homeColumns.map(column=><section className="weapon-column" key={column.title}><h2>{column.title}</h2><div className="weapon-column-grid">
@@ -97,9 +116,8 @@ export function LoadoutDemo(){
   return <main className="game-shell">
     <div className="game-bg"/>
     <div className="fixed-stage" style={{"--canvas-scale":canvasScale} as React.CSSProperties}>
-    <header className="select-bar"><button className="top-return" onClick={()=>setPage("home")}>‹ 返回</button><button className="top-rank">排行</button><div className="select-brand">ValorantBuild</div><button className="top-export">导出</button></header>
+    <TopBrandBar onBack={()=>setPage("home")} weaponName={weapon?.name}/>
     <nav className="selector-subnav">
-      <div className="weapon-crumb">// {weapon?.name}</div>
       <div className="selector-tabs"><button className={tab==="skin"?"active":""} onClick={()=>{setTab("skin");setQuery("")}}>皮肤</button>{weapon?.category!=="Melee"&&<button className={tab==="buddy"?"active":""} onClick={()=>{setTab("buddy");setQuery("")}}>挂饰</button>}</div>
     </nav>
     <div className="selector-layout">
@@ -118,7 +136,7 @@ export function LoadoutDemo(){
         <div className="selection-meta">
           {tab==="skin"&&selectedSkin&&selectedSkin.chromas.length>1&&<div className="chroma-row">{selectedSkin.chromas.map(c=><button key={c.id} className={selectedChroma?.id===c.id?"selected":""} onClick={()=>setChromaId(c.id)} title={c.name}>{c.swatch?<img src={c.swatch} alt=""/>:<img src={c.render} alt=""/>}</button>)}</div>}
           {tab==="buddy"&&<div className="buddy-summary"><span>当前挂饰</span><strong>{selectedBuddy?.name??"无挂饰"}</strong><small>挂饰会应用在当前武器配置中</small></div>}
-          <div className="equip-row"><button className={(weapon&&selectedSkin&&selectedChroma&&equipped[weapon.id]?.skinId===selectedSkin.id&&equipped[weapon.id]?.chromaId===selectedChroma.id&&equipped[weapon.id]?.buddyId===buddyId)?"equip-button equipped":"equip-button"} onClick={equip}>{(weapon&&selectedSkin&&selectedChroma&&equipped[weapon.id]?.skinId===selectedSkin.id&&equipped[weapon.id]?.chromaId===selectedChroma.id&&equipped[weapon.id]?.buddyId===buddyId)?"已装备":"装备"}</button></div>
+          <div className="equip-row"><button className={selectionIsEquipped?"equip-button equipped":"equip-button"} onClick={equip}>{selectionIsEquipped?"已装备":"装备"}</button></div>
         </div>
       </section>
     </div>

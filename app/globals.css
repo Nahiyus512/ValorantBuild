@@ -768,3 +768,33 @@ html,body{width:100%;height:100%;overflow:hidden!important}
 .fixed-stage .spray-wheel:hover span{
   transform:scale(1.025);background:#22ffc5!important;box-shadow:none!important;
 }
+
+/* Shared top bar for home and selector */
+.fixed-stage .shared-topbar .home-mark:before{width:780px!important}
+.fixed-stage .shared-topbar .top-rank{left:650px}
+.fixed-stage .shared-topbar .top-export{right:650px}
+.fixed-stage .shared-topbar .top-return{left:0;padding:0 22px}
+.fixed-stage .top-weapon{
+  position:absolute;left:150px;top:0;height:58px;display:flex;align-items:center;
+  color:#fff!important;font-size:25px;font-style:normal;
+}
+
+/* Compact selector tabs */
+.fixed-stage .selector-tabs{width:260px}
+
+/* Search/filter ends at the third card, before the scrollbar rail */
+.fixed-stage .browser-tools{width:calc(100% - 20px)}
+.fixed-stage .skin-grid::-webkit-scrollbar-button,
+.fixed-stage .buddy-grid::-webkit-scrollbar-button{display:none!important;width:0!important;height:0!important}
+.fixed-stage .skin-grid::-webkit-scrollbar-track,
+.fixed-stage .buddy-grid::-webkit-scrollbar-track{
+  background:linear-gradient(90deg,transparent calc(50% - .5px),rgba(255,255,255,.55) calc(50% - .5px) calc(50% + .5px),transparent calc(50% + .5px))!important;
+}
+.fixed-stage .skin-grid::-webkit-scrollbar-thumb,
+.fixed-stage .buddy-grid::-webkit-scrollbar-thumb{background:#fff!important;border:0!important;border-radius:0!important}
+
+/* Clear the inner disc; spokes stop just past the inner ring */
+.fixed-stage .inner-spokes{
+  left:38%!important;top:38%!important;width:24%!important;height:24%!important;background:#102630!important;
+}
+.fixed-stage .inner-spokes:before,.fixed-stage .inner-spokes:after{display:none!important}
