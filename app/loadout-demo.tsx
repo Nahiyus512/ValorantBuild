@@ -25,13 +25,13 @@ const homeColumns=[
   {title:"狙击枪",items:[["飞将",1],["莽侠",2],["冥驹",3],["战神",5],["奥丁",6]],subtitles:[["机枪",4]]},
 ] as const;
 
-function TopBrandBar({onBack,weaponName,saveState}:{onBack?:()=>void;weaponName?:string;saveState:SaveState}){
+function TopBrandBar({onBack,weaponName,onShare}:{onBack?:()=>void;weaponName?:string;onShare:()=>void}){
   return <header className="home-bar shared-topbar">
     {onBack&&<button className="top-return" onClick={onBack}><span>&lt;</span> 返回</button>}
     {weaponName&&<span className="top-weapon">// {weaponName}</span>}
     <button className="top-rank">排行</button>
     <div className="home-mark">ValorantBuild</div>
-    <button className="top-export" aria-live="polite">{saveState==="loading"?"正在恢复":saveState==="saving"?"保存中":saveState==="error"?"保存失败":"已保存"}</button>
+    <button className="top-export" onClick={onShare}>分享</button>
   </header>
 }
 
@@ -83,11 +83,14 @@ export function LoadoutDemo(){
   const [listScroll,setListScroll]=useState(0);
   const [saveState,setSaveState]=useState<SaveState>("loading");
   const [storageReady,setStorageReady]=useState(false);
-  const [cosmeticTab,setCosmeticTab]=useState<"cards"|"titles"|"sprays"|"wheel">("cards");
+  const [cosmeticTab,setCosmeticTab]=useState<"cards"|"titles"|"sprays">("cards");
   const [selectedCardId,setSelectedCardId]=useState("");
   const [selectedTitleId,setSelectedTitleId]=useState("");
   const [selectedSprayId,setSelectedSprayId]=useState("");
+  const [equippedCardId,setEquippedCardId]=useState<string|null>(null);
+  const [equippedTitleId,setEquippedTitleId]=useState<string|null>(null);
   const [sprayWheel,setSprayWheel]=useState<string[]>([]);
+  const [wheelPickerOpen,setWheelPickerOpen]=useState(false);
 
   useEffect(()=>{fetch("/demo-data.json").then(r=>r.json() as Promise<Data>).then(d=>{
     setData(d);
@@ -103,24 +106,26 @@ export function LoadoutDemo(){
   }).catch(()=>setSaveState("error"))},[]);
   useEffect(()=>{fetch("/cosmetic-data.json").then(r=>r.json() as Promise<CosmeticData>).then(c=>{
     setCosmetics(c);
-    let stored:{selectedCardId?:string;selectedTitleId?:string;selectedSprayId?:string;sprayWheel?:string[]}|null=null;
+    let stored:{cosmeticVersion?:number;selectedCardId?:string;selectedTitleId?:string;selectedSprayId?:string;equippedCardId?:string|null;equippedTitleId?:string|null;sprayWheel?:string[]}|null=null;
     try{stored=JSON.parse(window.localStorage.getItem(localStorageKey)??"null")}catch{}
     setSelectedCardId(stored?.selectedCardId??c.cards[0]?.id??"");
     setSelectedTitleId(stored?.selectedTitleId??c.titles[0]?.id??"");
     setSelectedSprayId(stored?.selectedSprayId??c.sprays[0]?.id??"");
-    setSprayWheel(stored?.sprayWheel?.length?stored.sprayWheel:c.sprays.slice(0,4).map(s=>s.id));
+    setEquippedCardId(stored?.equippedCardId??null);
+    setEquippedTitleId(stored?.equippedTitleId??null);
+    setSprayWheel(stored?.cosmeticVersion===2?(stored.sprayWheel??[]):[]);
   })},[]);
   useEffect(()=>{
     if(!storageReady)return;
     setSaveState("saving");
     const timer=window.setTimeout(()=>{
       try{
-        window.localStorage.setItem(localStorageKey,JSON.stringify({playerName,playerLevel,equipped,selectedCardId,selectedTitleId,selectedSprayId,sprayWheel}));
+        window.localStorage.setItem(localStorageKey,JSON.stringify({cosmeticVersion:2,playerName,playerLevel,equipped,selectedCardId,selectedTitleId,selectedSprayId,equippedCardId,equippedTitleId,sprayWheel}));
         setSaveState("saved");
       }catch{setSaveState("error")}
     },250);
     return()=>window.clearTimeout(timer);
-  },[storageReady,playerName,playerLevel,equipped,selectedCardId,selectedTitleId,selectedSprayId,sprayWheel]);
+  },[storageReady,playerName,playerLevel,equipped,selectedCardId,selectedTitleId,selectedSprayId,equippedCardId,equippedTitleId,sprayWheel]);
   useEffect(()=>{
     const fit=()=>setCanvasScale(Math.min(window.innerWidth/1920,window.innerHeight/1080));
     fit();window.addEventListener("resize",fit);return()=>window.removeEventListener("resize",fit);
@@ -145,6 +150,8 @@ export function LoadoutDemo(){
   const selectedCard=cosmetics?.cards.find(c=>c.id===selectedCardId);
   const selectedTitle=cosmetics?.titles.find(t=>t.id===selectedTitleId);
   const selectedSpray=cosmetics?.sprays.find(s=>s.id===selectedSprayId);
+  const equippedCard=cosmetics?.cards.find(c=>c.id===equippedCardId);
+  const equippedTitle=cosmetics?.titles.find(t=>t.id===equippedTitleId);
   const cosmeticItems=useMemo(()=>{
     if(!cosmetics)return[];
     const source=cosmeticTab==="cards"?cosmetics.cards:cosmeticTab==="titles"?cosmetics.titles:cosmetics.sprays;
@@ -167,13 +174,29 @@ export function LoadoutDemo(){
   }
   function toggleQuality(q:string){setQualities(v=>v.includes(q)?v.filter(x=>x!==q):[...v,q])}
   function displayFor(w:Weapon){const load=equipped[w.id];const s=w.skins.find(x=>x.id===load?.skinId)??w.skins.at(-1)!;return s.chromas.find(c=>c.id===load?.chromaId)?.render??s.chromas[0]?.render??w.icon}
+  async function shareHome(){
+    if(page!=="home"){setPage("home");await new Promise(resolve=>window.setTimeout(resolve,80))}
+    const stage=document.querySelector(".fixed-stage");
+    if(!stage)return;
+    const clone=stage.cloneNode(true) as HTMLElement;
+    clone.style.setProperty("--canvas-scale","1");
+    clone.style.transform="none";clone.style.position="relative";clone.style.left="0";clone.style.top="0";
+    clone.querySelectorAll("img").forEach(img=>img.src=new URL(img.getAttribute("src")??"",window.location.href).href);
+    const css=Array.from(document.styleSheets).flatMap(sheet=>{try{return Array.from(sheet.cssRules).map(rule=>rule.cssText)}catch{return[]}}).join("\n").replaceAll("url(/",`url(${window.location.origin}/`);
+    const markup=new XMLSerializer().serializeToString(clone).replaceAll("url(/",`url(${window.location.origin}/`);
+    const svg=`<svg xmlns="http://www.w3.org/2000/svg" width="1920" height="1080"><foreignObject width="100%" height="100%"><div xmlns="http://www.w3.org/1999/xhtml"><style>${css}</style>${markup}</div></foreignObject></svg>`;
+    const image=new Image();
+    const url=URL.createObjectURL(new Blob([svg],{type:"image/svg+xml;charset=utf-8"}));
+    image.onload=()=>{const canvas=document.createElement("canvas");canvas.width=1920;canvas.height=1080;canvas.getContext("2d")?.drawImage(image,0,0);URL.revokeObjectURL(url);canvas.toBlob(blob=>{if(!blob)return;const a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download=`ValorantBuild-${Date.now()}.png`;a.click();window.setTimeout(()=>URL.revokeObjectURL(a.href),1000)},"image/png")};
+    image.src=url;
+  }
 
   if(!data)return <main className="loading"><span>V</span><p>正在装载 1,364 款皮肤资源…</p></main>;
 
   if(page==="home")return <main className="game-shell">
     <TacticalBackground/>
     <div className="fixed-stage" style={{"--canvas-scale":canvasScale} as React.CSSProperties}>
-    <TopBrandBar saveState={saveState}/>
+    <TopBrandBar onShare={shareHome}/>
     <section className="loadout-layout">
       <div className="weapon-board">
         {homeColumns.map(column=><section className="weapon-column" key={column.title}><h2>{column.title}</h2><div className="weapon-column-grid">
@@ -184,7 +207,7 @@ export function LoadoutDemo(){
               </button>})}
           </div></section>)}
       </div>
-      <aside className="profile-panel"><h2>玩家卡面</h2><div className="player-card" role="button" tabIndex={0} onClick={e=>{if((e.target as HTMLElement).tagName!=="INPUT"){setCosmeticTab("cards");setQuery("");setPage("card")}}} onKeyDown={e=>{if(e.key==="Enter"){setCosmeticTab("cards");setPage("card")}}} style={selectedCard?{backgroundImage:`linear-gradient(180deg,transparent 42%,rgba(4,14,20,.92)),url(${selectedCard.icon})`}:undefined}><div className="card-energy"><input aria-label="玩家等级" value={playerLevel} maxLength={3} onChange={e=>setPlayerLevel(e.target.value.replace(/\D/g,""))}/></div><div className="player-card-inner"><div className="v-shape">V</div><input className="card-id" aria-label="玩家 ID" value={playerName} maxLength={20} onChange={e=>setPlayerName(e.target.value)}/><small>{selectedTitle?.name??"装备分析师"}</small></div></div><h2>个性表达</h2><button className="spray-wheel" onClick={()=>{setCosmeticTab("sprays");setQuery("");setPage("expression")}} aria-label="选择喷漆和喷漆盘"><b className="wheel-ring"/><u className="inner-spokes"/>{sprayWheel.slice(0,4).map((id,index)=>{const spray=cosmetics?.sprays.find(s=>s.id===id);return <i key={`${id}-${index}`}>{spray?<img src={spray.icon} alt=""/>:"V"}</i>})}<span/></button></aside>
+      <aside className="profile-panel"><h2>玩家卡面</h2><div className="player-card" role="button" tabIndex={0} onClick={e=>{if((e.target as HTMLElement).tagName!=="INPUT"){setCosmeticTab("cards");setQuery("");setPage("card")}}} onKeyDown={e=>{if(e.key==="Enter"){setCosmeticTab("cards");setPage("card")}}} style={equippedCard?{"--card-art":`url(${equippedCard.icon})`} as React.CSSProperties:undefined}><div className="card-energy"><input aria-label="玩家等级" value={playerLevel} maxLength={3} onChange={e=>setPlayerLevel(e.target.value.replace(/\D/g,""))}/></div><div className="player-card-inner"><div className="v-shape">V</div><input className="card-id" aria-label="玩家 ID" value={playerName} maxLength={20} onChange={e=>setPlayerName(e.target.value)}/><small>{equippedTitle?.name??"装备分析师"}</small></div></div><h2>个性表达</h2><button className="spray-wheel" onClick={()=>{setCosmeticTab("sprays");setQuery("");setPage("expression")}} aria-label="选择喷漆"><b className="wheel-ring"/><u className="inner-spokes"/>{[0,1,2,3].map(index=>{const id=sprayWheel[index];const spray=cosmetics?.sprays.find(s=>s.id===id);return <i key={`${id??"empty"}-${index}`}>{spray?<img src={spray.icon} alt=""/>:<em>+</em>}</i>})}<span/></button></aside>
     </section>
     <div className="home-foot"><span>20 种武器</span><span>1,364 款可用皮肤</span><span>866 个挂饰</span></div>
     </div>
@@ -192,39 +215,45 @@ export function LoadoutDemo(){
 
   if(page==="card"||page==="expression"){
     const isCardPage=page==="card";
-    const tabs=isCardPage?[["cards","卡面"],["titles","称号"]] as const:[["sprays","喷漆"],["wheel","喷漆盘"]] as const;
+    const tabs=isCardPage?[["cards","卡面"],["titles","称号"]] as const:[["sprays","喷漆"]] as const;
     const currentName=cosmeticTab==="cards"?selectedCard?.name:cosmeticTab==="titles"?selectedTitle?.name:selectedSpray?.name;
+    const cosmeticIsEquipped=cosmeticTab==="cards"?equippedCardId===selectedCardId:cosmeticTab==="titles"?equippedTitleId===selectedTitleId:sprayWheel.includes(selectedSprayId);
+    const toggleCosmetic=()=>{
+      if(cosmeticTab==="cards")setEquippedCardId(cosmeticIsEquipped?null:selectedCardId);
+      else if(cosmeticTab==="titles")setEquippedTitleId(cosmeticIsEquipped?null:selectedTitleId);
+      else if(cosmeticIsEquipped)setSprayWheel(v=>v.map(id=>id===selectedSprayId?"":id));
+      else setWheelPickerOpen(true);
+    };
     return <main className="game-shell"><TacticalBackground/><div className="fixed-stage" style={{"--canvas-scale":canvasScale} as React.CSSProperties}>
-      <TopBrandBar onBack={()=>setPage("home")} weaponName={isCardPage?"玩家卡面":"个性表达"} saveState={saveState}/>
+      <TopBrandBar onBack={()=>setPage("home")} weaponName={isCardPage?"玩家卡面":"个性表达"} onShare={shareHome}/>
       <nav className="selector-subnav"><div className="selector-tabs cosmetic-tabs">{tabs.map(([id,label])=><button key={id} className={cosmeticTab===id?"active":""} onClick={()=>{setCosmeticTab(id);setQuery("");setListScroll(0)}}>{label}</button>)}</div></nav>
       <div className="selector-layout cosmetic-layout">
         <aside className="item-browser cosmetic-browser">
           <div className="browser-tools buddy-tools"><label>⌕<input value={query} onChange={e=>setQuery(e.target.value)} placeholder={`搜索${tabs.find(([id])=>id===cosmeticTab)?.[1]??""}`}/></label></div>
-          <div className={`cosmetic-grid ${cosmeticTab==="titles"?"title-grid":""}`} onScroll={e=>{const el=e.currentTarget;setListScroll(el.scrollTop/Math.max(1,el.scrollHeight-el.clientHeight))}}>
+          <div className={`cosmetic-grid ${cosmeticTab==="titles"?"title-grid":""}`}>
             {cosmeticItems.map(item=><button key={item.id} className={(cosmeticTab==="cards"?selectedCardId:cosmeticTab==="titles"?selectedTitleId:selectedSprayId)===item.id?"selected":""} onClick={()=>{
               if(cosmeticTab==="cards")setSelectedCardId(item.id);
               else if(cosmeticTab==="titles")setSelectedTitleId(item.id);
               else setSelectedSprayId(item.id);
             }}>{("icon" in item)&&<img src={item.icon} alt=""/>}<strong>{item.name}</strong></button>)}
           </div>
-          <div className="custom-scrollbar"><span style={{top:`${listScroll*648}px`}}/></div>
         </aside>
         <section className="weapon-preview cosmetic-preview">
           <div className="preview-title"><h1>{cosmeticTab==="wheel"?"喷漆盘":currentName}</h1></div>
           {cosmeticTab==="cards"&&<div className="card-preview">{selectedCard&&<img src={selectedCard.icon} alt={selectedCard.name}/>}<strong>{playerName}</strong><small>{selectedTitle?.name}</small></div>}
           {cosmeticTab==="titles"&&<div className="title-preview"><span>{playerName}</span><strong>{selectedTitle?.name}</strong></div>}
           {cosmeticTab==="sprays"&&<div className="spray-preview">{selectedSpray&&<img src={selectedSpray.icon} alt={selectedSpray.name}/>}</div>}
-          {cosmeticTab==="wheel"&&<div className="wheel-editor">{[0,1,2,3].map(slot=>{const spray=cosmetics?.sprays.find(s=>s.id===sprayWheel[slot]);return <button key={slot} onClick={()=>selectedSprayId&&setSprayWheel(v=>{const next=[...v];next[slot]=selectedSprayId;return next})}>{spray&&<img src={spray.icon} alt={spray.name}/>}<span>{slot+1}</span></button>})}<p>先在“喷漆”中选择，再点击位置替换喷漆</p></div>}
-          <div className="selection-meta"><div className="equip-row"><button className="equip-button equipped">已装备</button></div></div>
+          <div className="selection-meta"><div className="equip-row"><button className={cosmeticIsEquipped?"equip-button equipped":"equip-button"} onClick={toggleCosmetic}>{cosmeticIsEquipped?"取消装备":"装备"}</button></div></div>
         </section>
       </div>
+      {wheelPickerOpen&&<div className="filter-modal wheel-picker" role="dialog" aria-modal="true" aria-label="选择喷漆盘位置"><div className="wheel-picker-panel"><h2>选择装备位置</h2><button className="picker-close" onClick={()=>setWheelPickerOpen(false)}>×</button><div className="picker-wheel"><b className="wheel-ring"/><u className="inner-spokes"/>{[0,1,2,3].map(slot=>{const spray=cosmetics?.sprays.find(s=>s.id===sprayWheel[slot]);return <button key={slot} onClick={()=>{setSprayWheel(v=>{const next=[...v];while(next.length<4)next.push("");next[slot]=selectedSprayId;return next});setWheelPickerOpen(false)}}>{spray?<img src={spray.icon} alt={spray.name}/>:<em>+</em>}<span>{slot+1}</span></button>})}<span/></div></div></div>}
     </div></main>
   }
 
   return <main className="game-shell">
     <TacticalBackground/>
     <div className="fixed-stage" style={{"--canvas-scale":canvasScale} as React.CSSProperties}>
-    <TopBrandBar onBack={()=>setPage("home")} weaponName={weapon?.name} saveState={saveState}/>
+    <TopBrandBar onBack={()=>setPage("home")} weaponName={weapon?.name} onShare={shareHome}/>
     <nav className="selector-subnav">
       <div className="selector-tabs"><button className={tab==="skin"?"active":""} onClick={()=>{setTab("skin");setQuery("")}}>皮肤</button>{weapon?.category!=="Melee"&&<button className={tab==="buddy"?"active":""} onClick={()=>{setTab("buddy");setQuery("")}}>挂饰</button>}</div>
     </nav>
@@ -233,11 +262,10 @@ export function LoadoutDemo(){
         <div className={`browser-tools ${tab==="buddy"?"buddy-tools":""}`}><label>⌕<input value={query} onChange={e=>setQuery(e.target.value)} placeholder={tab==="skin"?"搜索皮肤":"搜索挂饰"}/></label>
           {tab==="skin"&&<button className={`filter-trigger ${filterOpen?"on":""}`} aria-label="打开筛选与排序" onClick={()=>setFilterOpen(true)}><span/><span/><span/></button>}
         </div>
-        <div className={tab==="skin"?"skin-grid":"buddy-grid"} onScroll={e=>{const el=e.currentTarget;setListScroll(el.scrollTop/Math.max(1,el.scrollHeight-el.clientHeight))}}>
+        <div className={tab==="skin"?"skin-grid":"buddy-grid"}>
           {tab==="skin"?visibleSkins.map(s=><button key={s.id} className={skinId===s.id?"selected":""} onClick={()=>chooseSkin(s)} style={{"--rarity":s.rarityColor} as React.CSSProperties}><img src={s.chromas[0]?.render??s.icon} alt=""/><strong>{s.name.replace(` ${weapon?.name}`,"")}</strong><small>{s.priceCN==null?"非直接售卖":`${s.priceCN} 点券`}</small></button>):
           <><button className={buddyId===null?"selected":""} onClick={()=>setBuddyId(null)} aria-label="不使用挂饰"><span className="no-buddy">×</span></button>{visibleBuddies.map(b=><button key={b.id} className={buddyId===b.id?"selected":""} onClick={()=>setBuddyId(b.id)}><img src={b.icon} alt=""/><strong>{b.name}</strong></button>)}</>}
         </div>
-        <div className="custom-scrollbar"><span style={{top:`${listScroll*648}px`}}/></div>
       </aside>
       <section className="weapon-preview">
         <div className="preview-title">{selectedSkin?.rarityIcon&&<img src={selectedSkin.rarityIcon} alt={selectedSkin.rarityName}/>}<h1>{selectedSkin?.name??weapon?.name}</h1></div>

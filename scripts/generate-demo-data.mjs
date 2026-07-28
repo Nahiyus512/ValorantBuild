@@ -77,10 +77,10 @@ fs.writeFileSync("public/demo-data.json", JSON.stringify(output));
 
 fs.mkdirSync("public/cosmetics/cards", { recursive: true });
 fs.mkdirSync("public/cosmetics/sprays", { recursive: true });
-const availableCards = cards.filter((card) => fs.existsSync(card.smallArt));
+const availableCards = cards.filter((card) => fs.existsSync(card.largeArt));
 const availableSprays = sprays.filter((spray) => fs.existsSync(spray.transparentIcon));
 for (const card of availableCards) {
-  fs.copyFileSync(card.smallArt, `public/cosmetics/cards/${card.uuid}.png`);
+  fs.copyFileSync(card.largeArt, `public/cosmetics/cards/${card.uuid}.png`);
 }
 for (const spray of availableSprays) {
   fs.copyFileSync(spray.transparentIcon, `public/cosmetics/sprays/${spray.uuid}.png`);
