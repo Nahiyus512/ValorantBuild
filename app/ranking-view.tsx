@@ -396,7 +396,7 @@ export function RankingView() {
         </div>
         <div
           className={`ranking-pool${poolCollapsed?" collapsed":""}`}
-          style={{height:rankingBoardHeight}}
+          style={{height:rankingBoardHeight+16}}
           onDragOver={handleDragOver}
           onDrop={e=>handleDrop(e,"pool")}
         >
