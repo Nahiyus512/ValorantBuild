@@ -1306,3 +1306,316 @@ html,body{width:100%;height:100%;overflow:hidden!important}
   width:260px!important;grid-template-columns:1fr!important;border-bottom:0!important;
 }
 .fixed-stage .selector-tabs.single-tab button{grid-column:1!important;text-align:center}
+
+/* ===== Ranking Page ===== */
+
+/* Top-rank button hover (shares the share button's color-only transition) */
+.fixed-stage .top-rank{cursor:pointer;transition:color .2s ease!important}
+.fixed-stage .top-rank:hover,.fixed-stage .top-rank:active{color:#22ffc5!important}
+
+/* Ranking topbar: minimal bar with back button, title and actions */
+.fixed-stage .ranking-topbar{
+  height:58px;position:relative;z-index:3;display:flex;align-items:center;padding:0 60px;gap:16px;
+}
+.fixed-stage .ranking-back{
+  display:flex;align-items:center;gap:8px;border:0;background:none;color:#fff;font-size:18px;cursor:pointer;
+  transition:color .2s ease;height:58px;
+}
+.fixed-stage .ranking-back span{font-size:36px;line-height:1}
+.fixed-stage .ranking-back:hover{color:#22ffc5}
+.fixed-stage .ranking-title{
+  position:absolute;left:50%;transform:translateX(-50%);font-size:25px;letter-spacing:1.5px;color:#fff;
+  margin:0;font-weight:900;white-space:nowrap;
+}
+.fixed-stage .ranking-weapon-name{font-size:25px;color:#fff;font-style:normal;font-weight:900}
+.fixed-stage .ranking-clear{
+  border:1px solid #435e68;background:#0b2833;color:#b1c0c5;
+  padding:0 20px;height:42px;font-size:14px;cursor:pointer;transition:color .2s ease,border-color .2s ease;
+}
+.fixed-stage .ranking-clear:hover{color:#22ffc5;border-color:#22ffc5}
+.fixed-stage .ranking-export{
+  margin-left:auto;border:1px solid #22ffc5;background:rgba(34,255,197,.08);color:#22ffc5;
+  padding:0 20px;height:42px;font-size:14px;cursor:pointer;transition:background .2s ease,color .2s ease;
+}
+.fixed-stage .ranking-export:hover{background:#22ffc5;color:#061521}
+
+/* Weapon selection: centered board, no right panel, shifted right for symmetry */
+.fixed-stage .ranking-select-layout{
+  width:1920px;height:1022px;display:flex;justify-content:center;align-items:center;overflow:hidden;
+}
+.fixed-stage .ranking-select-layout .weapon-board{transform:none!important}
+.fixed-stage .ranking-select-layout .weapon-tile>img:first-child{height:100%!important;width:100%!important;object-fit:scale-down!important;object-position:center!important}
+.fixed-stage .ranking-select-layout .weapon-tile span{display:none!important}
+
+/* Ranking builder: tier list on top, skin pool at bottom */
+.fixed-stage .ranking-builder{
+  width:1920px;height:1022px;display:flex;flex-direction:column;overflow:hidden;
+}
+
+/* Tier list: vertical stack of rows, scrollable when content overflows */
+.fixed-stage .ranking-tier-region{
+  flex:1;min-height:0;position:relative;
+}
+.fixed-stage .ranking-tier-list{
+  width:100%;height:100%;overflow-y:auto;padding:0 60px;
+  display:flex;flex-direction:column;
+  scrollbar-width:none!important;
+}
+.fixed-stage .ranking-tier-list::-webkit-scrollbar{display:none!important;width:0!important;height:0!important}
+
+/* Each tier row: min-height fits one row of skins, expands when wrapping to multiple rows */
+.fixed-stage .ranking-tier{
+  display:flex;align-items:stretch;min-height:130px;flex:1 0 130px;margin:0;
+  border:1px solid #31434b;background:rgba(10,31,42,.6);
+  transition:border-color .2s ease,background .2s ease,box-shadow .2s ease;
+}
+.fixed-stage .ranking-tier.drag-over{
+  border-color:#22ffc5;background:rgba(34,255,197,.08);box-shadow:0 0 12px rgba(34,255,197,.15);
+}
+.fixed-stage .tier-label{
+  width:100px;flex-shrink:0;display:flex;flex-direction:column;align-items:center;justify-content:center;
+  color:#fff;font-weight:900;
+}
+.fixed-stage .tier-label span{font-size:32px;line-height:1;cursor:text;outline:none;padding:2px 6px;border-radius:3px;transition:background .15s ease}
+.fixed-stage .tier-label span:hover{background:rgba(255,255,255,.15)}
+.fixed-stage .tier-label span:focus{background:rgba(255,255,255,.2)}
+.fixed-stage .tier-items{
+  flex:1;display:grid;grid-template-columns:repeat(10,minmax(0,1fr));grid-auto-rows:112px;
+  gap:6px;padding:8px;align-content:center;align-items:center;
+}
+.fixed-stage .tier-skin-item{
+  display:flex;align-items:center;justify-content:center;cursor:grab;position:relative;
+  background:rgba(20,54,68,.5);border:1px solid #36515c;padding:4px;transition:border-color .2s ease;
+  min-width:0;
+}
+.fixed-stage .tier-skin-item:hover{border-color:#22ffc5}
+.fixed-stage .tier-skin-item:active{cursor:grabbing}
+.fixed-stage .tier-skin-item img{width:100%;height:102px;object-fit:contain;pointer-events:none;display:block}
+.fixed-stage .pool-skin-item{position:relative}
+
+/* Skin pool: bottom area with search, filter and smaller skin thumbnails */
+.fixed-stage .ranking-pool{
+  flex-shrink:0;height:340px;border-top:0;background:transparent;
+  padding:12px 60px;display:flex;flex-direction:column;
+  transition:height .22s ease;
+}
+.fixed-stage .ranking-pool.collapsed{height:66px}
+.fixed-stage .ranking-pool-tools{
+  display:flex;align-items:center;gap:12px;margin:0 0 10px;height:42px;
+}
+.fixed-stage .ranking-search{
+  display:flex;align-items:center;height:42px;border:1px solid #435e68;padding:0 11px;
+  color:#78919a;background:rgba(10,31,40,.8);gap:4px;
+}
+.fixed-stage .ranking-search input{
+  width:260px;border:0;background:none;color:#fff;outline:none;padding-left:8px;font:inherit;
+}
+.fixed-stage .ranking-pool-tools .filter-trigger{height:42px;border:1px solid #435e68!important}
+.fixed-stage .ranking-pool-tools .filter-trigger.on{border-color:var(--mint);color:var(--mint)}
+.fixed-stage .ranking-pool-count{margin-left:auto;color:#78909a;font-size:14px}
+.fixed-stage .ranking-pool-toggle{
+  height:42px;min-width:82px;border:1px solid #435e68;background:rgba(10,31,40,.65);color:#dbe6e6;
+  display:flex;align-items:center;justify-content:center;cursor:pointer;font:inherit;font-weight:700;font-size:14px;
+}
+.fixed-stage .ranking-pool-toggle:hover{border-color:#22ffc5;color:#22ffc5}
+.fixed-stage .ranking-pool-grid-region{position:relative;flex:1;min-height:0}
+.fixed-stage .ranking-pool.collapsed .ranking-pool-grid-region{display:none}
+
+/* Pool grid: auto-fill columns of small skin cards */
+.fixed-stage .ranking-skin-grid{
+  width:100%;height:100%;display:grid;grid-template-columns:repeat(9,minmax(0,1fr));gap:8px;
+  overflow-y:auto;align-content:start;
+  scrollbar-width:none!important;padding-right:0!important;
+}
+.fixed-stage .ranking-skin-grid::-webkit-scrollbar{display:none!important;width:0!important;height:0!important}
+.fixed-stage .ranking-scrollbar{
+  position:absolute;z-index:4;right:5px;top:0;width:10px;height:100%;touch-action:none;cursor:pointer;
+}
+.fixed-stage .ranking-scrollbar:before{
+  content:"";position:absolute;left:4px;top:0;bottom:0;width:1px;background:rgba(255,255,255,.68);
+}
+.fixed-stage .ranking-scrollbar span{
+  position:absolute;z-index:1;left:0;width:10px;min-height:64px;background:#fff;border:0;border-radius:0;
+}
+.fixed-stage .ranking-scrollbar.hidden{display:none}
+.fixed-stage .ranking-pool-grid-region .ranking-scrollbar{right:-55px}
+
+/* Pool skin card: matches tier-skin-item proportions */
+.fixed-stage .pool-skin-item{
+  border:1px solid #36515c;background:linear-gradient(140deg,rgba(21,52,64,.9),rgba(6,20,27,.92));
+  position:relative;padding:4px;display:flex;align-items:center;justify-content:center;cursor:grab;transition:border-color .2s ease;
+}
+.fixed-stage .pool-skin-item:hover{border-color:#fff}
+.fixed-stage .pool-skin-item:active{cursor:grabbing}
+.fixed-stage .pool-skin-item:after{
+  content:"";position:absolute;height:2px;bottom:0;left:0;right:0;background:var(--rarity);
+}
+.fixed-stage .pool-skin-item img{width:100%;height:108px;object-fit:contain;pointer-events:none;display:block}
+
+/* State-based hover tooltip: rarity icon + skin name, rendered outside scrollable containers */
+.fixed-stage .ranking-tooltip{
+  position:absolute;z-index:9999;pointer-events:none;
+  display:flex;align-items:center;gap:10px;
+  background:transparent;border:0;padding:8px 20px;
+  white-space:nowrap;font-size:22px;color:#edf4f3;
+  transform:translate(-50%,-100%);margin-top:-12px;
+}
+.fixed-stage .ranking-tooltip img{width:28px;height:28px;object-fit:contain}
+.fixed-stage.ranking-export-stage .ranking-tier-list{
+  overflow:visible!important;scrollbar-width:none!important;
+}
+.fixed-stage.ranking-export-stage .ranking-tier-list::-webkit-scrollbar{display:none!important}
+
+/* Ranking workspace v3: 3/4 tier board on the left, 1/4 skin pool on the right. */
+.fixed-stage .ranking-builder{
+  flex-direction:row;
+}
+.fixed-stage .ranking-tier-region{
+  flex:0 0 75%;width:75%;height:100%;min-width:0;
+}
+.fixed-stage .ranking-tier-list{
+  display:block;width:100%;height:100%;padding:16px 24px 16px 60px;
+}
+.fixed-stage .ranking-tier{
+  min-height:122px;flex:none;margin:0;
+}
+.fixed-stage .tier-items{
+  display:grid;
+  grid-template-columns:repeat(auto-fill,182px);
+  grid-auto-rows:122px;
+  gap:0 6px;
+  padding:0 8px;
+  align-content:start;
+  align-items:stretch;
+}
+.fixed-stage .tier-skin-item{
+  width:182px;height:122px;padding:0;
+}
+.fixed-stage .tier-skin-item img{
+  width:182px;height:122px;
+}
+.fixed-stage .ranking-tier-region .ranking-scrollbar{right:5px}
+
+.fixed-stage .ranking-pool{
+  flex:0 0 25%;width:25%;height:100%;min-width:0;
+  padding:16px 60px 16px 16px;
+  transition:width .22s ease,flex-basis .22s ease;
+}
+.fixed-stage .ranking-pool.collapsed{
+  flex-basis:66px;width:66px;height:100%;padding:16px 8px;
+}
+.fixed-stage .ranking-pool-tools{
+  display:grid;
+  grid-template-columns:minmax(0,1fr) 48px;
+  grid-template-rows:42px 42px;
+  gap:10px 8px;
+  height:94px;margin:0 0 10px;
+}
+.fixed-stage .ranking-search{min-width:0}
+.fixed-stage .ranking-search input{width:100%;min-width:0}
+.fixed-stage .ranking-pool-tools .filter-trigger{width:48px}
+.fixed-stage .ranking-pool-count{
+  margin:0;align-self:center;font-size:13px;
+}
+.fixed-stage .ranking-pool-toggle{
+  min-width:0;width:100%;
+}
+.fixed-stage .ranking-pool.collapsed .ranking-search,
+.fixed-stage .ranking-pool.collapsed .filter-trigger,
+.fixed-stage .ranking-pool.collapsed .ranking-pool-count{
+  display:none!important;
+}
+.fixed-stage .ranking-pool.collapsed .ranking-pool-tools{
+  display:block;height:42px;margin:0;
+}
+.fixed-stage .ranking-pool.collapsed .ranking-pool-toggle{
+  writing-mode:vertical-rl;width:50px;height:96px;
+}
+.fixed-stage .ranking-skin-grid{
+  grid-template-columns:repeat(3,minmax(0,1fr));
+  gap:8px;
+}
+.fixed-stage .pool-skin-item img{
+  width:100%;height:96px;
+}
+.fixed-stage .ranking-pool-grid-region .ranking-scrollbar{right:-55px}
+
+.fixed-stage.ranking-export-stage .ranking-tier-list{
+  width:1920px!important;
+  padding:16px 60px!important;
+}
+
+/* Ranking workspace v4: six columns expanded, eight when the right pool retracts. */
+.fixed-stage .ranking-builder{align-items:flex-start}
+.fixed-stage .ranking-tier-region{
+  flex-basis:68.75%;width:68.75%;
+  transition:width .22s ease,flex-basis .22s ease;
+}
+.fixed-stage .ranking-pool{
+  flex-basis:31.25%;width:31.25%;max-height:100%;
+  padding:16px;
+}
+.fixed-stage .ranking-pool.collapsed{
+  flex-basis:66px;width:66px;height:auto;padding:16px 8px;
+}
+.fixed-stage .ranking-builder:has(.ranking-pool.collapsed) .ranking-tier-region{
+  flex-basis:calc(100% - 66px);width:calc(100% - 66px);
+}
+.fixed-stage .ranking-skin-grid{
+  grid-template-columns:repeat(3,181px);
+  grid-auto-rows:122px;
+  justify-content:start;
+}
+.fixed-stage .pool-skin-item{
+  width:181px;height:122px;padding:0;
+}
+.fixed-stage .pool-skin-item img{
+  width:181px;height:122px;
+}
+.fixed-stage .ranking-pool-grid-region .ranking-scrollbar{right:-11px}
+.fixed-stage .ranking-tooltip{
+  transform:translate(-50%,-50%);
+  margin-top:0;
+  width:auto;
+  justify-content:center;
+  text-align:center;
+  white-space:nowrap;
+}
+.fixed-stage.ranking-export-stage .tier-items{
+  grid-template-columns:repeat(8,181px)!important;
+}
+.fixed-stage .tier-items{grid-template-columns:repeat(auto-fill,181px)}
+.fixed-stage .tier-skin-item{width:181px}
+.fixed-stage .tier-skin-item img{width:181px}
+.fixed-stage .ranking-builder:has(.ranking-pool.collapsed) .ranking-tier-list{
+  padding-right:23px;
+}
+.fixed-stage .ranking-builder:has(.ranking-pool.collapsed) .tier-items{
+  grid-template-columns:repeat(9,181px);
+  column-gap:3px;
+}
+.fixed-stage:has(.ranking-pool.collapsed) .ranking-clear{
+  margin-right:38px;
+}
+
+/* Keep the outer page gutters symmetric and the clear action stationary. */
+.fixed-stage .ranking-clear,
+.fixed-stage:has(.ranking-pool.collapsed) .ranking-clear{
+  margin-right:29px;
+}
+.fixed-stage .ranking-pool{
+  padding:16px 60px 16px 0;
+}
+.fixed-stage .ranking-pool.collapsed{
+  padding:16px 8px;
+}
+.fixed-stage .ranking-skin-grid{
+  width:559px;
+  transform:translateX(-19px);
+}
+.fixed-stage .ranking-pool-grid-region .ranking-scrollbar{
+  right:-35px;
+}
+.fixed-stage .pool-empty{
+  grid-column:1/-1;text-align:center;color:#607a84;font-size:16px;padding:40px 0;
+}

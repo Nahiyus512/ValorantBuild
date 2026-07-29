@@ -1,41 +1,42 @@
 "use client";
 
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
+import { useRouter } from "next/navigation";
 
-type Chroma={id:string;name:string;render:string;swatch:string|null;priceRadianite:number|null;isDefault:boolean};
-type Skin={id:string;name:string;rarity:string|null;rarityName:string;rarityRank:number;rarityColor:string;rarityIcon:string|null;priceVP:number|null;priceCN:number|null;icon:string;chromas:Chroma[]};
-type Weapon={id:string;name:string;category:string;defaultSkinId:string;icon:string;skins:Skin[]};
-type Buddy={id:string;name:string;icon:string};
-type Data={priceNote:string;weapons:Weapon[];buddies:Buddy[]};
+export type Chroma={id:string;name:string;render:string;swatch:string|null;priceRadianite:number|null;isDefault:boolean};
+export type Skin={id:string;name:string;rarity:string|null;rarityName:string;rarityRank:number;rarityColor:string;rarityIcon:string|null;priceVP:number|null;icon:string;chromas:Chroma[]};
+export type Weapon={id:string;name:string;category:string;defaultSkinId:string;icon:string;skins:Skin[]};
+export type Buddy={id:string;name:string;icon:string};
+export type Data={priceNote:string;weapons:Weapon[];buddies:Buddy[]};
 type Card={id:string;name:string;icon:string};
 type Title={id:string;name:string};
 type Spray={id:string;name:string;icon:string};
 type CosmeticData={cards:Card[];titles:Title[];sprays:Spray[]};
-type Equipped={skinId:string;chromaId:string;buddyId:string|null};
+export type Equipped={skinId:string;chromaId:string;buddyId:string|null};
 type SaveState="loading"|"saved"|"saving"|"error";
 const localStorageKey="valorantbuild.loadout.v1";
 
-const categoryNames:Record<string,string>={Sidearm:"佩枪",SMG:"冲锋枪",Shotgun:"霰弹枪",Rifle:"步枪",Sniper:"狙击枪",Heavy:"机枪",Melee:"近战武器"};
-const categoryOrder=["Sidearm","SMG","Shotgun","Rifle","Sniper","Heavy","Melee"];
-const qualityOrder=["Select","Deluxe","Premium","Exclusive","Ultra"];
-const homeColumns=[
+export const categoryNames:Record<string,string>={Sidearm:"佩枪",SMG:"冲锋枪",Shotgun:"霰弹枪",Rifle:"步枪",Sniper:"狙击枪",Heavy:"机枪",Melee:"近战武器"};
+export const categoryOrder=["Sidearm","SMG","Shotgun","Rifle","Sniper","Heavy","Melee"];
+export const qualityOrder=["Select","Deluxe","Premium","Exclusive","Ultra"];
+export const homeColumns=[
   {title:"佩枪",items:[["标配",1],["短炮",2],["狂怒",3],["鬼魅",4],["追猎",5],["正义",6]]},
   {title:"冲锋枪",items:[["蜂刺",1],["骇灵",2],["雄鹿",5],["判官",6]],subtitles:[["霰弹枪",4]]},
   {title:"步枪",items:[["獠犬",1],["戍卫",2],["幻影",3],["狂徒",4],["近战武器",6]],subtitles:[["近战武器",5]]},
   {title:"狙击枪",items:[["飞将",1],["莽侠",2],["冥驹",3],["战神",5],["奥丁",6]],subtitles:[["机枪",4]]},
 ] as const;
 
-function TopBrandBar({onBack,weaponName,onShare}:{onBack?:()=>void;weaponName?:string;onShare:()=>void}){
+function TopBrandBar({onBack,weaponName,onShare,onRank}:{onBack?:()=>void;weaponName?:string;onShare:()=>void;onRank:()=>void}){
   return <header className="home-bar shared-topbar">
     {onBack&&<button className="top-return" onClick={onBack}><span>&lt;</span> 返回</button>}
     {weaponName&&<span className="top-weapon">// {weaponName}</span>}
-    <button className="top-rank">排行</button>
+    <button className="top-rank" onClick={onRank}>排行</button>
     <div className="home-mark">ValorantBuild</div>
     <button className="top-export" onClick={onShare}>分享</button>
   </header>
 }
 
-function TacticalBackground(){
+export function TacticalBackground(){
   return <div className="background-layer" aria-hidden="true">
     <div className="base-gradient"/>
     <div className="center-glow"/>
@@ -77,6 +78,7 @@ function SharePreview({imageUrl,onClose,onSave}:{imageUrl:string;onClose:()=>voi
 }
 
 export function LoadoutDemo(){
+  const router=useRouter();
   const [data,setData]=useState<Data|null>(null);
   const [page,setPage]=useState<"home"|"select"|"card"|"expression">("home");
   const [cosmetics,setCosmetics]=useState<CosmeticData|null>(null);
@@ -169,8 +171,8 @@ export function LoadoutDemo(){
   const visibleSkins=useMemo(()=>{
     if(!weapon)return[];
     let list=weapon.skins.filter(s=>s.name.toLowerCase().includes(query.toLowerCase())&&(!qualities.length||qualities.includes(s.rarity??"")));
-    if(sort==="priceAsc")list=[...list].sort((a,b)=>(a.priceCN??1e9)-(b.priceCN??1e9));
-    if(sort==="priceDesc")list=[...list].sort((a,b)=>(b.priceCN??-1)-(a.priceCN??-1));
+    if(sort==="priceAsc")list=[...list].sort((a,b)=>a.priceVP==null?(b.priceVP==null?0:1):b.priceVP==null?-1:a.priceVP-b.priceVP);
+    if(sort==="priceDesc")list=[...list].sort((a,b)=>a.priceVP==null?(b.priceVP==null?0:1):b.priceVP==null?-1:b.priceVP-a.priceVP);
     if(sort==="qualityAsc")list=[...list].sort((a,b)=>a.rarityRank-b.rarityRank);
     if(sort==="qualityDesc")list=[...list].sort((a,b)=>b.rarityRank-a.rarityRank);
     return list;
@@ -276,7 +278,7 @@ export function LoadoutDemo(){
   if(page==="home")return <main className="game-shell">
     <TacticalBackground/>
     <div className="fixed-stage" style={{"--canvas-scale":canvasScale} as React.CSSProperties}>
-    <TopBrandBar onShare={shareHome}/>
+    <TopBrandBar onShare={shareHome} onRank={()=>router.push("/ranking")}/>
     <section className="loadout-layout">
       <div className="weapon-board">
         {homeColumns.map(column=><section className="weapon-column" key={column.title}><h2>{column.title}</h2><div className="weapon-column-grid">
@@ -307,7 +309,7 @@ export function LoadoutDemo(){
       else setWheelPickerOpen(true);
     };
     return <main className="game-shell"><TacticalBackground/><div className="fixed-stage" style={{"--canvas-scale":canvasScale} as React.CSSProperties}>
-      <TopBrandBar onBack={()=>setPage("home")} weaponName={isCardPage?"玩家卡面":"个性表达"} onShare={shareHome}/>
+      <TopBrandBar onBack={()=>setPage("home")} weaponName={isCardPage?"玩家卡面":"个性表达"} onShare={shareHome} onRank={()=>router.push("/ranking")}/>
       <nav className="selector-subnav"><div className={`selector-tabs cosmetic-tabs ${isCardPage?"":"single-tab"}`}>{tabs.map(([id,label])=><button key={id} className={cosmeticTab===id?"active":""} onClick={()=>{setCosmeticTab(id);setQuery("");setListScroll(0)}}>{label}</button>)}</div></nav>
       <div className="selector-layout cosmetic-layout">
         <aside className="item-browser cosmetic-browser">
@@ -336,7 +338,7 @@ export function LoadoutDemo(){
   return <main className="game-shell">
     <TacticalBackground/>
     <div className="fixed-stage" style={{"--canvas-scale":canvasScale} as React.CSSProperties}>
-    <TopBrandBar onBack={()=>setPage("home")} weaponName={weapon?.name} onShare={shareHome}/>
+    <TopBrandBar onBack={()=>setPage("home")} weaponName={weapon?.name} onShare={shareHome} onRank={()=>router.push("/ranking")}/>
     <nav className="selector-subnav">
       <div className={`selector-tabs ${weapon?.category==="Melee"?"single-tab":""}`}><button className={tab==="skin"?"active":""} onClick={()=>{setTab("skin");setQuery("")}}>皮肤</button>{weapon?.category!=="Melee"&&<button className={tab==="buddy"?"active":""} onClick={()=>{setTab("buddy");setQuery("")}}>挂饰</button>}</div>
     </nav>
@@ -346,7 +348,7 @@ export function LoadoutDemo(){
           {tab==="skin"&&<button className={`filter-trigger ${filterOpen?"on":""}`} aria-label="打开筛选与排序" onClick={()=>setFilterOpen(true)}><span/><span/><span/></button>}
         </div>
         <div ref={gridRef} className={tab==="skin"?"skin-grid":"buddy-grid"} onScroll={e=>{const el=e.currentTarget;setListScroll(el.scrollTop/Math.max(1,el.scrollHeight-el.clientHeight))}}>
-          {tab==="skin"?visibleSkins.map(s=><button key={s.id} className={skinId===s.id?"selected":""} onClick={()=>chooseSkin(s)} style={{"--rarity":s.rarityColor} as React.CSSProperties}><img src={s.chromas[0]?.render??s.icon} alt=""/><strong>{s.name.replace(` ${weapon?.name}`,"")}</strong><small>{s.priceCN==null?"非直接售卖":`${s.priceCN} 点券`}</small></button>):
+          {tab==="skin"?visibleSkins.map(s=><button key={s.id} className={skinId===s.id?"selected":""} onClick={()=>chooseSkin(s)} style={{"--rarity":s.rarityColor} as React.CSSProperties}><img src={s.chromas[0]?.render??s.icon} alt=""/><strong>{s.name.replace(` ${weapon?.name}`,"")}</strong></button>):
           <><button className={buddyId===null?"selected":""} onClick={()=>setBuddyId(null)} aria-label="不使用挂饰"><span className="no-buddy">×</span></button>{visibleBuddies.map(b=><button key={b.id} className={buddyId===b.id?"selected":""} onClick={()=>setBuddyId(b.id)}><img src={b.icon} alt=""/><strong>{b.name}</strong></button>)}</>}
         </div>
         <div className={`custom-scrollbar${scrollable?"":" hidden"}`} onPointerDown={moveCustomScroll} onPointerMove={moveCustomScroll}><span style={{top:`${listScroll*648}px`}}/></div>
