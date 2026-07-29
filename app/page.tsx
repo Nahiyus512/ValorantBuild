@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { LoadoutDemo } from "./loadout-demo";
+import { LoadoutDemo } from "./loadout";
 
 export const metadata: Metadata = {
   title: "ValorantBuild",
