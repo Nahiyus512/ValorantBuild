@@ -48,7 +48,7 @@ export function RankingView() {
   const [data, setData] = useState<Data | null>(null);
   const [selectedWeaponId, setSelectedWeaponId] = useState<string | null>(null);
   const [query, setQuery] = useState("");
-  const [sort, setSort] = useState<"default" | "priceAsc" | "priceDesc" | "qualityAsc" | "qualityDesc">("qualityDesc");
+  const [sort, setSort] = useState<"qualityAsc" | "qualityDesc">("qualityDesc");
   const [qualities, setQualities] = useState<string[]>([]);
   const [filterOpen, setFilterOpen] = useState(false);
   const [tierData, setTierData] = useState<TierData>({});
@@ -108,8 +108,6 @@ export function RankingView() {
       s.name.toLowerCase().includes(query.toLowerCase()) &&
       (!qualities.length || qualities.includes(s.rarity ?? ""))
     );
-    if (sort === "priceAsc") list = [...list].sort((a, b) => a.priceVP == null ? (b.priceVP == null ? 0 : 1) : b.priceVP == null ? -1 : a.priceVP - b.priceVP);
-    if (sort === "priceDesc") list = [...list].sort((a, b) => a.priceVP == null ? (b.priceVP == null ? 0 : 1) : b.priceVP == null ? -1 : b.priceVP - a.priceVP);
     if (sort === "qualityAsc") list = [...list].sort((a, b) => a.rarityRank - b.rarityRank);
     if (sort === "qualityDesc") list = [...list].sort((a, b) => b.rarityRank - a.rarityRank);
     return list;
@@ -451,7 +449,7 @@ export function RankingView() {
                   <input type="checkbox" checked={qualities.includes(q)} onChange={()=>toggleQuality(q)}/>
                   <span className="filter-check"/><strong>{["精选","豪华","卓越","传奇","终极"][i]}</strong><i/>
                 </label>)}</section>
-              <section><h3>排序选择</h3>{[["qualityDesc","品质：高到低"],["qualityAsc","品质：低到高"],["priceDesc","价格：高到低"],["priceAsc","价格：低到高"]].map(([value,label])=>
+              <section><h3>排序选择</h3>{[["qualityDesc","品质：高到低"],["qualityAsc","品质：低到高"]].map(([value,label])=>
                 <label className="sort-option" key={value}>
                   <input type="radio" name="ranking-sort" checked={sort===value} onChange={()=>setSort(value as typeof sort)}/>
                   <span/><strong>{label}</strong>

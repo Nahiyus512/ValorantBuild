@@ -31,25 +31,10 @@ async function fetchApi(endpoint, attempts = 3) {
   }
 }
 
-function readPreviousData() {
-  if (!fs.existsSync(OUTPUT_PATH)) return { weapons: [] };
-  return JSON.parse(fs.readFileSync(OUTPUT_PATH, "utf8"));
-}
-
 function colorFromTier(tier) {
   const value = tier?.highlightColor;
   return value ? `#${value.slice(0, 6)}` : "#718791";
 }
-
-const previousData = readPreviousData();
-const previousSkins = new Map(
-  previousData.weapons.flatMap((weapon) => weapon.skins.map((skin) => [skin.id, skin])),
-);
-const previousChromas = new Map(
-  previousData.weapons.flatMap((weapon) =>
-    weapon.skins.flatMap((skin) => skin.chromas.map((chroma) => [chroma.id, chroma])),
-  ),
-);
 
 const [weapons, buddies, cards, titles, sprays, contentTiers] = await Promise.all([
   fetchApi("weapons"),
@@ -63,7 +48,6 @@ const [weapons, buddies, cards, titles, sprays, contentTiers] = await Promise.al
 const tierMap = new Map(contentTiers.map((tier) => [tier.uuid, tier]));
 const output = {
   generatedAt: new Date().toISOString(),
-  priceNote: "价格采用现有原始 VP 数据，仅用于排序；公开内容 API 不提供的价格保持为空。",
   weapons: weapons.map((weapon) => ({
     id: weapon.uuid,
     name: weapon.displayName,
@@ -83,14 +67,12 @@ const output = {
           rarityRank: tier?.rank ?? -1,
           rarityColor: colorFromTier(tier),
           rarityIcon: tier?.displayIcon ?? null,
-          priceVP: previousSkins.get(skin.uuid)?.priceVP ?? null,
           icon: skin.displayIcon ?? skin.levels[0]?.displayIcon ?? null,
           chromas: skin.chromas.map((chroma, index) => ({
             id: chroma.uuid,
             name: chroma.displayName,
             render: chroma.fullRender ?? chroma.displayIcon,
             swatch: chroma.swatch,
-            priceRadianite: previousChromas.get(chroma.uuid)?.priceRadianite ?? null,
             isDefault: index === 0,
           })),
         };
