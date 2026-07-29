@@ -73,7 +73,7 @@ html,body{width:100%;height:100%;overflow:hidden!important}
 .fixed-stage{position:absolute;z-index:2;left:50%;top:50%;width:1920px;height:1080px;transform:translate(-50%,-50%) scale(var(--canvas-scale));transform-origin:center center;overflow:hidden}
 .fixed-stage .home-bar,.fixed-stage .select-bar{height:58px!important;min-height:58px!important;padding:0 22px!important}
 .fixed-stage .home-mark{width:180px!important;height:58px!important}
-.fixed-stage .loadout-layout{width:1920px!important;height:1022px!important;min-height:0!important;display:grid!important;grid-template-columns:1450px 235px!important;gap:55px!important;margin:0!important;padding:60px 90px 36px!important}
+.fixed-stage .loadout-layout{width:1920px!important;height:1022px!important;min-height:0!important;display:grid!important;grid-template-columns:1450px 275px!important;gap:55px!important;margin:0!important;padding:60px 50px 36px 90px!important}
 .fixed-stage .weapon-board{width:1450px!important;height:926px!important;display:grid!important;grid-template-columns:repeat(4,335px)!important;grid-template-rows:1fr!important;gap:36px!important;overflow:hidden!important}
 .fixed-stage .weapon-column{display:block!important;width:335px!important;height:926px!important;min-width:335px!important}
 .fixed-stage .weapon-column>h2{height:36px!important;margin:0!important;font-size:19px!important}
@@ -81,7 +81,7 @@ html,body{width:100%;height:100%;overflow:hidden!important}
 .fixed-stage .weapon-column-grid>h3{transform:translateY(-31px)!important;font-size:19px!important}
 .fixed-stage .weapon-tile{width:335px!important;height:135px!important;min-height:135px!important;padding:8px!important}
 .fixed-stage .weapon-tile>img:first-child{height:105px!important}.fixed-stage .weapon-tile span{font-size:11px!important;bottom:7px!important}.fixed-stage .weapon-tile small{display:block!important;font-size:8px!important}
-.fixed-stage .profile-panel{width:235px!important;height:926px!important;display:grid!important;grid-template-rows:36px 520px 40px 205px!important;align-content:space-between!important}
+.fixed-stage .profile-panel{width:275px!important;height:926px!important;display:grid!important;grid-template-rows:36px 520px 40px 205px!important;align-content:start!important}
 .fixed-stage .profile-panel h2{height:36px!important;font-size:19px!important}.fixed-stage .player-card{width:235px!important;height:520px!important;padding-top:100px!important}.fixed-stage .v-shape{font-size:92px!important}
 .fixed-stage .player-card strong{margin-top:70px!important;font-size:14px!important}.fixed-stage .player-card small{font-size:10px!important}
 .fixed-stage .spray-wheel{width:205px!important;height:205px!important;align-self:end!important}.fixed-stage .spray-wheel i{width:43px!important;height:43px!important}
@@ -408,9 +408,9 @@ html,body{width:100%;height:100%;overflow:hidden!important}
 .fixed-stage .weapon-column:nth-child(4) .weapon-tile>img:first-child{height:137px!important}
 
 /* Player card: rectangular upper 3/4, fading inverted-triangle lower 1/4 */
-.fixed-stage .profile-panel{grid-template-rows:36px 520px 38px 235px!important}
+.fixed-stage .profile-panel{grid-template-rows:36px 567px 48px 275px!important}
 .fixed-stage .player-card{
-  width:255px!important;height:520px!important;margin-left:-10px;
+  width:275px!important;height:567px!important;margin-left:0!important;
   --frame:#dfe7e7;--active:#18ffe0;
   background:
     linear-gradient(var(--frame),var(--frame)) left top/100% 1px no-repeat,
@@ -423,7 +423,7 @@ html,body{width:100%;height:100%;overflow:hidden!important}
   box-shadow:none!important;
 }
 .fixed-stage .player-card-inner{
-  position:absolute;left:10px;top:10px;width:235px;height:492px;padding-top:88px;
+  position:absolute;left:10px;top:10px;width:255px;height:539px;padding-top:98px;
   background:linear-gradient(155deg,#102b36,#173840 48%,rgba(7,28,38,.22));
   clip-path:polygon(0 0,100% 0,100% 75%,50% 100%,0 75%);
   -webkit-mask-image:linear-gradient(to bottom,#000 0 75%,rgba(0,0,0,.86) 84%,transparent 100%);
@@ -446,7 +446,7 @@ html,body{width:100%;height:100%;overflow:hidden!important}
 .fixed-stage .player-card:before{left:-8px}
 .fixed-stage .player-card:after{left:auto;right:-8px;transform:scaleX(-1)}
 .fixed-stage .card-energy{
-  left:-4px;right:-4px;top:-10px;height:24px;
+  left:0;right:0;top:-9.5px;height:24px;
   background:linear-gradient(90deg,var(--frame) 0 39%,transparent 39% 61%,var(--frame) 61% 100%) center/100% 5px no-repeat;
 }
 .fixed-stage .card-energy span{top:1px}
@@ -467,14 +467,14 @@ html,body{width:100%;height:100%;overflow:hidden!important}
   linear-gradient(var(--active),var(--active)) left bottom/100% 1px no-repeat}
 
 /* Expression wheel: shortened extensions retract on hover; only rings activate */
-.fixed-stage .spray-wheel{width:235px!important;height:235px!important;align-self:end!important;transition:border-color .3s ease,box-shadow .3s ease}
+.fixed-stage .spray-wheel{width:275px!important;height:275px!important;align-self:end!important;transition:border-color .3s ease,box-shadow .3s ease}
 .fixed-stage .spray-wheel:before,.fixed-stage .spray-wheel:after{
   width:109.33%;height:1px!important;
   background:linear-gradient(90deg,#58707a 0 4%,transparent 4% 8%,#58707a 8% 92%,transparent 92% 96%,#58707a 96% 100%)!important;
   transition:width .32s ease!important;
 }
 .fixed-stage .spray-wheel i{
-  width:48px!important;height:48px!important;background:transparent!important;
+  width:56px!important;height:56px!important;background:transparent!important;
   box-shadow:none!important;border:0!important;
 }
 .fixed-stage .spray-wheel i:nth-child(1){left:calc(50% - 24px)!important;top:18px!important}
@@ -679,10 +679,10 @@ html,body{width:100%;height:100%;overflow:hidden!important}
 .fixed-stage .card-energy,.fixed-stage .player-card:hover .card-energy{background-size:100% 5px!important}
 
 /* Correct expression-slot positions after adding the independent ring layer */
-.fixed-stage .spray-wheel i:nth-of-type(1){left:calc(50% - 24px)!important;right:auto!important;top:34px!important;bottom:auto!important}
-.fixed-stage .spray-wheel i:nth-of-type(2){left:18px!important;right:auto!important;top:calc(50% - 24px)!important;bottom:auto!important}
-.fixed-stage .spray-wheel i:nth-of-type(3){left:auto!important;right:18px!important;top:calc(50% - 24px)!important;bottom:auto!important}
-.fixed-stage .spray-wheel i:nth-of-type(4){left:calc(50% - 24px)!important;right:auto!important;top:auto!important;bottom:18px!important}
+.fixed-stage .spray-wheel i:nth-of-type(1){left:calc(50% - 28px)!important;right:auto!important;top:40px!important;bottom:auto!important}
+.fixed-stage .spray-wheel i:nth-of-type(2){left:21px!important;right:auto!important;top:calc(50% - 28px)!important;bottom:auto!important}
+.fixed-stage .spray-wheel i:nth-of-type(3){left:auto!important;right:21px!important;top:calc(50% - 28px)!important;bottom:auto!important}
+.fixed-stage .spray-wheel i:nth-of-type(4){left:calc(50% - 28px)!important;right:auto!important;top:auto!important;bottom:21px!important}
 
 /* Selector uses the same top brand treatment as the loadout home */
 .fixed-stage .select-bar{background:transparent!important;border-bottom:0!important}
@@ -1064,7 +1064,7 @@ html,body{width:100%;height:100%;overflow:hidden!important}
   left:0!important;right:0!important;width:auto!important;
   background-size:100% 5px!important;background-position:center!important;
 }
-.fixed-stage .spray-wheel i em{font-size:26px;font-style:normal;color:#88a0a7}
+.fixed-stage .spray-wheel i em{font-size:30px;font-style:normal;color:#88a0a7}
 
 /* Cosmetic lists and aligned actions. */
 .fixed-stage .cosmetic-preview .selection-meta{
@@ -1173,10 +1173,10 @@ html,body{width:100%;height:100%;overflow:hidden!important}
 
 /* Identity sits in the lower-middle of both the equipped card and its preview. */
 .fixed-stage .player-card-inner .card-id{
-  position:absolute!important;left:0!important;right:0!important;bottom:126px!important;margin:0!important;
+  position:absolute!important;left:0!important;right:0!important;bottom:140px!important;margin:0!important;
 }
 .fixed-stage .player-card-inner>small{
-  position:absolute!important;left:0!important;right:0!important;bottom:96px!important;margin:0!important;z-index:4;
+  position:absolute!important;left:0!important;right:0!important;bottom:110px!important;margin:0!important;z-index:4;
   color:#dce7e5!important;text-shadow:0 2px 5px #000;
 }
 .fixed-stage .card-preview strong{bottom:174px!important}
@@ -1273,25 +1273,25 @@ html,body{width:100%;height:100%;overflow:hidden!important}
 }
 .fixed-stage .profile-panel .spray-wheel i:nth-of-type(1){
   left:50%!important;
-  top:22%!important;
+  top:17%!important;
 }
 .fixed-stage .profile-panel .spray-wheel i:nth-of-type(2){
-  left:22%!important;
+  left:17%!important;
   top:50%!important;
 }
 .fixed-stage .profile-panel .spray-wheel i:nth-of-type(3){
-  left:78%!important;
+  left:83%!important;
   top:50%!important;
 }
 .fixed-stage .profile-panel .spray-wheel i:nth-of-type(4){
   left:50%!important;
-  top:78%!important;
+  top:83%!important;
 }
 .fixed-stage .profile-panel .spray-wheel i img{
   display:block!important;
-  width:64px!important;
-  height:64px!important;
-  max-width:64px!important;
+  width:75px!important;
+  height:75px!important;
+  max-width:75px!important;
   object-fit:contain!important;
   object-position:center!important;
   transform:none!important;

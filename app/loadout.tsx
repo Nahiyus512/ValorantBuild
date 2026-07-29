@@ -205,12 +205,26 @@ export function LoadoutDemo(){
     if(shareGenerating)return;
     setShareGenerating(true);
     if(page!=="home"){setPage("home");await new Promise(resolve=>window.setTimeout(resolve,80))}
-    const stage=document.querySelector(".fixed-stage");
+    const stage=document.querySelector(".fixed-stage") as HTMLElement|null;
+    const background=document.querySelector(".background-layer");
     if(!stage){setShareGenerating(false);return}
     const clone=stage.cloneNode(true) as HTMLElement;
-    clone.querySelector(".top-export")?.remove();
+    clone.querySelector(".shared-topbar")?.remove();
+    clone.querySelector(".home-foot")?.remove();
+    if(background){
+      const bgClone=background.cloneNode(true) as HTMLElement;
+      bgClone.style.position="absolute";bgClone.style.inset="0";bgClone.style.zIndex="0";
+      const glow=bgClone.querySelector<HTMLElement>(".center-glow");
+      if(glow)glow.style.opacity="1";
+      clone.insertBefore(bgClone,clone.firstChild);
+    }
     clone.style.setProperty("--canvas-scale","1");
     clone.style.transform="none";clone.style.position="relative";clone.style.left="0";clone.style.top="0";
+    clone.style.width="1920px";clone.style.height="1022px";clone.style.overflow="hidden";
+    clone.style.backgroundColor="#061521";
+    clone.style.color="#edf3f1";
+    clone.style.fontFamily='"Noto Sans SC","Microsoft YaHei",sans-serif';
+    clone.style.fontWeight="900";
     const asDataUrl=async(src:string)=>{
       try{
         const response=await fetch(new URL(src,window.location.href).href,{mode:"cors"});
@@ -225,13 +239,15 @@ export function LoadoutDemo(){
     clonedImages.forEach((img,index)=>img.src=embedded[index]);
     const card=clone.querySelector<HTMLElement>(".player-card");
     if(card&&equippedCard)card.style.setProperty("--card-art",`url(${await asDataUrl(equippedCard.icon)})`);
+    let fontFaceCss="";
+    try{const fontDataUrl=await asDataUrl("/fonts/NotoSansSC-subset.ttf");fontFaceCss=`@font-face{font-family:"Noto Sans SC";src:url(${fontDataUrl}) format("truetype");font-weight:normal;font-style:normal;font-display:swap;}`}catch{}
     const css=Array.from(document.styleSheets).flatMap(sheet=>{try{return Array.from(sheet.cssRules).filter(rule=>!rule.cssText.startsWith("@font-face")).map(rule=>rule.cssText)}catch{return[]}}).join("\n").replaceAll("url(/",`url(${window.location.origin}/`);
     const markup=new XMLSerializer().serializeToString(clone).replaceAll("url(/",`url(${window.location.origin}/`);
-    const svg=`<svg xmlns="http://www.w3.org/2000/svg" width="1920" height="1080"><foreignObject width="100%" height="100%"><div xmlns="http://www.w3.org/1999/xhtml"><style>${css}</style>${markup}</div></foreignObject></svg>`;
+    const svg=`<svg xmlns="http://www.w3.org/2000/svg" width="1920" height="1022"><foreignObject width="100%" height="100%"><div xmlns="http://www.w3.org/1999/xhtml"><style>${fontFaceCss}\n${css}</style>${markup}</div></foreignObject></svg>`;
     const image=new Image();
-    const url=URL.createObjectURL(new Blob([svg],{type:"image/svg+xml;charset=utf-8"}));
-    image.onload=()=>{const canvas=document.createElement("canvas");canvas.width=1920;canvas.height=1080;canvas.getContext("2d")?.drawImage(image,0,0);URL.revokeObjectURL(url);canvas.toBlob(blob=>{setShareGenerating(false);if(!blob){window.alert("图片生成失败，请重试");return}setShareImageUrl(previous=>{if(previous)URL.revokeObjectURL(previous);return URL.createObjectURL(blob)})},"image/png")};
-    image.onerror=()=>{setShareGenerating(false);URL.revokeObjectURL(url);window.alert("图片生成失败，请重试")};
+    const url='data:image/svg+xml;charset=utf-8,'+encodeURIComponent(svg);
+    image.onload=()=>{try{const canvas=document.createElement("canvas");canvas.width=1920;canvas.height=1022;canvas.getContext("2d")?.drawImage(image,0,0);canvas.toBlob(blob=>{setShareGenerating(false);if(!blob){window.alert("图片生成失败，请重试");return}setShareImageUrl(previous=>{if(previous)URL.revokeObjectURL(previous);return URL.createObjectURL(blob)})},"image/png")}catch{setShareGenerating(false);window.alert("图片生成失败，请重试")}};
+    image.onerror=()=>{setShareGenerating(false);window.alert("图片生成失败，请重试")};
     image.src=url;
   }
   function closeSharePreview(){setShareImageUrl(previous=>{if(previous)URL.revokeObjectURL(previous);return null})}
@@ -242,7 +258,7 @@ export function LoadoutDemo(){
     document.body.appendChild(anchor);anchor.click();anchor.remove();
   }
 
-  if(!data)return <main className="loading"><span>V</span><p>正在装载 1,364 款皮肤资源…</p></main>;
+  if(!data)return <main className="loading"><span suppressHydrationWarning>V</span><p suppressHydrationWarning>正在装载 1,364 款皮肤资源…</p></main>;
 
   if(page==="home")return <main className="game-shell">
     <TacticalBackground/>
