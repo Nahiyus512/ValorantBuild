@@ -1296,3 +1296,13 @@ html,body{width:100%;height:100%;overflow:hidden!important}
   object-position:center!important;
   transform:none!important;
 }
+
+/* Skin grid packs to top when fewer items than a full page; scrollbar hides when not scrollable. */
+.fixed-stage .skin-grid,.fixed-stage .buddy-grid{align-content:start!important}
+.fixed-stage .custom-scrollbar.hidden{display:none!important}
+
+/* Melee weapon shows a single centered tab, mirroring the expression page. */
+.fixed-stage .selector-tabs.single-tab{
+  width:260px!important;grid-template-columns:1fr!important;border-bottom:0!important;
+}
+.fixed-stage .selector-tabs.single-tab button{grid-column:1!important;text-align:center}

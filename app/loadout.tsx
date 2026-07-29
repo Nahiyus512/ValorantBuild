@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 
 type Chroma={id:string;name:string;render:string;swatch:string|null;priceRadianite:number|null;isDefault:boolean};
 type Skin={id:string;name:string;rarity:string|null;rarityName:string;rarityRank:number;rarityColor:string;rarityIcon:string|null;priceVP:number|null;priceCN:number|null;icon:string;chromas:Chroma[]};
@@ -106,6 +106,8 @@ export function LoadoutDemo(){
   const [wheelPickerOpen,setWheelPickerOpen]=useState(false);
   const [shareImageUrl,setShareImageUrl]=useState<string|null>(null);
   const [shareGenerating,setShareGenerating]=useState(false);
+  const gridRef=useRef<HTMLDivElement>(null);
+  const [scrollable,setScrollable]=useState(false);
 
   useEffect(()=>{fetch("/loadout-data.json").then(r=>r.json() as Promise<Data>).then(d=>{
     setData(d);
@@ -146,6 +148,17 @@ export function LoadoutDemo(){
     fit();window.addEventListener("resize",fit);return()=>window.removeEventListener("resize",fit);
   },[]);
   useEffect(()=>()=>{if(shareImageUrl)URL.revokeObjectURL(shareImageUrl)},[shareImageUrl]);
+
+  useLayoutEffect(()=>{
+    const grid=gridRef.current;
+    if(grid){
+      grid.scrollTop=0;
+      setScrollable(grid.scrollHeight>grid.clientHeight);
+    }else{
+      setScrollable(false);
+    }
+    setListScroll(0);
+  },[weaponId,tab,page,cosmeticTab,query,qualities,sort]);
 
   const weapon=data?.weapons.find(w=>w.id===weaponId);
   const selectedSkin=weapon?.skins.find(s=>s.id===skinId);
@@ -299,14 +312,14 @@ export function LoadoutDemo(){
       <div className="selector-layout cosmetic-layout">
         <aside className="item-browser cosmetic-browser">
           <div className="browser-tools buddy-tools"><label>⌕<input value={query} onChange={e=>setQuery(e.target.value)} placeholder={`搜索${tabs.find(([id])=>id===cosmeticTab)?.[1]??""}`}/></label></div>
-          <div className={`cosmetic-grid ${cosmeticTab==="titles"?"title-grid":""}`} onScroll={e=>{const el=e.currentTarget;setListScroll(el.scrollTop/Math.max(1,el.scrollHeight-el.clientHeight))}}>
+          <div ref={gridRef} className={`cosmetic-grid ${cosmeticTab==="titles"?"title-grid":""}`} onScroll={e=>{const el=e.currentTarget;setListScroll(el.scrollTop/Math.max(1,el.scrollHeight-el.clientHeight))}}>
             {cosmeticItems.map(item=><button key={item.id} className={(cosmeticTab==="cards"?selectedCardId:cosmeticTab==="titles"?selectedTitleId:selectedSprayId)===item.id?"selected":""} onClick={()=>{
               if(cosmeticTab==="cards")setSelectedCardId(item.id);
               else if(cosmeticTab==="titles")setSelectedTitleId(item.id);
               else setSelectedSprayId(item.id);
             }}>{("icon" in item)&&typeof item.icon==="string"&&<img src={item.icon} alt=""/>}<strong>{item.name}</strong></button>)}
           </div>
-          <div className="custom-scrollbar" onPointerDown={moveCustomScroll} onPointerMove={moveCustomScroll}><span style={{top:`${listScroll*648}px`}}/></div>
+          <div className={`custom-scrollbar${scrollable?"":" hidden"}`} onPointerDown={moveCustomScroll} onPointerMove={moveCustomScroll}><span style={{top:`${listScroll*648}px`}}/></div>
         </aside>
         <section className="weapon-preview cosmetic-preview">
           <div className="preview-title"><h1>{currentName}</h1></div>
@@ -325,18 +338,18 @@ export function LoadoutDemo(){
     <div className="fixed-stage" style={{"--canvas-scale":canvasScale} as React.CSSProperties}>
     <TopBrandBar onBack={()=>setPage("home")} weaponName={weapon?.name} onShare={shareHome}/>
     <nav className="selector-subnav">
-      <div className="selector-tabs"><button className={tab==="skin"?"active":""} onClick={()=>{setTab("skin");setQuery("")}}>皮肤</button>{weapon?.category!=="Melee"&&<button className={tab==="buddy"?"active":""} onClick={()=>{setTab("buddy");setQuery("")}}>挂饰</button>}</div>
+      <div className={`selector-tabs ${weapon?.category==="Melee"?"single-tab":""}`}><button className={tab==="skin"?"active":""} onClick={()=>{setTab("skin");setQuery("")}}>皮肤</button>{weapon?.category!=="Melee"&&<button className={tab==="buddy"?"active":""} onClick={()=>{setTab("buddy");setQuery("")}}>挂饰</button>}</div>
     </nav>
     <div className="selector-layout">
       <aside className="item-browser">
         <div className={`browser-tools ${tab==="buddy"?"buddy-tools":""}`}><label>⌕<input value={query} onChange={e=>setQuery(e.target.value)} placeholder={tab==="skin"?"搜索皮肤":"搜索挂饰"}/></label>
           {tab==="skin"&&<button className={`filter-trigger ${filterOpen?"on":""}`} aria-label="打开筛选与排序" onClick={()=>setFilterOpen(true)}><span/><span/><span/></button>}
         </div>
-        <div className={tab==="skin"?"skin-grid":"buddy-grid"} onScroll={e=>{const el=e.currentTarget;setListScroll(el.scrollTop/Math.max(1,el.scrollHeight-el.clientHeight))}}>
+        <div ref={gridRef} className={tab==="skin"?"skin-grid":"buddy-grid"} onScroll={e=>{const el=e.currentTarget;setListScroll(el.scrollTop/Math.max(1,el.scrollHeight-el.clientHeight))}}>
           {tab==="skin"?visibleSkins.map(s=><button key={s.id} className={skinId===s.id?"selected":""} onClick={()=>chooseSkin(s)} style={{"--rarity":s.rarityColor} as React.CSSProperties}><img src={s.chromas[0]?.render??s.icon} alt=""/><strong>{s.name.replace(` ${weapon?.name}`,"")}</strong><small>{s.priceCN==null?"非直接售卖":`${s.priceCN} 点券`}</small></button>):
           <><button className={buddyId===null?"selected":""} onClick={()=>setBuddyId(null)} aria-label="不使用挂饰"><span className="no-buddy">×</span></button>{visibleBuddies.map(b=><button key={b.id} className={buddyId===b.id?"selected":""} onClick={()=>setBuddyId(b.id)}><img src={b.icon} alt=""/><strong>{b.name}</strong></button>)}</>}
         </div>
-        <div className="custom-scrollbar" onPointerDown={moveCustomScroll} onPointerMove={moveCustomScroll}><span style={{top:`${listScroll*648}px`}}/></div>
+        <div className={`custom-scrollbar${scrollable?"":" hidden"}`} onPointerDown={moveCustomScroll} onPointerMove={moveCustomScroll}><span style={{top:`${listScroll*648}px`}}/></div>
       </aside>
       <section className="weapon-preview">
         <div className="preview-title">{selectedSkin?.rarityIcon&&<img src={selectedSkin.rarityIcon} alt={selectedSkin.rarityName}/>}<h1>{selectedSkin?.name??weapon?.name}</h1></div>
