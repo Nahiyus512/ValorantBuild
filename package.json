@@ -8,6 +8,7 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
+    "data:update": "node scripts/generate-data.mjs",
     "start": "npx serve out",
     "lint": "eslint . --ignore-pattern .next --ignore-pattern out"
   },

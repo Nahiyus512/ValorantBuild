@@ -1,0 +1,50 @@
+name: Update Valorant data
+
+on:
+  schedule:
+    # GitHub cron 使用 UTC；周四 00:00 UTC = 北京时间周四 08:00。
+    - cron: "0 0 * * 4"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: update-valorant-data
+  cancel-in-progress: false
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Fetch current Valorant data
+        run: npm run data:update
+
+      - name: Verify production build
+        run: npm run build
+
+      - name: Commit updated data
+        run: |
+          if git diff --quiet -- public/loadout-data.json public/cosmetic-data.json; then
+            echo "No data changes."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add public/loadout-data.json public/cosmetic-data.json
+          git commit -m "chore: update Valorant data"
+          git push
