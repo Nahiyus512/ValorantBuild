@@ -4,6 +4,10 @@ import "./globals.css";
 export const metadata: Metadata = {
   title: "ValorantBuild",
   description: "ValorantBuild 无畏契约皮肤构建器",
+  icons: {
+    icon: [{ url: "/favicon.svg", type: "image/svg+xml" }],
+    shortcut: "/favicon.svg",
+  },
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
