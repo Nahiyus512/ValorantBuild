@@ -17,7 +17,7 @@ from fontTools.ttLib import TTFont
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 PUBLIC = os.path.join(ROOT, "public")
-SRC_FONT = os.path.join(PUBLIC, "fonts", "NotoSansSC-VF.ttf")
+SRC_FONT = os.path.join(ROOT, "scripts", "assets", "NotoSansSC-VF.ttf")
 SUBSET_FONT = os.path.join(PUBLIC, "fonts", "NotoSansSC-subset-var.ttf")
 OUT_FONT = os.path.join(PUBLIC, "fonts", "NotoSansSC-subset.ttf")
 

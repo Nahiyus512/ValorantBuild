@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { RankingView } from "../ranking-view";
+import { RankingBuilder } from "@/features/ranking/ranking-builder";
 
 export const metadata: Metadata = {
   title: "排行 - ValorantBuild",
@@ -7,5 +7,5 @@ export const metadata: Metadata = {
 };
 
 export default function RankingPage() {
-  return <RankingView />;
+  return <RankingBuilder />;
 }

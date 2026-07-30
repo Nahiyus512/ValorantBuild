@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { LoadoutDemo } from "./loadout";
+import { LoadoutBuilder } from "@/features/loadout/loadout-builder";
 
 export const metadata: Metadata = {
   title: "ValorantBuild",
@@ -7,5 +7,5 @@ export const metadata: Metadata = {
 };
 
 export default function Home() {
-  return <LoadoutDemo />;
+  return <LoadoutBuilder />;
 }
