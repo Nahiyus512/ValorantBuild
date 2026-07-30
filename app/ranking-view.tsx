@@ -336,7 +336,7 @@ export function RankingView() {
     <div className="fixed-stage" style={{"--canvas-scale":canvasScale} as React.CSSProperties}>
       <header className="ranking-topbar">
         <button className="ranking-back" onClick={()=>setSelectedWeaponId(null)}><span>&lt;</span> 返回</button>
-        <span className="ranking-weapon-name">// {weapon.name}</span>
+        <span className="ranking-weapon-name">{"//"} {weapon.name}</span>
         <button className="ranking-export" onClick={exportRanking}>导出排行</button>
         <button className="ranking-clear" onClick={clearWeaponRanking}>清空排行</button>
       </header>

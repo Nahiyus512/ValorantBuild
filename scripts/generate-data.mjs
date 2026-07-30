@@ -36,12 +36,13 @@ function colorFromTier(tier) {
   return value ? `#${value.slice(0, 6)}` : "#718791";
 }
 
-const [weapons, buddies, cards, titles, sprays, contentTiers] = await Promise.all([
+const [weapons, buddies, cards, titles, sprays, flexes, contentTiers] = await Promise.all([
   fetchApi("weapons"),
   fetchApi("buddies"),
   fetchApi("playercards"),
   fetchApi("playertitles"),
   fetchApi("sprays"),
+  fetchApi("flex"),
   fetchApi("contenttiers"),
 ]);
 
@@ -101,6 +102,11 @@ const cosmeticOutput = {
     id: spray.uuid,
     name: spray.displayName,
     icon: spray.fullTransparentIcon ?? spray.displayIcon ?? null,
+  })),
+  flexes: flexes.map((flex) => ({
+    id: flex.uuid,
+    name: flex.displayName,
+    icon: flex.displayIcon ?? null,
   })),
 };
 
