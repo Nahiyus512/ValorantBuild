@@ -4,17 +4,15 @@
       <stop stop-color="#17262D"/>
       <stop offset="1" stop-color="#071116"/>
     </linearGradient>
-    <linearGradient id="accent" x1="13" y1="13" x2="51" y2="51" gradientUnits="userSpaceOnUse">
+    <linearGradient id="accent" x1="12" y1="13" x2="53" y2="51" gradientUnits="userSpaceOnUse">
       <stop stop-color="#FF6571"/>
       <stop offset="1" stop-color="#FF3346"/>
     </linearGradient>
   </defs>
 
   <rect x="2" y="2" width="60" height="60" rx="14" fill="url(#bg)"/>
-  <path d="M16 17L29.5 39.5L34 32L25 17H16Z" fill="url(#accent)"/>
-  <path d="M48 17L34.5 39.5L30 47H39L57 17H48Z" fill="url(#accent)"/>
-  <path d="M14 14H26" stroke="#22FFC5" stroke-width="3" stroke-linecap="square"/>
-  <path d="M38 50H50" stroke="#22FFC5" stroke-width="3" stroke-linecap="square"/>
-  <path d="M2 23V16C2 8.268 8.268 2 16 2H23" stroke="#304750" stroke-width="2"/>
-  <path d="M62 41V48C62 55.732 55.732 62 48 62H41" stroke="#304750" stroke-width="2"/>
+  <path d="M11.5 17L25 39.5L29.5 32L20.5 17H11.5Z" fill="url(#accent)"/>
+  <path d="M43.5 17L30 39.5L25.5 47H34.5L52.5 17H43.5Z" fill="url(#accent)"/>
+  <path d="M9.5 14H21.5" stroke="#22FFC5" stroke-width="3" stroke-linecap="square"/>
+  <path d="M42.5 50H54.5" stroke="#22FFC5" stroke-width="3" stroke-linecap="square"/>
 </svg>
