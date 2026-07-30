@@ -6,12 +6,12 @@ const OUTPUT_PATH = "public/loadout-data.json";
 const COSMETIC_OUTPUT_PATH = "public/cosmetic-data.json";
 const STATS_OUTPUT_PATH = "app/generated/valorant-stats.json";
 
-const rarityByTierId = {
-  "12683d76-48d7-84a3-4e09-6985794f0445": "Select",
-  "0cebb8be-46d7-c12a-d306-e9907bfc5a25": "Deluxe",
-  "60bca009-4182-7998-dee7-b8a2558dc369": "Premium",
-  "e046854e-406c-37f4-6607-19a9ba8426fc": "Exclusive",
-  "471cb2e3-44b3-327c-6402-6f8e813a5c86": "Ultra",
+const rarityByTierRank = {
+  0: "Select",
+  1: "Deluxe",
+  2: "Premium",
+  3: "Exclusive",
+  4: "Ultra",
 };
 
 async function fetchApi(endpoint, attempts = 3) {
@@ -61,7 +61,17 @@ const output = {
       .filter((skin) => !skin.displayName.includes("从个人最爱中随机选择"))
       .map((skin) => {
         const tier = tierMap.get(skin.contentTierUuid);
-        const rarity = rarityByTierId[skin.contentTierUuid] ?? null;
+        if (skin.contentTierUuid && !tier) {
+          throw new Error(
+            `皮肤 ${skin.displayName} 引用了未知品质 UUID：${skin.contentTierUuid}`,
+          );
+        }
+        const rarity = rarityByTierRank[tier?.rank] ?? null;
+        if (tier && !rarity) {
+          throw new Error(
+            `未知品质等级：${tier.displayName}（rank=${tier.rank}, uuid=${tier.uuid}）`,
+          );
+        }
         return {
           id: skin.uuid,
           name: skin.displayName,

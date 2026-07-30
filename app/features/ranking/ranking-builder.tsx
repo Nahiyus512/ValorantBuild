@@ -20,15 +20,16 @@ const tierLabelStorageKey = "valorantbuild.ranking.labels.v1";
 const minimumLoadingDurationMs = 1_500;
 const initialScroll = { top: 0, height: 80, visible: false };
 const rankingTiers = [
-  { id: "s", label: "T0", color: "#ff4655" },
-  { id: "a", label: "T1", color: "#f5955b" },
-  { id: "b", label: "T2", color: "#fad663" },
-  { id: "c", label: "T3", color: "#5a9fe2" },
-  { id: "d", label: "T4", color: "#78909a" },
+  { id: "s", label: "夯", color: "#ff4655" },
+  { id: "a", label: "顶级", color: "#f5955b" },
+  { id: "b", label: "人上人", color: "#fad663" },
+  { id: "c", label: "NPC", color: "#5a9fe2" },
+  { id: "d", label: "拉完了", color: "#78909a" },
 ] as const;
 
 type TierData = Record<string, Array<{ skinId: string; chromaId: string }>>;
 type ScrollIndicator = { top: number; height: number; visible: boolean };
+type DropTarget = { tierId: string; index: number };
 type SkinTooltip = {
   x: number;
   y: number;
@@ -86,7 +87,8 @@ export function RankingBuilder() {
   const [filterOpen, setFilterOpen] = useState(false);
   const [tierData, setTierData] = useState<TierData>({});
   const [tierLabels, setTierLabels] = useState<Record<string, string>>({});
-  const [dragOverTier, setDragOverTier] = useState<string | null>(null);
+  const [dropTarget, setDropTarget] = useState<DropTarget | null>(null);
+  const [draggingSkinId, setDraggingSkinId] = useState<string | null>(null);
   const [hoveredTooltip, setHoveredTooltip] = useState<SkinTooltip | null>(null);
   const [poolCollapsed, setPoolCollapsed] = useState(false);
   const [rankingBoardHeight, setRankingBoardHeight] = useState(626);
@@ -197,19 +199,70 @@ export function RankingBuilder() {
     source: string,
   ) {
     dragData.current = { skinId, chromaId, source };
+    setDraggingSkinId(skinId);
+    setHoveredTooltip(null);
     event.dataTransfer.effectAllowed = "move";
+    event.dataTransfer.setData("text/plain", skinId);
   }
 
-  function handleDragOver(event: React.DragEvent) {
+  function allowDrop(event: React.DragEvent) {
     event.preventDefault();
     event.dataTransfer.dropEffect = "move";
   }
 
-  function handleDrop(event: React.DragEvent, targetTier: string) {
+  function handleTierItemDragOver(
+    event: React.DragEvent<HTMLElement>,
+    tierId: string,
+    itemIndex: number,
+  ) {
+    allowDrop(event);
+    event.stopPropagation();
+    const rect = event.currentTarget.getBoundingClientRect();
+    const index = itemIndex + (event.clientX >= rect.left + rect.width / 2 ? 1 : 0);
+    setDropTarget(current =>
+      current?.tierId === tierId && current.index === index
+        ? current
+        : { tierId, index },
+    );
+  }
+
+  function handleTierItemsDragOver(
+    event: React.DragEvent<HTMLDivElement>,
+    tierId: string,
+    itemCount: number,
+  ) {
+    allowDrop(event);
+    if (event.target !== event.currentTarget) return;
+    setDropTarget(current =>
+      current?.tierId === tierId && current.index === itemCount
+        ? current
+        : { tierId, index: itemCount },
+    );
+  }
+
+  function handleDrop(
+    event: React.DragEvent,
+    targetTier: string,
+    requestedIndex?: number,
+  ) {
     event.preventDefault();
+    event.stopPropagation();
     if (!dragData.current) return;
-    const { skinId, chromaId } = dragData.current;
+    const { skinId, chromaId, source } = dragData.current;
+    const weaponSkinIds = new Set(weapon?.skins.map(skin => skin.id) ?? []);
     setTierData(current => {
+      const sourceItems = current[source] ?? [];
+      const sourceVisibleIndex = source === targetTier
+        ? sourceItems
+          .filter(item => weaponSkinIds.has(item.skinId))
+          .findIndex(item => item.skinId === skinId && item.chromaId === chromaId)
+        : -1;
+      let visibleIndex = requestedIndex ?? Number.MAX_SAFE_INTEGER;
+      if (sourceVisibleIndex >= 0 && sourceVisibleIndex < visibleIndex) {
+        visibleIndex -= 1;
+      }
+      if (source === targetTier && sourceVisibleIndex === visibleIndex) return current;
+
       const next: TierData = {};
       for (const [tierId, items] of Object.entries(current)) {
         next[tierId] = items.filter(item =>
@@ -217,12 +270,19 @@ export function RankingBuilder() {
         );
       }
       if (targetTier !== "pool") {
-        if (!next[targetTier]) next[targetTier] = [];
-        if (!next[targetTier].some(item =>
-          item.skinId === skinId && item.chromaId === chromaId
-        )) {
-          next[targetTier] = [...next[targetTier], { skinId, chromaId }];
-        }
+        const targetItems = [...(next[targetTier] ?? [])];
+        const visiblePositions = targetItems.reduce<number[]>((positions, item, index) => {
+          if (weaponSkinIds.has(item.skinId)) positions.push(index);
+          return positions;
+        }, []);
+        const clampedIndex = Math.max(0, Math.min(visibleIndex, visiblePositions.length));
+        const actualIndex = clampedIndex < visiblePositions.length
+          ? visiblePositions[clampedIndex]
+          : visiblePositions.length
+            ? visiblePositions.at(-1)! + 1
+            : targetItems.length;
+        targetItems.splice(actualIndex, 0, { skinId, chromaId });
+        next[targetTier] = targetItems;
       }
       return next;
     });
@@ -231,7 +291,8 @@ export function RankingBuilder() {
 
   function finishDrag() {
     dragData.current = null;
-    setDragOverTier(null);
+    setDropTarget(null);
+    setDraggingSkinId(null);
   }
 
   function removeFromTier(skinId: string, chromaId: string) {
@@ -280,7 +341,7 @@ export function RankingBuilder() {
       || event.clientY < rect.top
       || event.clientY >= rect.bottom;
     if (outside) {
-      setDragOverTier(current => current === tierId ? null : current);
+      setDropTarget(current => current?.tierId === tierId ? null : current);
     }
   }
 
@@ -387,11 +448,8 @@ export function RankingBuilder() {
               return (
                 <div
                   key={tier.id}
-                  className={`ranking-tier${dragOverTier === tier.id ? " drag-over" : ""}`}
-                  onDragOver={handleDragOver}
-                  onDragEnter={() => setDragOverTier(tier.id)}
+                  className={`ranking-tier${dropTarget?.tierId === tier.id ? " drag-over" : ""}`}
                   onDragLeave={event => handleTierDragLeave(event, tier.id)}
-                  onDrop={event => handleDrop(event, tier.id)}
                 >
                   <div className="tier-label" style={{ background: tier.color }}>
                     <span
@@ -403,7 +461,7 @@ export function RankingBuilder() {
                         setTierLabels(current => ({ ...current, [tier.id]: label }));
                       }}
                       onKeyDown={event => {
-                        if (event.key === "Enter") {
+                        if (event.key === "Enter" && !event.nativeEvent.isComposing) {
                           event.preventDefault();
                           event.currentTarget.blur();
                         }
@@ -412,17 +470,37 @@ export function RankingBuilder() {
                       {tierLabels[tier.id] ?? tier.label}
                     </span>
                   </div>
-                  <div className="tier-items">
-                    {entries.map(entry => {
+                  <div
+                    className="tier-items"
+                    onDragOver={event =>
+                      handleTierItemsDragOver(event, tier.id, entries.length)
+                    }
+                    onDrop={event => handleDrop(event, tier.id, entries.length)}
+                  >
+                    {entries.map((entry, index) => {
                       const skin = skinsById.get(entry.skinId);
                       if (!skin) return null;
                       const chroma = skin.chromas.find(item => item.id === entry.chromaId)
                         ?? skin.chromas[0];
+                      const markerBefore = dropTarget?.tierId === tier.id
+                        && dropTarget.index === index;
+                      const markerAfter = dropTarget?.tierId === tier.id
+                        && dropTarget.index === entries.length
+                        && index === entries.length - 1;
                       return (
                         <div
                           key={`${entry.skinId}-${entry.chromaId}`}
-                          className="tier-skin-item"
+                          className={`tier-skin-item${draggingSkinId === entry.skinId ? " dragging" : ""}`}
                           draggable
+                          onDragOver={event =>
+                            handleTierItemDragOver(event, tier.id, index)
+                          }
+                          onDrop={event => {
+                            const rect = event.currentTarget.getBoundingClientRect();
+                            const targetIndex = index
+                              + (event.clientX >= rect.left + rect.width / 2 ? 1 : 0);
+                            handleDrop(event, tier.id, targetIndex);
+                          }}
                           onDragStart={event =>
                             handleDragStart(
                               event,
@@ -444,10 +522,19 @@ export function RankingBuilder() {
                           }
                           onMouseLeave={() => setHoveredTooltip(null)}
                         >
+                          {markerBefore && (
+                            <span className="ranking-drop-marker before" aria-hidden="true" />
+                          )}
+                          {markerAfter && (
+                            <span className="ranking-drop-marker after" aria-hidden="true" />
+                          )}
                           <img src={chroma?.render ?? skin.icon} alt={skin.name} />
                         </div>
                       );
                     })}
+                    {entries.length === 0 && dropTarget?.tierId === tier.id && (
+                      <span className="ranking-empty-drop" aria-hidden="true" />
+                    )}
                   </div>
                 </div>
               );
@@ -465,7 +552,7 @@ export function RankingBuilder() {
         <div
           className={`ranking-pool${poolCollapsed ? " collapsed" : ""}`}
           style={{ height: rankingBoardHeight + 16 }}
-          onDragOver={handleDragOver}
+          onDragOver={allowDrop}
           onDrop={event => handleDrop(event, "pool")}
         >
           <div className="ranking-pool-tools">
