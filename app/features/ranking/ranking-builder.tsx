@@ -566,7 +566,8 @@ export function RankingBuilder() {
       )}
       {share.generating && (
         <div className="share-generating" role="status">
-          <span />正在生成排行榜图片...
+          <img src="/omen-cat-loader.gif" alt="" aria-hidden="true" />
+          正在生成排行榜图片...
         </div>
       )}
     </GameCanvas>

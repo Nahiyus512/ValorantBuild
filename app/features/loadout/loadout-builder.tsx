@@ -10,6 +10,7 @@ import { SkinFilterDialog } from "@/components/ui/skin-filter-dialog";
 import { WeaponBoard } from "@/components/valorant/weapon-board";
 import { useFixedCanvasScale } from "@/hooks/use-fixed-canvas-scale";
 import { useShareImage } from "@/hooks/use-share-image";
+import valorantStats from "@/generated/valorant-stats.json";
 import { asDataUrl, embedCloneImages, renderElementToPng } from "@/lib/share-image";
 import { readStorage, writeStorage } from "@/lib/storage";
 import { loadCosmeticData, loadLoadoutData } from "@/lib/valorant-data";
@@ -390,13 +391,20 @@ export function LoadoutBuilder() {
   }
 
   if (loadError) return <LoadingState error message={`${loadError}，请刷新重试。`} />;
-  if (!data || !cosmetics) return <LoadingState message="正在装载 1,364 款皮肤资源…" />;
+  if (!data || !cosmetics) {
+    return (
+      <LoadingState
+        message={`正在装载 ${valorantStats.skinCount.toLocaleString("zh-CN")} 款皮肤资源…`}
+      />
+    );
+  }
 
   const overlay = (
     <>
       {share.generating && (
         <div className="share-generating" role="status">
-          <span />正在生成分享图片…
+          <img src="/omen-cat-loader.gif" alt="" aria-hidden="true" />
+          正在生成分享图片…
         </div>
       )}
       {share.imageUrl && (
@@ -485,7 +493,9 @@ export function LoadoutBuilder() {
           </aside>
         </section>
         <div className="home-foot">
-          <span>20 种武器</span><span>1,364 款可用皮肤</span><span>866 个挂饰</span>
+          <span>{data.weapons.length.toLocaleString("zh-CN")} 种武器</span>
+          <span>{data.weapons.reduce((sum, weapon) => sum + weapon.skins.length, 0).toLocaleString("zh-CN")} 款可用皮肤</span>
+          <span>{data.buddies.length.toLocaleString("zh-CN")} 个挂饰</span>
         </div>
       </GameCanvas>
     );

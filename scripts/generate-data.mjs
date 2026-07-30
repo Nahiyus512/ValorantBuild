@@ -4,6 +4,7 @@ const API_BASE = "https://valorant-api.com/v1";
 const LANGUAGE = "zh-CN";
 const OUTPUT_PATH = "public/loadout-data.json";
 const COSMETIC_OUTPUT_PATH = "public/cosmetic-data.json";
+const STATS_OUTPUT_PATH = "app/generated/valorant-stats.json";
 
 const rarityByTierId = {
   "12683d76-48d7-84a3-4e09-6985794f0445": "Select",
@@ -46,9 +47,10 @@ const [weapons, buddies, cards, titles, sprays, flexes, contentTiers] = await Pr
   fetchApi("contenttiers"),
 ]);
 
+const generatedAt = new Date().toISOString();
 const tierMap = new Map(contentTiers.map((tier) => [tier.uuid, tier]));
 const output = {
-  generatedAt: new Date().toISOString(),
+  generatedAt,
   weapons: weapons.map((weapon) => ({
     id: weapon.uuid,
     name: weapon.displayName,
@@ -110,9 +112,18 @@ const cosmeticOutput = {
   })),
 };
 
+const stats = {
+  generatedAt,
+  weaponCount: output.weapons.length,
+  skinCount: output.weapons.reduce((sum, weapon) => sum + weapon.skins.length, 0),
+  buddyCount: output.buddies.length,
+};
+
+fs.mkdirSync("app/generated", { recursive: true });
 fs.writeFileSync(OUTPUT_PATH, JSON.stringify(output));
 fs.writeFileSync(COSMETIC_OUTPUT_PATH, JSON.stringify(cosmeticOutput));
+fs.writeFileSync(STATS_OUTPUT_PATH, `${JSON.stringify(stats, null, 2)}\n`);
 
 console.log(
-  `已更新 ${output.weapons.length} 把武器、${output.weapons.reduce((sum, weapon) => sum + weapon.skins.length, 0)} 款皮肤、${output.buddies.length} 个挂饰。`,
+  `已更新 ${stats.weaponCount} 把武器、${stats.skinCount} 款皮肤、${stats.buddyCount} 个挂饰。`,
 );

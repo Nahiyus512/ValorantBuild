@@ -6,7 +6,16 @@ type LoadingStateProps = {
 export function LoadingState({ message, error = false }: LoadingStateProps) {
   return (
     <main className="loading">
-      <span suppressHydrationWarning>{error ? "!" : "V"}</span>
+      {error ? (
+        <span className="loading-error" suppressHydrationWarning>!</span>
+      ) : (
+        <img
+          className="omen-cat-loader"
+          src="/omen-cat-loader.gif"
+          alt=""
+          aria-hidden="true"
+        />
+      )}
       <p suppressHydrationWarning>{message}</p>
     </main>
   );

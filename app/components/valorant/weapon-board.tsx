@@ -41,7 +41,7 @@ export function WeaponBoard({
                 : buddiesById.get(buddyId ?? "");
               return (
                 <button
-                  className="weapon-tile"
+                  className={`weapon-tile${weapon.category === "Melee" ? " melee-tile" : ""}`}
                   style={{ gridRow: row }}
                   key={weapon.id}
                   onClick={() => onSelect(weapon)}
