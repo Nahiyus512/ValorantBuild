@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { GameCanvas } from "@/components/layout/game-canvas";
 import { TopBrandBar } from "@/components/navigation/top-brand-bar";
 import { LoadingState } from "@/components/ui/loading-state";
+import { ResetDataDialog } from "@/components/ui/reset-data-dialog";
 import { SharePreview } from "@/components/ui/share-preview";
 import { SkinFilterDialog } from "@/components/ui/skin-filter-dialog";
 import { WeaponBoard } from "@/components/valorant/weapon-board";
@@ -12,7 +13,7 @@ import { useFixedCanvasScale } from "@/hooks/use-fixed-canvas-scale";
 import { useShareImage } from "@/hooks/use-share-image";
 import valorantStats from "@/generated/valorant-stats.json";
 import { asDataUrl, embedCloneImages, renderElementToPng } from "@/lib/share-image";
-import { readStorage, writeStorage } from "@/lib/storage";
+import { clearAppStorage, readStorage, writeStorage } from "@/lib/storage";
 import { delay } from "@/lib/timing";
 import { loadCosmeticData, loadLoadoutData } from "@/lib/valorant-data";
 import type {
@@ -33,6 +34,7 @@ const cardTabs = [["cards", "卡面"], ["titles", "称号"]] as const;
 const expressionTabs = [["sprays", "喷漆"], ["flexes", "盘盘"]] as const;
 
 type LoadoutView = "home" | "select" | "card" | "expression";
+type ResetConfirmation = "initial" | "final" | null;
 
 type StoredLoadout = {
   playerName?: string;
@@ -64,12 +66,14 @@ export function LoadoutBuilder() {
   const canvasScale = useFixedCanvasScale();
   const share = useShareImage("valorantbuild-loadout.png");
   const gridRef = useRef<HTMLDivElement>(null);
+  const storageTimerRef = useRef<number | null>(null);
 
   const [data, setData] = useState<LoadoutData | null>(null);
   const [cosmetics, setCosmetics] = useState<CosmeticData | null>(null);
   const [view, setView] = useState<LoadoutView>("home");
   const [loadError, setLoadError] = useState<string | null>(null);
   const [storageReady, setStorageReady] = useState(false);
+  const [resetConfirmation, setResetConfirmation] = useState<ResetConfirmation>(null);
 
   const [weaponId, setWeaponId] = useState("");
   const [tab, setTab] = useState<"skin" | "buddy">("skin");
@@ -135,6 +139,7 @@ export function LoadoutBuilder() {
   useEffect(() => {
     if (!storageReady) return;
     const timer = window.setTimeout(() => {
+      storageTimerRef.current = null;
       writeStorage(storageKey, {
         version: 1,
         playerName,
@@ -149,7 +154,11 @@ export function LoadoutBuilder() {
         expressionWheel,
       });
     }, 250);
-    return () => window.clearTimeout(timer);
+    storageTimerRef.current = timer;
+    return () => {
+      window.clearTimeout(timer);
+      if (storageTimerRef.current === timer) storageTimerRef.current = null;
+    };
   }, [
     equipped,
     equippedCardId,
@@ -310,6 +319,27 @@ export function LoadoutBuilder() {
     setView(nextView);
   }
 
+  function cancelDataReset() {
+    setResetConfirmation(null);
+    setView("home");
+  }
+
+  function confirmDataReset() {
+    if (resetConfirmation === "initial") {
+      setResetConfirmation("final");
+      return;
+    }
+    if (resetConfirmation !== "final") return;
+
+    if (storageTimerRef.current !== null) {
+      window.clearTimeout(storageTimerRef.current);
+      storageTimerRef.current = null;
+    }
+    setStorageReady(false);
+    clearAppStorage();
+    window.location.replace("/");
+  }
+
   function selectCosmeticItem(id: string) {
     if (cosmeticTab === "cards") setSelectedCardId(id);
     else if (cosmeticTab === "titles") setSelectedTitleId(id);
@@ -420,13 +450,24 @@ export function LoadoutBuilder() {
           onSave={share.save}
         />
       )}
+      {resetConfirmation && (
+        <ResetDataDialog
+          finalConfirmation={resetConfirmation === "final"}
+          onCancel={cancelDataReset}
+          onConfirm={confirmDataReset}
+        />
+      )}
     </>
   );
 
   if (view === "home") {
     return (
       <GameCanvas scale={canvasScale} overlay={overlay}>
-        <TopBrandBar onShare={shareHome} onRank={() => router.push("/ranking")} />
+        <TopBrandBar
+          onClearData={() => setResetConfirmation("initial")}
+          onShare={shareHome}
+          onRank={() => router.push("/ranking")}
+        />
         <section className="loadout-layout">
           <WeaponBoard
             data={data}
@@ -531,6 +572,7 @@ export function LoadoutBuilder() {
         <TopBrandBar
           onBack={() => setView("home")}
           weaponName={isCardView ? "玩家卡面" : "个性表达"}
+          onClearData={() => setResetConfirmation("initial")}
           onShare={shareHome}
           onRank={() => router.push("/ranking")}
         />
@@ -676,6 +718,7 @@ export function LoadoutBuilder() {
       <TopBrandBar
         onBack={() => setView("home")}
         weaponName={weapon?.name}
+        onClearData={() => setResetConfirmation("initial")}
         onShare={shareHome}
         onRank={() => router.push("/ranking")}
       />

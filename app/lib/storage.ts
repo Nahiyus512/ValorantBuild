@@ -14,3 +14,16 @@ export function writeStorage(key: string, value: unknown): void {
     // Storage may be unavailable in privacy mode; the UI remains usable.
   }
 }
+
+export function clearAppStorage(): void {
+  try {
+    for (let index = window.localStorage.length - 1; index >= 0; index -= 1) {
+      const key = window.localStorage.key(index);
+      if (key?.startsWith("valorantbuild.")) {
+        window.localStorage.removeItem(key);
+      }
+    }
+  } catch {
+    // Storage may be unavailable in privacy mode; reloading still resets UI state.
+  }
+}

@@ -1,6 +1,7 @@
 type TopBrandBarProps = {
   onBack?: () => void;
   weaponName?: string;
+  onClearData: () => void;
   onShare: () => void;
   onRank: () => void;
 };
@@ -8,6 +9,7 @@ type TopBrandBarProps = {
 export function TopBrandBar({
   onBack,
   weaponName,
+  onClearData,
   onShare,
   onRank,
 }: TopBrandBarProps) {
@@ -20,7 +22,15 @@ export function TopBrandBar({
       )}
       {weaponName && <span className="top-weapon">{"//"} {weaponName}</span>}
       <button className="top-rank" onClick={onRank}>排行</button>
-      <div className="home-mark">ValorantBuild</div>
+      <button
+        type="button"
+        className="home-mark"
+        onClick={onClearData}
+        aria-label="清空所有缓存数据"
+        title="清空数据"
+      >
+        ValorantBuild
+      </button>
       <button className="top-export" onClick={onShare}>分享</button>
     </header>
   );
