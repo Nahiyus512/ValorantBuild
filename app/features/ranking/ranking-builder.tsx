@@ -11,11 +11,13 @@ import { useFixedCanvasScale } from "@/hooks/use-fixed-canvas-scale";
 import { useShareImage } from "@/hooks/use-share-image";
 import { embedCloneImages, renderElementToPng } from "@/lib/share-image";
 import { readStorage, writeStorage } from "@/lib/storage";
+import { delay } from "@/lib/timing";
 import { loadLoadoutData } from "@/lib/valorant-data";
 import type { LoadoutData, SkinSort, Weapon } from "@/types/valorant";
 
 const rankingStorageKey = "valorantbuild.ranking.v1";
 const tierLabelStorageKey = "valorantbuild.ranking.labels.v1";
+const minimumLoadingDurationMs = 1_500;
 const initialScroll = { top: 0, height: 80, visible: false };
 const rankingTiers = [
   { id: "s", label: "T0", color: "#ff4655" },
@@ -93,8 +95,11 @@ export function RankingBuilder() {
 
   useEffect(() => {
     let active = true;
-    loadLoadoutData()
-      .then(loadoutData => {
+    Promise.all([
+      loadLoadoutData(),
+      delay(minimumLoadingDurationMs),
+    ])
+      .then(([loadoutData]) => {
         if (!active) return;
         setData(loadoutData);
         setTierData(readStorage<TierData>(rankingStorageKey) ?? {});

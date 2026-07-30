@@ -13,6 +13,7 @@ import { useShareImage } from "@/hooks/use-share-image";
 import valorantStats from "@/generated/valorant-stats.json";
 import { asDataUrl, embedCloneImages, renderElementToPng } from "@/lib/share-image";
 import { readStorage, writeStorage } from "@/lib/storage";
+import { delay } from "@/lib/timing";
 import { loadCosmeticData, loadLoadoutData } from "@/lib/valorant-data";
 import type {
   CosmeticData,
@@ -27,6 +28,7 @@ import type {
 } from "@/types/valorant";
 
 const storageKey = "valorantbuild.loadout.v1";
+const minimumLoadingDurationMs = 1_500;
 const cardTabs = [["cards", "卡面"], ["titles", "称号"]] as const;
 const expressionTabs = [["sprays", "喷漆"], ["flexes", "盘盘"]] as const;
 
@@ -97,7 +99,11 @@ export function LoadoutBuilder() {
 
   useEffect(() => {
     let active = true;
-    Promise.all([loadLoadoutData(), loadCosmeticData()])
+    Promise.all([
+      loadLoadoutData(),
+      loadCosmeticData(),
+      delay(minimumLoadingDurationMs),
+    ])
       .then(([loadoutData, cosmeticData]) => {
         if (!active) return;
         const stored = readStorage<StoredLoadout>(storageKey);

@@ -26,8 +26,11 @@
 .selection-meta{position:relative;min-height:105px;border-top:0}.chroma-row{position:absolute;left:50%;transform:translateX(-50%);bottom:18px;min-height:0;display:flex;gap:9px}.chroma-row button{width:45px;height:45px;padding:3px}.buddy-summary{position:absolute;left:0;bottom:20px;min-height:0}.buddy-summary small{display:none}
 .equip-row{position:absolute;right:0;bottom:0;height:72px;min-height:0;border-top:0;display:flex;align-items:center;gap:12px}
 .favorite-button{margin-left:0!important;width:62px!important;height:60px!important;padding:0!important;background:transparent!important;color:#fff!important;border:2px solid #71858c!important;font-size:30px!important}
-.equip-button{margin-left:0!important;position:relative;width:265px;height:60px!important;padding:0!important;background:#eeeae4!important;color:#12191d!important;border:3px solid #eeeae4!important;box-shadow:0 0 0 2px #21333b,0 0 0 4px #c5cecd!important;clip-path:none!important;font-size:18px;font-weight:bold}
+.equip-button{margin-left:0!important;position:relative;width:265px;height:60px!important;padding:0!important;background:#eeeae4!important;color:#12191d!important;border:3px solid #eeeae4!important;box-shadow:0 0 0 2px #21333b,0 0 0 4px #c5cecd!important;clip-path:none!important;font-size:18px;font-weight:bold;cursor:pointer;transition:background-color .22s ease,color .22s ease,border-color .22s ease}
 .equip-button.equipped{background:rgba(7,25,35,.28)!important;color:#53656c!important;border-color:#243941!important;box-shadow:0 0 0 2px #142730,0 0 0 4px #20353d!important}
+.equip-button:hover{background:#fff!important;color:#061521!important;border-color:#18ffe0!important}
+.equip-button.equipped:hover{background:rgba(24,255,224,.12)!important;color:#8fffee!important;border-color:#18ffe0!important}
+.equip-button:focus-visible{outline:2px solid #18ffe0;outline-offset:7px}
 @media(max-width:1000px){.loadout-layout{grid-template-columns:1fr}.selector-layout{grid-template-columns:420px 1fr}.player-card{height:420px}.spray-wheel{width:165px;height:165px}}
 @media(max-width:700px){.selector-layout{display:block}.preview-title img{width:28px;height:28px}.main-gun{width:100%;height:210px}.gun-buddy{left:68%;top:61%}.selection-meta{min-height:150px}.chroma-row{left:0;transform:none;bottom:90px;max-width:100%;overflow-x:auto}.equip-button{width:190px}.favorite-button{width:52px!important}}
 
@@ -928,8 +931,8 @@ html,body{width:100%;height:100%;overflow:hidden!important}
 .fixed-stage .title-grid button{height:92px;padding:12px}
 .fixed-stage .title-grid strong{font-size:16px}
 .fixed-stage .cosmetic-preview{position:relative;width:1020px!important;height:1022px!important;padding:36px 70px 24px!important}
-.fixed-stage .card-preview{position:absolute;left:50%;top:135px;transform:translateX(-50%);width:310px;height:620px;border:2px solid #e7eeee;background:#07131b;overflow:hidden;box-shadow:0 28px 70px rgba(0,0,0,.48)}
-.fixed-stage .card-preview img{width:100%;height:100%;object-fit:cover}
+.fixed-stage .card-preview{position:absolute;left:50%;top:135px;transform:translateX(-50%);width:268px;height:640px;aspect-ratio:268/640;border:2px solid #e7eeee;background:#07131b;overflow:hidden;box-shadow:0 28px 70px rgba(0,0,0,.48)}
+.fixed-stage .card-preview img{display:block;width:100%;height:100%;object-fit:contain}
 .fixed-stage .card-preview strong,.fixed-stage .card-preview small{position:absolute;left:0;right:0;text-align:center;text-shadow:0 2px 7px #000}
 .fixed-stage .card-preview strong{bottom:58px;font-size:24px}.fixed-stage .card-preview small{bottom:30px;font-size:15px}
 .fixed-stage .title-preview{height:610px;display:flex;flex-direction:column;align-items:center;justify-content:center}
@@ -1267,51 +1270,11 @@ html,body{width:100%;height:100%;overflow:hidden!important}
 }
 .fixed-stage .player-card:before,
 .fixed-stage .player-card:after{
-  content:"";
-  position:absolute;
-  z-index:6;
-  pointer-events:none;
-  transition:background .3s ease,filter .3s ease;
+  content:none!important;
+  display:none!important;
 }
-.fixed-stage .player-card:before{
-  inset:-4px;
-  width:auto;
-  height:auto;
-  transform:none;
-  background:
-    linear-gradient(var(--frame),var(--frame)) left top/2px 87% no-repeat,
-    linear-gradient(var(--frame),var(--frame)) right top/2px 87% no-repeat,
-    linear-gradient(45deg,transparent 49%,var(--frame) 49.5% 50.5%,transparent 51%) left bottom/38% 14% no-repeat,
-    linear-gradient(-45deg,transparent 49%,var(--frame) 49.5% 50.5%,transparent 51%) right bottom/38% 14% no-repeat,
-    linear-gradient(var(--frame),var(--frame)) center bottom/24% 2px no-repeat!important;
-}
-.fixed-stage .player-card:after{
-  display:block!important;
-  inset:auto -8px -8px;
-  width:auto;
-  height:14%;
-  transform:none;
-  background:
-    linear-gradient(45deg,transparent 49%,rgba(223,231,231,.72) 49.5% 50.5%,transparent 51%) left bottom/39% 100% no-repeat,
-    linear-gradient(-45deg,transparent 49%,rgba(223,231,231,.72) 49.5% 50.5%,transparent 51%) right bottom/39% 100% no-repeat,
-    linear-gradient(rgba(223,231,231,.72),rgba(223,231,231,.72)) center bottom/22% 1px no-repeat!important;
-}
-.fixed-stage .player-card:hover:before{
-  height:auto;
-  background:
-    linear-gradient(var(--active),var(--active)) left top/2px 87% no-repeat,
-    linear-gradient(var(--active),var(--active)) right top/2px 87% no-repeat,
-    linear-gradient(45deg,transparent 49%,var(--active) 49.5% 50.5%,transparent 51%) left bottom/38% 14% no-repeat,
-    linear-gradient(-45deg,transparent 49%,var(--active) 49.5% 50.5%,transparent 51%) right bottom/38% 14% no-repeat,
-    linear-gradient(var(--active),var(--active)) center bottom/24% 2px no-repeat!important;
-}
-.fixed-stage .player-card:hover:after{
-  height:14%;
-  background:
-    linear-gradient(45deg,transparent 49%,rgba(24,255,224,.76) 49.5% 50.5%,transparent 51%) left bottom/39% 100% no-repeat,
-    linear-gradient(-45deg,transparent 49%,rgba(24,255,224,.76) 49.5% 50.5%,transparent 51%) right bottom/39% 100% no-repeat,
-    linear-gradient(rgba(24,255,224,.76),rgba(24,255,224,.76)) center bottom/22% 1px no-repeat!important;
-  filter:drop-shadow(0 0 4px rgba(24,255,224,.25));
+.fixed-stage .player-card:hover{
+  background:none!important;
 }
 
 /* Requested home-wheel and weapon-preview alignment. */
