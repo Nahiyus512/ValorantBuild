@@ -377,20 +377,25 @@ export function RankingBuilder() {
     if (!tierList || share.generating) return;
     setHoveredTooltip(null);
     share.setGenerating(true);
-    const exportHeight = Math.max(720, tierList.scrollHeight);
     const root = document.createElement("div");
     root.className = "fixed-stage ranking-export-stage";
+    const listClone = tierList.cloneNode(true) as HTMLElement;
+    root.style.cssText = `position:fixed;left:-10000px;top:0;transform:none;width:1920px;height:auto;overflow:visible;visibility:hidden;pointer-events:none;background:#061521;color:#edf3f1;font-family:"Noto Sans SC","Microsoft YaHei",sans-serif;font-weight:900;`;
+    listClone.style.cssText += ";position:relative;z-index:1;width:1920px;height:auto;overflow:visible;box-sizing:border-box";
+    root.appendChild(listClone);
+    document.body.appendChild(root);
+    const exportHeight = Math.ceil(listClone.scrollHeight);
+    root.remove();
+
     root.style.cssText = `position:relative;left:0;top:0;transform:none;width:1920px;height:${exportHeight}px;overflow:hidden;background:#061521;color:#edf3f1;font-family:"Noto Sans SC","Microsoft YaHei",sans-serif;font-weight:900;`;
+    listClone.style.height = `${exportHeight}px`;
     if (background) {
       const backgroundClone = background.cloneNode(true) as HTMLElement;
       backgroundClone.style.position = "absolute";
       backgroundClone.style.inset = "0";
       backgroundClone.style.zIndex = "0";
-      root.appendChild(backgroundClone);
+      root.prepend(backgroundClone);
     }
-    const listClone = tierList.cloneNode(true) as HTMLElement;
-    listClone.style.cssText += `;position:relative;z-index:1;width:1920px;height:${exportHeight}px;overflow:visible;box-sizing:border-box`;
-    root.appendChild(listClone);
     await embedCloneImages(tierList, listClone);
     try {
       share.showBlob(await renderElementToPng(root, 1920, exportHeight));
