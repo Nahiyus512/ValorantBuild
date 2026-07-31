@@ -29,7 +29,7 @@ import type {
 } from "@/types/valorant";
 
 const storageKey = "valorantbuild.loadout.v1";
-const minimumLoadingDurationMs = 1_500;
+const minimumLoadingDurationMs = 1_000;
 const cardTabs = [["cards", "卡面"], ["titles", "称号"]] as const;
 const expressionTabs = [["sprays", "喷漆"], ["flexes", "盘盘"]] as const;
 

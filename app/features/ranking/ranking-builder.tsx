@@ -17,14 +17,14 @@ import type { LoadoutData, SkinSort, Weapon } from "@/types/valorant";
 
 const rankingStorageKey = "valorantbuild.ranking.v1";
 const tierLabelStorageKey = "valorantbuild.ranking.labels.v1";
-const minimumLoadingDurationMs = 1_500;
+const minimumLoadingDurationMs = 1_000;
 const initialScroll = { top: 0, height: 80, visible: false };
 const rankingTiers = [
   { id: "s", label: "夯", color: "#ff4655" },
   { id: "a", label: "顶级", color: "#f5955b" },
-  { id: "b", label: "人上人", color: "#fad663" },
-  { id: "c", label: "NPC", color: "#5a9fe2" },
-  { id: "d", label: "拉完了", color: "#78909a" },
+  { id: "b", label: "人上人", color: "#ddb84f" },
+  { id: "c", label: "NPC", color: "#d8c8aa" },
+  { id: "d", label: "拉完了", color: "#f3f1eb" },
 ] as const;
 
 type TierData = Record<string, Array<{ skinId: string; chromaId: string }>>;
